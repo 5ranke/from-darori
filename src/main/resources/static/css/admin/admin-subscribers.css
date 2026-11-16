@@ -1,0 +1,51 @@
+/* 운영자 공통 레이아웃은 admin-common.css를 사용합니다. 이 파일은 구독자 화면 전용입니다. */
+.admin-subscribers-page .subscriber-panel { min-width: 0; padding: 40px 30px 56px; border-radius: 15px; }
+.admin-subscribers-page .subscriber-panel h2 { font-size: 23px; font-weight: 750; letter-spacing: -.6px; }
+.admin-subscribers-page .subscriber-intro { margin-top: 6px; color: var(--admin-muted); font-size: 18px; }
+.admin-subscribers-page .subscriber-demo { margin-top: 12px; color: #777780; font-size: 12px; line-height: 1.6; }
+.admin-subscribers-page #subscriber-form { margin-top: 40px; }
+.admin-subscribers-page .subscriber-field + .subscriber-field { margin-top: 24px; }
+.admin-subscribers-page .subscriber-field label { display: block; font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+.admin-subscribers-page .subscriber-optional { font-size: 13px; font-weight: 400; color: #777780; margin-left: 4px; }
+.admin-subscribers-page .subscriber-field .admin-input { min-height: 50px; padding: 13px 15px; font-size: 15px; border-radius: 12px; }
+.admin-subscribers-page .subscriber-field .admin-input[aria-invalid="true"] { border-color: #b43c25; }
+.admin-subscribers-page .subscriber-hint { font-size: 12px; margin-top: 7px; color: #777780; }
+.admin-subscribers-page .subscriber-error { margin-top: 7px; font-size: 13px; color: #b43c25; }
+.admin-subscribers-page .subscriber-add { margin-top: 26px; min-height: 48px; padding: 10px 22px; font-size: 18px; }
+.admin-subscribers-page .subscriber-status-message:not(:empty) { margin-top: 18px; color: #7b4331; font-size: 14px; }
+.admin-subscribers-page .subscriber-list-section { margin-top: 52px; }
+.admin-subscribers-page .subscriber-summary { margin-top: 5px; color: #777780; font-size: 17px; }
+.admin-subscribers-page .subscriber-list { list-style: none; margin: 12px 0 0; padding: 0; }
+.admin-subscribers-page .subscriber-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--admin-border); }
+.admin-subscribers-page .subscriber-person { min-width: 0; }
+.admin-subscribers-page .subscriber-email { font-size: 17px; font-weight: 700; overflow-wrap: anywhere; }
+.admin-subscribers-page .subscriber-person-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+.admin-subscribers-page .subscriber-name { color: var(--admin-muted); font-size: 16px; overflow-wrap: anywhere; }
+.admin-subscribers-page .subscriber-state { display: inline-block; border-radius: 999px; padding: 3px 10px; color: #80503c; background: #fff0eb; font-size: 12px; }
+.admin-subscribers-page .subscriber-state--unsubscribed { background: #f1f1f3; color: #66666e; }
+.admin-subscribers-page .subscriber-remove { flex-shrink: 0; min-height: 40px; padding: 7px 16px; }
+.admin-subscribers-page .subscriber-more { display: flex; flex-direction: column; align-items: center; gap: 12px; min-height: 64px; padding: 22px 20px 0; margin: 14px auto 0; border: 0; background: white; color: #777780; font-size: 13px; }
+.admin-subscribers-page .subscriber-chevron { display: block; width: 17px; height: 17px; transform: rotate(45deg); border-right: 2px solid var(--admin-text); border-bottom: 2px solid var(--admin-text); }
+.admin-subscribers-page .subscriber-empty { padding: 38px 12px; text-align: center; color: #777780; }
+.admin-subscribers-page .subscriber-delete-dialog { width: min(640px, calc(100% - 32px)); padding: 52px 42px 42px; text-align: center; max-height: calc(100svh - 32px); overflow-y: auto; }
+.admin-subscribers-page .subscriber-delete-dialog h2 { font-size: 26px; letter-spacing: -.6px; }
+.admin-subscribers-page .subscriber-delete-dialog > p { font-size: 15px; }
+.admin-subscribers-page .subscriber-delete-card { margin-top: 34px; padding: 24px 28px; text-align: left; border: 1px solid var(--admin-border); border-radius: 15px; }
+.admin-subscribers-page .subscriber-delete-card p { margin: 0; font-size: 18px; color: var(--admin-text); }
+.admin-subscribers-page .subscriber-delete-person { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 20px; overflow-wrap: anywhere; }
+.admin-subscribers-page .subscriber-delete-person strong { font-size: 18px; }
+.admin-subscribers-page .subscriber-delete-person span { color: #777780; }
+.admin-subscribers-page #subscriber-delete-confirm { min-width: 180px; }
+.admin-subscribers-page [hidden] { display: none !important; }
+.admin-subscribers-page button:disabled { opacity: .5; cursor: not-allowed; }
+@media (max-width: 600px) {
+  .admin-subscribers-page .subscriber-panel { padding: 28px 20px 40px; }
+  .admin-subscribers-page .subscriber-intro { font-size: 16px; }
+  .admin-subscribers-page .subscriber-email { font-size: 15px; }
+  .admin-subscribers-page .subscriber-summary { font-size: 15px; }
+  .admin-subscribers-page .subscriber-row { gap: 12px; }
+  .admin-subscribers-page .subscriber-delete-dialog { padding: 30px 22px; }
+  .admin-subscribers-page .subscriber-delete-dialog h2 { font-size: 22px; }
+  .admin-subscribers-page .subscriber-delete-card { padding: 20px; }
+  .admin-subscribers-page #subscriber-delete-confirm { min-width: 120px; }
+}
