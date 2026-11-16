@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="From. 다로리 운영자 관리 대시보드">
+  <title>대시보드 | From. 다로리 관리</title>
+  <link rel="stylesheet" href="../css/admin/admin-common.css">
+  <link rel="stylesheet" href="../css/admin/admin-dashboard.css">
+  <script defer src="../js/admin/admin-common.js"></script>
+  <script defer src="../js/admin/admin-dashboard-data.js"></script>
+  <script defer src="../js/admin/admin-dashboard.js"></script>
+</head>
+<body class="admin-page" data-admin-page="dashboard">
+  <a class="admin-skip" href="#admin-content">본문 바로가기</a>
+  <div data-admin-header></div>
+  <main class="admin-container admin-main">
+    <h1 class="admin-greeting">안녕하세요, <span id="admin-name">OOO</span>님</h1>
+    <nav class="admin-tabs" aria-label="운영자 영역">
+      <button type="button" class="admin-tab" data-admin-route="newsletter">뉴스레터 제작</button>
+      <a class="admin-tab admin-tab--active" href="dashboard.html" aria-current="page">관리</a>
+    </nav>
+    <div class="admin-workspace">
+      <nav class="admin-sidebar admin-card" aria-label="관리 메뉴" data-admin-sidebar></nav>
+      <section class="admin-dashboard admin-card" id="admin-content" aria-label="대시보드" tabindex="-1">
+        <h2 class="admin-sr-only">대시보드</h2>
+        <div class="admin-stats" id="admin-stats"></div>
+        <section class="admin-reports" aria-labelledby="admin-reports-title">
+          <h2 id="admin-reports-title">확인이 필요한 주민 제보 <span class="admin-count" id="admin-report-count">0건</span></h2>
+          <button class="admin-button admin-button--outline" type="button" data-admin-route="reports">제보 보러 가기</button>
+        </section>
+        <section class="admin-recent" aria-labelledby="admin-recent-title">
+          <h2 id="admin-recent-title">최근 등록한 소식</h2>
+          <ul class="admin-news-list" id="admin-news-list"></ul>
+        </section>
+        <p class="admin-demo-note">화면 확인을 위한 예시 데이터입니다.</p>
+      </section>
+    </div>
+  </main>
+  <div data-admin-footer></div>
+  <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-dialog-title" aria-describedby="admin-dialog-description">
+    <form method="dialog">
+      <h2 id="admin-dialog-title"></h2>
+      <p id="admin-dialog-description"></p>
+      <div class="admin-dialog-actions"><button class="admin-button admin-button--outline" value="cancel" id="admin-dialog-cancel">취소</button><button class="admin-button admin-button--primary" value="confirm" id="admin-dialog-confirm">확인</button></div>
+    </form>
+  </dialog>
+  <noscript><p class="admin-container">대시보드를 표시하려면 JavaScript를 활성화해 주세요.</p></noscript>
+</body>
+</html>
