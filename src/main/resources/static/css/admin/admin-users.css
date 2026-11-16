@@ -1,0 +1,53 @@
+/* 공통 헤더·탭·메뉴·푸터·반응형 너비는 admin-common.css를 그대로 사용합니다. */
+.admin-users-page .user-panel { min-width: 0; padding: 40px 30px 60px; border-radius: 15px; }
+.admin-users-page .user-panel h2 { font-size: 23px; font-weight: 750; letter-spacing: -.6px; }
+.admin-users-page .user-intro { margin-top: 6px; color: var(--admin-muted); font-size: 18px; }
+.admin-users-page .user-demo { margin-top: 12px; color: #777780; font-size: 12px; line-height: 1.6; }
+.admin-users-page #user-form { margin-top: 40px; }
+.admin-users-page .user-field + .user-field { margin-top: 24px; }
+.admin-users-page .user-field label { display: block; font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+.admin-users-page .user-field .admin-input { min-height: 50px; padding: 13px 15px; font-size: 15px; border-radius: 12px; }
+.admin-users-page .user-field select.admin-input { padding-right: 34px; cursor: pointer; }
+.admin-users-page .user-field .admin-input[aria-invalid="true"] { border-color: #b43c25; }
+.admin-users-page .user-hint { font-size: 12px; margin-top: 7px; color: #777780; }
+.admin-users-page .user-error { margin-top: 7px; font-size: 13px; color: #b43c25; }
+.admin-users-page .user-add { margin-top: 26px; min-height: 48px; padding: 10px 22px; font-size: 18px; }
+.admin-users-page .user-status-message:not(:empty) { margin-top: 18px; color: #7b4331; font-size: 14px; }
+.admin-users-page .user-list-section { margin-top: 80px; }
+.admin-users-page .user-summary { margin-top: 5px; color: #777780; font-size: 17px; }
+.admin-users-page .user-list { list-style: none; margin: 12px 0 0; padding: 0; }
+.admin-users-page .user-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 26px 0; border-bottom: 1px solid var(--admin-border); }
+.admin-users-page .user-person { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 10px 12px; min-width: 0; }
+.admin-users-page .user-role-badge { display: inline-block; padding: 4px 12px; background: #fff0eb; border-radius: 999px; font-size: 13px; white-space: nowrap; }
+.admin-users-page .user-email { grid-column: 2; font-size: 17px; font-weight: 700; overflow-wrap: anywhere; }
+.admin-users-page .user-name { grid-column: 2; color: var(--admin-muted); font-size: 16px; overflow-wrap: anywhere; }
+.admin-users-page .user-remove { flex-shrink: 0; min-height: 40px; padding: 7px 16px; }
+.admin-users-page .user-more { display: flex; flex-direction: column; align-items: center; gap: 12px; min-height: 64px; padding: 22px 20px 0; margin: 14px auto 0; border: 0; background: white; color: #777780; font-size: 13px; }
+.admin-users-page .user-chevron { display: block; width: 17px; height: 17px; transform: rotate(45deg); border-right: 2px solid var(--admin-text); border-bottom: 2px solid var(--admin-text); }
+.admin-users-page .user-empty { padding: 38px 12px; text-align: center; color: #777780; }
+.admin-users-page .user-delete-dialog { width: min(640px, calc(100% - 32px)); padding: 52px 42px 42px; text-align: center; max-height: calc(100svh - 32px); overflow-y: auto; }
+.admin-users-page .user-delete-dialog h2 { font-size: 26px; letter-spacing: -.6px; }
+.admin-users-page .user-delete-dialog > p { font-size: 15px; }
+.admin-users-page .user-delete-card { margin-top: 34px; padding: 24px 28px; text-align: left; border: 1px solid var(--admin-border); border-radius: 15px; }
+.admin-users-page .user-delete-card p { margin: 0; font-size: 18px; color: var(--admin-text); }
+.admin-users-page .user-delete-person { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 20px; overflow-wrap: anywhere; }
+.admin-users-page .user-delete-person strong { font-size: 18px; }
+.admin-users-page .user-delete-person span { color: #777780; }
+.admin-users-page .user-delete-card .user-role-badge { margin-top: 14px; }
+.admin-users-page #user-delete-confirm { min-width: 180px; }
+.admin-users-page [hidden] { display: none !important; }
+.admin-users-page button:disabled { opacity: .5; cursor: not-allowed; }
+@media (max-width: 600px) {
+  .admin-users-page .user-panel { padding: 28px 20px 40px; }
+  .admin-users-page .user-intro { font-size: 16px; }
+  .admin-users-page .user-email, .admin-users-page .user-summary { font-size: 15px; }
+  .admin-users-page .user-list-section { margin-top: 52px; }
+  .admin-users-page .user-row { align-items: flex-start; gap: 12px; }
+  .admin-users-page .user-person { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .admin-users-page .user-person .user-role-badge { justify-self: start; }
+  .admin-users-page .user-email, .admin-users-page .user-name { grid-column: 1; }
+  .admin-users-page .user-delete-dialog { padding: 30px 22px; }
+  .admin-users-page .user-delete-dialog h2 { font-size: 22px; }
+  .admin-users-page .user-delete-card { padding: 20px; }
+  .admin-users-page #user-delete-confirm { min-width: 120px; }
+}
