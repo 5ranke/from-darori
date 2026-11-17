@@ -1,12 +1,15 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" class="admin-auth-pending">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>운영자 관리 | From. 다로리</title>
   <link rel="stylesheet" href="../css/admin/admin-common.css">
   <link rel="stylesheet" href="../css/admin/admin-users.css">
+  <link rel="stylesheet" href="../css/admin/admin-auth.css">
+  <script defer src="../js/admin/admin-auth.js"></script>
   <script defer src="../js/admin/admin-common.js"></script>
+  <script defer src="../js/admin/admin-auth-guard.js"></script>
   <script defer src="../js/admin/admin-users-data.js"></script>
   <script defer src="../js/admin/admin-users.js"></script>
 </head>
@@ -75,6 +78,6 @@
   <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-dialog-title" aria-describedby="admin-dialog-description">
     <form method="dialog"><h2 id="admin-dialog-title"></h2><p id="admin-dialog-description"></p><div class="admin-dialog-actions"><button class="admin-button admin-button--outline" value="cancel" id="admin-dialog-cancel">취소</button><button class="admin-button admin-button--primary" value="confirm" id="admin-dialog-confirm">확인</button></div></form>
   </dialog>
-  <noscript><p class="admin-container">운영자 관리 미리보기를 사용하려면 JavaScript를 활성화해 주세요.</p></noscript>
+  <noscript><p class="admin-container">인증 확인을 위해 JavaScript를 활성화해 주세요.</p><p class="admin-container">운영자 관리 미리보기를 사용하려면 JavaScript를 활성화해 주세요.</p></noscript>
 </body>
 </html>

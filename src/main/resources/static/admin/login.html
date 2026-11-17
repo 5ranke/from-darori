@@ -7,7 +7,10 @@
   <title>운영자 로그인 | From. 다로리</title>
   <link rel="stylesheet" href="../css/admin/admin-common.css">
   <link rel="stylesheet" href="../css/admin/admin-login.css">
+  <link rel="stylesheet" href="../css/admin/admin-auth.css">
+  <script defer src="../js/admin/admin-auth.js"></script>
   <script defer src="../js/admin/admin-common.js"></script>
+  <script defer src="../js/admin/admin-auth-guard.js"></script>
   <script defer src="../js/admin/admin-login.js"></script>
 </head>
 <body class="admin-page admin-login-page" data-admin-page="login">
@@ -17,11 +20,11 @@
     <h1>운영자 페이지</h1>
     <section class="admin-card admin-login-card" aria-labelledby="admin-login-title">
       <h2 id="admin-login-title">운영자 로그인</h2>
-      <!-- API 연결 전에는 제출을 JS에서 차단합니다. 비밀번호를 URL로 전송하지 않습니다. -->
+      <!-- JavaScript가 같은 출처의 인증 API로 JSON을 전송합니다. -->
       <form id="admin-login-form" method="post" novalidate>
         <div class="admin-login-field">
           <label for="admin-login-email">이메일</label>
-          <input class="admin-input" id="admin-login-email" name="email" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="name@example.com" aria-describedby="admin-login-email-error" required>
+          <input class="admin-input" id="admin-login-email" name="email" type="email" maxlength="254" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="name@example.com" aria-describedby="admin-login-email-error" required>
           <p class="admin-login-error" id="admin-login-email-error" hidden></p>
         </div>
         <div class="admin-login-field">

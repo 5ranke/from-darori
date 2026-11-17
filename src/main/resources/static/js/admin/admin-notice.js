@@ -1,5 +1,7 @@
 /* 공지사항 화면 동작. 데이터 접근은 예시 저장소에 위임합니다. */
-(() => {
+(async () => {
+  const authenticatedUser = await window.DaroriAdminAuthPage.ready;
+  if (!authenticatedUser) return;
   const data = window.DaroriAdminNoticeData;
   const { routes, showDialog } = window.DaroriAdmin;
   // 이 페이지에서만 공지 경로를 연결합니다. 기존 공통/대시보드 파일은 유지합니다.
