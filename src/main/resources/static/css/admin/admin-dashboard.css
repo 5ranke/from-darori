@@ -39,3 +39,6 @@
   .admin-page .admin-news-actions { align-self: flex-end; }
   .admin-page .admin-news-meta { font-size: 14px; }
 }
+
+.admin-page .admin-dashboard-retry { margin-top: 12px; }
+.admin-page .admin-dashboard-retry[hidden] { display: none; }
