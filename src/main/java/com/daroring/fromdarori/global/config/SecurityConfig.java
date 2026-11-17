@@ -71,7 +71,7 @@ public class SecurityConfig {
 
     private static void unauthorized(HttpServletResponse response) throws IOException {
         response.setHeader("WWW-Authenticate", "Bearer");
-        writeError(response, 401, "AUTH4010", "인증이 필요하거나 토큰이 유효하지 않습니다.");
+        writeError(response, 401, "AUTH4012", "인증이 필요하거나 토큰이 유효하지 않습니다.");
     }
 
     private static void writeError(HttpServletResponse response, int status, String code,

@@ -2,6 +2,7 @@ package com.daroring.fromdarori.domain.admin.controller;
 
 import com.daroring.fromdarori.global.response.ApiResponse;
 import com.daroring.fromdarori.domain.admin.exception.RefreshTokenException;
+import com.daroring.fromdarori.domain.admin.exception.DeletedAdminException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -12,6 +13,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice(assignableTypes = AdminAuthController.class)
 public class AdminAuthExceptionHandler {
+
+    @ExceptionHandler(DeletedAdminException.class)
+    public ResponseEntity<ApiResponse<Void>> deletedAdmin(DeletedAdminException exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.failure("AUTH4016", exception.getMessage()));
+    }
 
     @ExceptionHandler(RefreshTokenException.class)
     public ResponseEntity<ApiResponse<Void>> invalidRefreshToken(RefreshTokenException exception) {

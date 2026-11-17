@@ -3,6 +3,9 @@ package com.daroring.fromdarori.domain.admin.service;
 import com.daroring.fromdarori.domain.admin.dto.AdminLoginRequest;
 import com.daroring.fromdarori.domain.admin.dto.AdminLoginResponse;
 import com.daroring.fromdarori.domain.admin.dto.AdminRefreshResponse;
+import com.daroring.fromdarori.domain.admin.dto.AdminMeResponse;
+import com.daroring.fromdarori.domain.admin.exception.DeletedAdminException;
+import java.util.UUID;
 import com.daroring.fromdarori.domain.admin.exception.RefreshTokenException;
 import com.daroring.fromdarori.domain.admin.exception.RefreshTokenException.Reason;
 import com.daroring.fromdarori.domain.admin.entity.AdminUser;
@@ -88,6 +91,13 @@ public class AdminAuthService {
         }
         var response = new AdminRefreshResponse(accessToken, "Bearer", jwtTokenProvider.accessTokenExpiresIn());
         return new RefreshResult(response, refreshTokenSupport.cookie(refreshToken));
+    }
+
+    @Transactional(readOnly = true)
+    public AdminMeResponse me(UUID adminUserId) {
+        AdminUser user = adminUserRepository.findById(adminUserId)
+                .orElseThrow(DeletedAdminException::new);
+        return AdminMeResponse.from(user);
     }
 
     public record RefreshResult(AdminRefreshResponse response, ResponseCookie refreshCookie) {

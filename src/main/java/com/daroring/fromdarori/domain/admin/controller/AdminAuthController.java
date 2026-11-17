@@ -3,6 +3,7 @@ package com.daroring.fromdarori.domain.admin.controller;
 import com.daroring.fromdarori.domain.admin.dto.AdminLoginRequest;
 import com.daroring.fromdarori.domain.admin.dto.AdminLoginResponse;
 import com.daroring.fromdarori.domain.admin.dto.AdminRefreshResponse;
+import com.daroring.fromdarori.domain.admin.dto.AdminMeResponse;
 import com.daroring.fromdarori.domain.admin.service.AdminAuthService;
 import com.daroring.fromdarori.global.response.ApiResponse;
 import jakarta.validation.Valid;
@@ -12,6 +13,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import java.util.UUID;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +53,13 @@ public class AdminAuthController {
 
     // 로그인한 운영자 조회
     // GET /api/v1/admin/auth/me
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<AdminMeResponse>> me(@AuthenticationPrincipal Jwt jwt) {
+        var response = adminAuthService.me(UUID.fromString(jwt.getSubject()));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CACHE_CONTROL, "no-store")
+                .body(ApiResponse.success("운영자 정보를 조회했습니다.", response));
+    }
 
     // 운영자 로그아웃
     // POST /api/v1/admin/auth/logout
