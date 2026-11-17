@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/v1/admin/auth/login",
-                                "/api/v1/admin/auth/refresh").permitAll()
+                                "/api/v1/admin/auth/refresh", "/api/v1/admin/auth/logout").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAnyRole("OPERATOR", "REPRESENTATIVE")
                         .anyRequest().permitAll())
                 .exceptionHandling(errors -> errors
@@ -50,9 +50,11 @@ public class SecurityConfig {
                                 403, "AUTH4031", "접근 권한이 없습니다.")))
                 .oauth2ResourceServer(resource -> resource
                         .bearerTokenResolver(request -> {
-                            // Refresh authenticates solely with its cookie, even with an expired Bearer header.
-                            if ("POST".equals(request.getMethod()) && "/api/v1/admin/auth/refresh".equals(
-                                    request.getRequestURI().substring(request.getContextPath().length()))) {
+                            // Cookie-based endpoints work even with an expired Bearer header.
+                            String path = request.getRequestURI().substring(request.getContextPath().length());
+                            if ("POST".equals(request.getMethod()) && (
+                                    "/api/v1/admin/auth/refresh".equals(path)
+                                            || "/api/v1/admin/auth/logout".equals(path))) {
                                 return null;
                             }
                             return new DefaultBearerTokenResolver().resolve(request);

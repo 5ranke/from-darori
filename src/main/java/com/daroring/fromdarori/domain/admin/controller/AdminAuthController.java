@@ -63,4 +63,13 @@ public class AdminAuthController {
 
     // 운영자 로그아웃
     // POST /api/v1/admin/auth/logout
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(
+            @CookieValue(name = "refreshToken", required = false) String refreshToken) {
+        var cookie = adminAuthService.logout(refreshToken);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header(HttpHeaders.CACHE_CONTROL, "no-store")
+                .body(ApiResponse.success("로그아웃되었습니다.", null));
+    }
 }

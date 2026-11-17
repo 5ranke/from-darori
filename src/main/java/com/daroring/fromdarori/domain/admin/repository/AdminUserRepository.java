@@ -23,4 +23,12 @@ public interface AdminUserRepository extends JpaRepository<AdminUser, UUID> {
             """)
     int rotateRefreshToken(@Param("id") UUID id, @Param("oldHash") String oldHash,
                            @Param("newHash") String newHash, @Param("now") OffsetDateTime now);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+            update AdminUser u set u.refreshTokenHash = null,
+                u.refreshTokenExpiresAt = null, u.updatedAt = :now
+            where u.refreshTokenHash = :hash
+            """)
+    int invalidateRefreshToken(@Param("hash") String hash, @Param("now") OffsetDateTime now);
 }

@@ -93,6 +93,20 @@ public class AdminAuthService {
         return new RefreshResult(response, refreshTokenSupport.cookie(refreshToken));
     }
 
+    @Transactional
+    public ResponseCookie logout(String token) {
+        if (token != null && !token.isBlank()) {
+            if (!token.matches("[A-Za-z0-9_-]{43}")) {
+                throw new RefreshTokenException(Reason.INVALID);
+            }
+            // Missing/expired/already invalidated sessions are treated as logged out.
+            // Match the current hash so an old token cannot revoke a newer login.
+            adminUserRepository.invalidateRefreshToken(refreshTokenSupport.hash(token),
+                    OffsetDateTime.now(ZoneOffset.UTC));
+        }
+        return refreshTokenSupport.clearCookie();
+    }
+
     @Transactional(readOnly = true)
     public AdminMeResponse me(UUID adminUserId) {
         AdminUser user = adminUserRepository.findById(adminUserId)
