@@ -7,7 +7,7 @@ window.DaroriAdmin = (() => {
     notices: null,
     subscribers: null,
     operators: null,
-    news: null,
+    news: 'news.html',
     reports: null,
     letters: null,
     unsubscribe: null
@@ -21,7 +21,7 @@ window.DaroriAdmin = (() => {
   if (header) header.innerHTML = `<header class="admin-header"><div class="admin-container admin-header-inner"><a class="admin-logo" href="dashboard.html">From. 다로리</a><button type="button" class="admin-button admin-button--dark" data-admin-route="visitor">방문자 페이지로</button></div></header>`;
   const sidebar = document.querySelector('[data-admin-sidebar]');
   if (sidebar) {
-    const items = [['dashboard', '대시보드'], ['notices', '공지사항 작성'], ['subscribers', '구독자 관리'], ['operators', '운영자 관리']];
+    const items = [['dashboard', '대시보드'], ['news', '소식 작성'], ['notices', '공지사항 작성'], ['subscribers', '구독자 관리'], ['operators', '운영자 관리']];
     items.forEach(([key, label]) => {
       const active = document.body.dataset.adminPage === key;
       const item = document.createElement(active ? 'a' : 'button');
