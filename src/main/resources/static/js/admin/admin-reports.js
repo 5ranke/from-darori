@@ -21,8 +21,8 @@
           <p class="report-item-meta"></p>
         </div>
         <div class="report-item-actions">
-          <button type="button" class="report-btn report-btn--dark" data-action="register">소식으로 등록</button>
           <button type="button" class="report-btn" data-action="delete">삭제</button>
+          <button type="button" class="report-btn report-btn--dark" data-action="register">소식으로 등록</button>
         </div>`;
       li.querySelector('.report-item-title').textContent = report.content;
       li.querySelector('.report-item-meta').textContent = `${report.name} | ${report.date}`;
