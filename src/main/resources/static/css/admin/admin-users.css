@@ -51,3 +51,5 @@
   .admin-users-page .user-delete-card { padding: 20px; }
   .admin-users-page #user-delete-confirm { min-width: 120px; }
 }
+
+.admin-users-page .user-retry { margin-top: 16px; }
