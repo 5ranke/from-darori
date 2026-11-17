@@ -1,0 +1,57 @@
+package com.daroring.fromdarori.domain.admin.service;
+
+import com.daroring.fromdarori.domain.admin.dto.AdminLoginRequest;
+import com.daroring.fromdarori.domain.admin.dto.AdminLoginResponse;
+import com.daroring.fromdarori.domain.admin.entity.AdminUser;
+import com.daroring.fromdarori.domain.admin.repository.AdminUserRepository;
+import com.daroring.fromdarori.global.security.JwtTokenProvider;
+import com.daroring.fromdarori.global.security.RefreshTokenSupport;
+import java.time.ZoneOffset;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class AdminAuthService {
+
+    private final AdminUserRepository adminUserRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenSupport refreshTokenSupport;
+    // Unknown accounts also run password verification to reduce timing differences.
+    private final String dummyPasswordHash;
+
+    public AdminAuthService(AdminUserRepository adminUserRepository, PasswordEncoder passwordEncoder,
+                            JwtTokenProvider jwtTokenProvider, RefreshTokenSupport refreshTokenSupport) {
+        this.adminUserRepository = adminUserRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.refreshTokenSupport = refreshTokenSupport;
+        this.dummyPasswordHash = passwordEncoder.encode(java.util.UUID.randomUUID().toString());
+    }
+
+    @Transactional
+    public LoginResult login(AdminLoginRequest request) {
+        AdminUser user = adminUserRepository.findByEmail(request.email()).orElse(null);
+        String hash = user == null ? dummyPasswordHash : user.getPasswordHash();
+        boolean passwordMatches = passwordEncoder.matches(request.password(), hash);
+        if (user == null || !passwordMatches) {
+            throw new BadCredentialsException("이메일 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        String accessToken = jwtTokenProvider.createAccessToken(user.getId(), user.getRole());
+        var refreshToken = refreshTokenSupport.issue(request.isRememberMe());
+        user.updateRefreshToken(refreshToken.tokenHash(), refreshToken.expiresAt().atOffset(ZoneOffset.UTC));
+        // The managed entity is flushed at transaction commit, before the controller sets the cookie.
+        var response = new AdminLoginResponse(accessToken, "Bearer", jwtTokenProvider.accessTokenExpiresIn(),
+                AdminLoginResponse.AdminUserInfo.from(user));
+        return new LoginResult(response, refreshTokenSupport.cookie(refreshToken));
+    }
+
+    public record LoginResult(AdminLoginResponse response, ResponseCookie refreshCookie) {
+        @Override
+        public String toString() { return "LoginResult[REDACTED]"; }
+    }
+}
