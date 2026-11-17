@@ -1,6 +1,12 @@
 package com.daroring.fromdarori.global.config;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import com.daroring.fromdarori.domain.admin.repository.AdminUserRepository;
+import java.util.UUID;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +29,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, AdminUserRepository adminUserRepository) throws Exception {
         JwtGrantedAuthoritiesConverter authorities = new JwtGrantedAuthoritiesConverter();
         authorities.setAuthoritiesClaimName("role");
         authorities.setAuthorityPrefix("ROLE_");
@@ -45,7 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admin/**").hasAnyRole("OPERATOR", "REPRESENTATIVE")
                         .anyRequest().permitAll())
                 .exceptionHandling(errors -> errors
-                        .authenticationEntryPoint((request, response, exception) -> unauthorized(response))
+                        .authenticationEntryPoint(SecurityConfig::unauthorized)
                         .accessDeniedHandler((request, response, exception) -> writeError(response,
                                 403, "AUTH4031", "접근 권한이 없습니다.")))
                 .oauth2ResourceServer(resource -> resource
@@ -59,8 +65,13 @@ public class SecurityConfig {
                             }
                             return new DefaultBearerTokenResolver().resolve(request);
                         })
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(authentication))
-                        .authenticationEntryPoint((request, response, exception) -> unauthorized(response))
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(token -> {
+                            if (!adminUserRepository.existsById(UUID.fromString(token.getSubject()))) {
+                                throw new OAuth2AuthenticationException(new OAuth2Error("deleted_admin"));
+                            }
+                            return authentication.convert(token);
+                        }))
+                        .authenticationEntryPoint(SecurityConfig::unauthorized)
                         .accessDeniedHandler((request, response, exception) -> writeError(response,
                                 403, "AUTH4031", "접근 권한이 없습니다.")))
                 .build();
@@ -71,9 +82,15 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    private static void unauthorized(HttpServletResponse response) throws IOException {
+    private static void unauthorized(HttpServletRequest request, HttpServletResponse response,
+                                     AuthenticationException exception) throws IOException {
         response.setHeader("WWW-Authenticate", "Bearer");
-        writeError(response, 401, "AUTH4012", "인증이 필요하거나 토큰이 유효하지 않습니다.");
+        String path = request.getRequestURI().substring(request.getContextPath().length());
+        boolean deletedMe = "/api/v1/admin/auth/me".equals(path)
+                && exception instanceof OAuth2AuthenticationException oauth
+                && "deleted_admin".equals(oauth.getError().getErrorCode());
+        writeError(response, 401, deletedMe ? "AUTH4016" : "AUTH4012",
+                deletedMe ? "삭제된 운영자 계정입니다." : "인증이 필요하거나 토큰이 유효하지 않습니다.");
     }
 
     private static void writeError(HttpServletResponse response, int status, String code,

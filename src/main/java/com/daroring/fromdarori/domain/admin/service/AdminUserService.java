@@ -2,6 +2,10 @@ package com.daroring.fromdarori.domain.admin.service;
 
 import com.daroring.fromdarori.domain.admin.dto.AdminUserListResponse;
 import com.daroring.fromdarori.domain.admin.dto.AdminUserCreateRequest;
+import com.daroring.fromdarori.domain.admin.dto.AdminUserDeleteResponse;
+import com.daroring.fromdarori.domain.admin.exception.AdminUserDeletionException;
+import com.daroring.fromdarori.domain.admin.exception.AdminUserDeletionException.Reason;
+import java.util.UUID;
 import com.daroring.fromdarori.domain.admin.entity.AdminUser;
 import com.daroring.fromdarori.domain.admin.exception.DuplicateAdminEmailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,6 +44,31 @@ public class AdminUserService {
             throw exception;
         }
         return AdminUserListResponse.UserInfo.from(user);
+    }
+
+    @Transactional
+    public AdminUserDeleteResponse delete(UUID adminUserId, UUID currentAdminId) {
+        // Lock in a fixed order so concurrent deletions cannot both remove the last accounts.
+        var users = adminUserRepository.findAllForDeletion();
+        AdminUser target = users.stream().filter(user -> user.getId().equals(adminUserId))
+                .findFirst().orElseThrow(() -> new AdminUserDeletionException(Reason.NOT_FOUND));
+        if (adminUserId.equals(currentAdminId)) {
+            throw new AdminUserDeletionException(Reason.SELF);
+        }
+        if (users.size() <= 1) {
+            throw new AdminUserDeletionException(Reason.LAST);
+        }
+        if (users.stream().noneMatch(user -> user.getId().equals(currentAdminId))) {
+            throw new AdminUserDeletionException(Reason.UNAUTHENTICATED);
+        }
+        try {
+            adminUserRepository.delete(target);
+            // Let PostgreSQL apply ON DELETE SET NULL; do not cascade-delete authored content.
+            adminUserRepository.flush();
+        } catch (DataIntegrityViolationException exception) {
+            throw new AdminUserDeletionException(Reason.RELATED_DATA);
+        }
+        return new AdminUserDeleteResponse(adminUserId);
     }
 
     @Transactional(readOnly = true)

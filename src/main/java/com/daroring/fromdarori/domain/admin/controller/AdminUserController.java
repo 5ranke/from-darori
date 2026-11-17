@@ -2,6 +2,12 @@ package com.daroring.fromdarori.domain.admin.controller;
 
 import com.daroring.fromdarori.domain.admin.dto.AdminUserListResponse;
 import com.daroring.fromdarori.domain.admin.dto.AdminUserCreateRequest;
+import com.daroring.fromdarori.domain.admin.dto.AdminUserDeleteResponse;
+import java.util.UUID;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
@@ -49,4 +55,12 @@ public class AdminUserController {
 
     // 운영자 계정 삭제
     // DELETE /api/v1/admin/users/{adminUserId}
+    @DeleteMapping("/{adminUserId}")
+    public ResponseEntity<ApiResponse<AdminUserDeleteResponse>> delete(
+            @PathVariable("adminUserId") UUID adminUserId, @AuthenticationPrincipal Jwt jwt) {
+        var result = adminUserService.delete(adminUserId, UUID.fromString(jwt.getSubject()));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CACHE_CONTROL, "no-store")
+                .body(ApiResponse.success("운영자 계정이 삭제되었습니다.", result));
+    }
 }
