@@ -23,11 +23,23 @@ public class RefreshTokenSupport {
 
     // Store only tokenHash and expiresAt in admin_user; send token only via the cookie.
     public IssuedRefreshToken issue(boolean rememberMe) {
+        Duration ttl = rememberMe ? properties.rememberMeRefreshTokenTtl() : properties.refreshTokenTtl();
+        return generate(Instant.now().plus(ttl), ttl);
+    }
+
+    public IssuedRefreshToken issueUntil(Instant expiresAt) {
+        Duration ttl = Duration.between(Instant.now(), expiresAt);
+        if (ttl.isNegative() || ttl.isZero()) {
+            throw new IllegalArgumentException("Refresh token expiry must be in the future");
+        }
+        return generate(expiresAt, ttl);
+    }
+
+    private IssuedRefreshToken generate(Instant expiresAt, Duration ttl) {
         byte[] bytes = new byte[32];
         random.nextBytes(bytes);
         String token = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-        Duration ttl = rememberMe ? properties.rememberMeRefreshTokenTtl() : properties.refreshTokenTtl();
-        return new IssuedRefreshToken(token, hash(token), Instant.now().plus(ttl), ttl);
+        return new IssuedRefreshToken(token, hash(token), expiresAt, ttl);
     }
 
     public String hash(String token) {

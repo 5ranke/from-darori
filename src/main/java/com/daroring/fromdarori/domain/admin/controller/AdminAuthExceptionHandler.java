@@ -1,6 +1,7 @@
 package com.daroring.fromdarori.domain.admin.controller;
 
 import com.daroring.fromdarori.global.response.ApiResponse;
+import com.daroring.fromdarori.domain.admin.exception.RefreshTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -11,6 +12,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice(assignableTypes = AdminAuthController.class)
 public class AdminAuthExceptionHandler {
+
+    @ExceptionHandler(RefreshTokenException.class)
+    public ResponseEntity<ApiResponse<Void>> invalidRefreshToken(RefreshTokenException exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.failure(exception.getCode(), exception.getMessage()));
+    }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse<Void>> invalidCredentials(BadCredentialsException exception) {

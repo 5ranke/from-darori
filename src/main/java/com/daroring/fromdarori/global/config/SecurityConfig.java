@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -48,6 +49,14 @@ public class SecurityConfig {
                         .accessDeniedHandler((request, response, exception) -> writeError(response,
                                 403, "AUTH4031", "접근 권한이 없습니다.")))
                 .oauth2ResourceServer(resource -> resource
+                        .bearerTokenResolver(request -> {
+                            // Refresh authenticates solely with its cookie, even with an expired Bearer header.
+                            if ("POST".equals(request.getMethod()) && "/api/v1/admin/auth/refresh".equals(
+                                    request.getRequestURI().substring(request.getContextPath().length()))) {
+                                return null;
+                            }
+                            return new DefaultBearerTokenResolver().resolve(request);
+                        })
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(authentication))
                         .authenticationEntryPoint((request, response, exception) -> unauthorized(response))
                         .accessDeniedHandler((request, response, exception) -> writeError(response,

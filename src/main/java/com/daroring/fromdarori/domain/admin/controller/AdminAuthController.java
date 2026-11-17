@@ -2,6 +2,7 @@ package com.daroring.fromdarori.domain.admin.controller;
 
 import com.daroring.fromdarori.domain.admin.dto.AdminLoginRequest;
 import com.daroring.fromdarori.domain.admin.dto.AdminLoginResponse;
+import com.daroring.fromdarori.domain.admin.dto.AdminRefreshResponse;
 import com.daroring.fromdarori.domain.admin.service.AdminAuthService;
 import com.daroring.fromdarori.global.response.ApiResponse;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +36,15 @@ public class AdminAuthController {
 
     // Access Token 재발급
     // POST /api/v1/admin/auth/refresh
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<AdminRefreshResponse>> refresh(
+            @CookieValue(name = "refreshToken", required = false) String refreshToken) {
+        var result = adminAuthService.refresh(refreshToken);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, result.refreshCookie().toString())
+                .header(HttpHeaders.CACHE_CONTROL, "no-store")
+                .body(ApiResponse.success("Access Token이 재발급되었습니다.", result.response()));
+    }
 
     // 로그인한 운영자 조회
     // GET /api/v1/admin/auth/me
