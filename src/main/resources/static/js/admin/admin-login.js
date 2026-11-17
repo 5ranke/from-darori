@@ -1,4 +1,4 @@
-/* 화면 입력 검증 전용입니다. 실제 로그인/API/토큰 저장은 하지 않습니다. */
+/* 로그인 입력 검증과 인증 모듈 연결. 비밀번호는 저장하지 않습니다. */
 (() => {
   const form = document.getElementById('admin-login-form');
   const email = document.getElementById('admin-login-email');
@@ -6,16 +6,18 @@
   const submit = document.getElementById('admin-login-submit');
   const status = document.getElementById('admin-login-status');
   const fields = [email, password];
+  let busy = true;
+  window.DaroriAdminAuthPage.ready.then(() => { busy = false; updateButton(); });
 
   function getError(field) {
     if (field === email) {
       if (!field.value.trim()) return '이메일을 입력해 주세요.';
-      // type="email"의 브라우저 형식 검증을 사용합니다. 서버 요청 필드 계약은 아닙니다.
+      if (field.value.length > 254) return '이메일은 최대 254자까지 입력해 주세요.';
       if (field.validity.typeMismatch) return '올바른 이메일 형식을 입력해 주세요.';
       return '';
     }
     // 비밀번호 앞뒤 공백을 임의로 제거하지 않습니다.
-    return field.value.length ? '' : '비밀번호를 입력해 주세요.';
+    return field.value.trim().length ? '' : '비밀번호를 입력해 주세요.';
   }
   function validate(field) {
     const error = document.getElementById(`${field.id}-error`);
@@ -26,7 +28,7 @@
     return !message;
   }
   function updateButton() {
-    submit.disabled = fields.some(field => Boolean(getError(field)));
+    submit.disabled = busy || fields.some(field => Boolean(getError(field)));
   }
   fields.forEach(field => {
     field.addEventListener('blur', () => validate(field));
@@ -38,16 +40,28 @@
     // 브라우저 자동 완성으로 값이 바뀌었을 때도 반영합니다.
     field.addEventListener('change', updateButton);
   });
-  form.addEventListener('submit', event => {
+  form.addEventListener('submit', async event => {
     event.preventDefault();
+    if (busy) return;
     const results = fields.map(validate);
     if (results.includes(false)) {
       fields[results.indexOf(false)].focus();
       return;
     }
-    status.textContent = '입력값을 확인했습니다. 현재는 화면 미리보기 단계로, 실제 로그인과 로그인 유지는 API 연결 후 사용할 수 있습니다.';
-    // 추후 명세 확인 후 별도 인증 모듈을 호출할 연결 지점입니다.
-    // 비밀번호·이메일·로그인 유지 선택은 현재 저장하거나 전송하지 않습니다.
+    busy = true; updateButton();
+    form.setAttribute('aria-busy', 'true');
+    status.textContent = '로그인 중입니다.';
+    try {
+      await window.DaroriAdminAuth.login({ email: email.value, password: password.value,
+        rememberMe: document.getElementById('admin-login-remember').checked });
+      password.value = '';
+      window.location.replace('dashboard.html');
+    } catch (error) {
+      status.textContent = error.message;
+      password.value = '';
+    } finally {
+      busy = false; form.removeAttribute('aria-busy'); updateButton();
+    }
   });
   window.addEventListener('pageshow', updateButton);
   updateButton();

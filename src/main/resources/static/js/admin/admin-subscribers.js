@@ -1,5 +1,7 @@
 /* 구독자 폼·목록·삭제 팝업. 데이터 접근은 예시 저장소로 분리합니다. */
-(() => {
+(async () => {
+  const authenticatedUser = await window.DaroriAdminAuthPage.ready;
+  if (!authenticatedUser) return;
   const data = window.DaroriAdminSubscribersData;
   const $ = id => document.getElementById(id);
   const form = $('subscriber-form');

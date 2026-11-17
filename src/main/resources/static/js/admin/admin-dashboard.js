@@ -1,8 +1,10 @@
 /* 대시보드의 화면 표시와 예시 상호작용만 담당합니다. */
 (async () => {
+  const authenticatedUser = await window.DaroriAdminAuthPage.ready;
+  if (!authenticatedUser) return;
   const { showDialog, navigate } = window.DaroriAdmin;
   const data = await window.DaroriAdminDashboardData.getDashboard();
-  document.getElementById('admin-name').textContent = data.operatorName;
+  document.getElementById('admin-name').textContent = authenticatedUser.displayName;
   document.getElementById('admin-report-count').textContent = `${data.pendingReportCount}건`;
   const stats = document.getElementById('admin-stats');
   data.statistics.forEach(stat => {

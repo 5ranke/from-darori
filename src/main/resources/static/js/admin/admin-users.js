@@ -1,5 +1,7 @@
 /* 운영자 관리 화면. 실제 계정 생성/권한 처리/로그인 기능은 포함하지 않습니다. */
-(() => {
+(async () => {
+  const authenticatedUser = await window.DaroriAdminAuthPage.ready;
+  if (!authenticatedUser) return;
   const data = window.DaroriAdminUsersData;
   const $ = id => document.getElementById(id);
   const form = $('user-form');
