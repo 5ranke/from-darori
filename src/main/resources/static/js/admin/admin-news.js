@@ -2,6 +2,19 @@
   const newsList = [...window.NEWS_SAMPLE]; // 화면에 보여줄 소식들
   let selectedCategory = '다로리의 요즘';    // 지금 선택된 카테고리
 
+  // 카테고리별 내용 안내 문구
+  const placeholders = {
+    '다로리의 요즘': '다로리의 요즘 소식을 작성해 주세요.',
+    '프로젝트 후속': '어떤 프로젝트였는지, 참여 이후 어떤 변화가 있었는지 적어 주세요.',
+    '구인 / 참여': '모집 대상, 역할, 활동 일정, 신청 방법을 적어 주세요.',
+    '제철 정보': '무엇이 제철인지, 판매 시기와 구매 방법을 적어 주세요.'
+  };
+
+  // 카테고리별로 나타났다 사라지는 입력칸
+  const linkField = document.getElementById('news-link-field');
+  const recruitField = document.getElementById('news-recruit-field');
+  const buyField = document.getElementById('news-buy-field');
+
   const listEl = document.getElementById('news-list');
   const countEl = document.getElementById('news-count');
   const form = document.getElementById('news-form');
@@ -33,14 +46,17 @@
     countEl.textContent = newsList.length;
   }
 
-  // ② 카테고리 버튼 누르면 그것만 검정으로
+  // ② 카테고리 버튼 누르면 그것만 검정으로 + 입력칸 바꾸기
   document.getElementById('news-categories').addEventListener('click', e => {
     const chip = e.target.closest('.news-chip');
     if (!chip) return;
     document.querySelectorAll('.news-chip').forEach(c => c.classList.remove('news-chip--active'));
     chip.classList.add('news-chip--active');
     selectedCategory = chip.dataset.category;
-    contentInput.placeholder = `${selectedCategory} 소식을 작성해 주세요.`;
+    contentInput.placeholder = placeholders[selectedCategory];
+    linkField.hidden = selectedCategory !== '프로젝트 후속';
+    recruitField.hidden = selectedCategory !== '구인 / 참여';
+    buyField.hidden = selectedCategory !== '제철 정보';
   });
 
   // ③ 사진 고르면 파일 이름 보여주기

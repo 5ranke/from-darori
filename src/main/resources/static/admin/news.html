@@ -37,6 +37,26 @@
           <label class="news-label" for="news-content-input">내용</label>
           <textarea id="news-content-input" class="news-input news-textarea" placeholder="다로리의 요즘 소식을 작성해 주세요."></textarea>
 
+          <!-- 프로젝트 후속일 때만 보임 -->
+          <div id="news-link-field" hidden>
+            <label class="news-label" for="news-link-input">프로젝트 링크</label>
+            <input id="news-link-input" class="news-input" type="url" placeholder="https://">
+          </div>
+
+          <!-- 구인 / 참여일 때만 보임 -->
+          <div id="news-recruit-field" hidden>
+            <label class="news-label" for="news-deadline-input">모집 마감일</label>
+            <input id="news-deadline-input" class="news-input" type="date">
+            <label class="news-label" for="news-apply-input">신청 링크</label>
+            <input id="news-apply-input" class="news-input" type="url" placeholder="https://">
+          </div>
+
+          <!-- 제철 정보일 때만 보임 -->
+          <div id="news-buy-field" hidden>
+            <label class="news-label" for="news-buy-input">구매 링크</label>
+            <input id="news-buy-input" class="news-input" type="url" placeholder="https://">
+          </div>
+
           <p class="news-label">사진</p>
           <label class="news-photo" for="news-photo-input">
             <span id="news-photo-text">추가할 사진을 선택해주세요</span>
