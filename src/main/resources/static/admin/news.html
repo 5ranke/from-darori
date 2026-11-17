@@ -14,8 +14,15 @@
   <div data-admin-header></div>
   <main class="admin-container admin-main">
     <h1 class="admin-greeting">안녕하세요, <span id="admin-name">OOO</span>님</h1>
+
+    <!-- 탭 -->
+    <nav class="admin-tabs" aria-label="운영자 영역">
+      <a class="admin-tab admin-tab--active" href="news.html" aria-current="page">뉴스레터 제작</a>
+      <a class="admin-tab" href="dashboard.html">관리</a>
+    </nav>
+
     <div class="admin-workspace">
-      <nav class="admin-sidebar admin-card" aria-label="관리 메뉴" data-admin-sidebar></nav>
+      <nav class="admin-sidebar admin-card" aria-label="뉴스레터 메뉴" data-admin-sidebar></nav>
 
       <!-- ===== 여기부터 윤서님이 만드는 부분 ===== -->
       <section class="admin-news admin-card" id="admin-content">
@@ -35,7 +42,7 @@
           </div>
 
           <label class="news-label" for="news-content-input">내용</label>
-          <textarea id="news-content-input" class="news-input news-textarea" placeholder="다로리의 요즘 소식을 작성해 주세요."></textarea>
+          <textarea id="news-content-input" class="news-input news-textarea" placeholder="다로리의 요즘 소식을 입력하세요."></textarea>
 
           <!-- 프로젝트 후속일 때만 보임 -->
           <div id="news-link-field" hidden>
@@ -57,11 +64,19 @@
             <input id="news-buy-input" class="news-input" type="url" placeholder="https://">
           </div>
 
+          <!-- 사진: 고른 사진이 3칸씩 깔리고, 마지막 칸이 추가 버튼 -->
           <p class="news-label">사진</p>
-          <label class="news-photo" for="news-photo-input">
-            <span id="news-photo-text">추가할 사진을 선택해주세요</span>
-            <input id="news-photo-input" type="file" accept="image/*" hidden>
-          </label>
+          <div class="news-photos" id="news-photos">
+            <label class="news-photo-add" for="news-photo-input">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="15" rx="3"/>
+                <path d="M3 16l5-5 4 4 3-3 6 6"/>
+                <path d="M17 2v6M14 5h6"/>
+              </svg>
+              <span>추가할 사진을 선택해주세요</span>
+            </label>
+          </div>
+          <input id="news-photo-input" type="file" accept="image/*" multiple hidden>
 
           <button type="submit" class="news-save">소식 저장</button>
         </form>

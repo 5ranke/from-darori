@@ -1,10 +1,11 @@
 (() => {
   const newsList = [...window.NEWS_SAMPLE]; // 화면에 보여줄 소식들
   let selectedCategory = '다로리의 요즘';    // 지금 선택된 카테고리
+  const photos = [];                          // 고른 사진 파일들
 
   // 카테고리별 내용 안내 문구
   const placeholders = {
-    '다로리의 요즘': '다로리의 요즘 소식을 작성해 주세요.',
+    '다로리의 요즘': '다로리의 요즘 소식을 입력하세요.',
     '프로젝트 후속': '어떤 프로젝트였는지, 참여 이후 어떤 변화가 있었는지 적어 주세요.',
     '구인 / 참여': '모집 대상, 역할, 활동 일정, 신청 방법을 적어 주세요.',
     '제철 정보': '무엇이 제철인지, 판매 시기와 구매 방법을 적어 주세요.'
@@ -21,9 +22,10 @@
   const titleInput = document.getElementById('news-title-input');
   const contentInput = document.getElementById('news-content-input');
   const photoInput = document.getElementById('news-photo-input');
-  const photoText = document.getElementById('news-photo-text');
+  const photoGrid = document.getElementById('news-photos');
+  const addTile = photoGrid.querySelector('.news-photo-add');
 
-  // ① 저장된 소식 목록을 화면에 그리기
+  // ① 저장된 소식 목록 그리기
   function render() {
     listEl.innerHTML = '';
     newsList.forEach(news => {
@@ -36,8 +38,8 @@
           <p class="news-item-meta"></p>
         </div>
         <div class="news-item-actions">
-          <button type="button" class="news-small-btn news-small-btn--dark" data-action="edit">수정</button>
           <button type="button" class="news-small-btn" data-action="delete">삭제</button>
+          <button type="button" class="news-small-btn news-small-btn--accent" data-action="edit">수정</button>
         </div>`;
       li.querySelector('.news-item-title').textContent = news.title;
       li.querySelector('.news-item-meta').textContent = `${news.category} | ${news.date}`;
@@ -46,7 +48,22 @@
     countEl.textContent = newsList.length;
   }
 
-  // ② 카테고리 버튼 누르면 그것만 검정으로 + 입력칸 바꾸기
+  // ② 사진 미리보기 그리기 (추가 칸은 항상 맨 뒤)
+  function renderPhotos() {
+    photoGrid.querySelectorAll('.news-photo-item').forEach(img => {
+      URL.revokeObjectURL(img.src);
+      img.remove();
+    });
+    photos.forEach(file => {
+      const img = document.createElement('img');
+      img.className = 'news-photo-item';
+      img.src = URL.createObjectURL(file);
+      img.alt = file.name;
+      photoGrid.insertBefore(img, addTile);
+    });
+  }
+
+  // ③ 카테고리 버튼 누르면 그것만 주황으로 + 입력칸 바꾸기
   document.getElementById('news-categories').addEventListener('click', e => {
     const chip = e.target.closest('.news-chip');
     if (!chip) return;
@@ -59,13 +76,14 @@
     buyField.hidden = selectedCategory !== '제철 정보';
   });
 
-  // ③ 사진 고르면 파일 이름 보여주기
+  // ④ 사진 고르면 미리보기에 추가 (여러 장 가능)
   photoInput.addEventListener('change', () => {
-    const file = photoInput.files[0];
-    photoText.textContent = file ? file.name : '추가할 사진을 선택해주세요';
+    photos.push(...photoInput.files);
+    photoInput.value = ''; // 같은 사진을 다시 고를 수 있게 비우기
+    renderPhotos();
   });
 
-  // ④ 소식 저장 → 목록 맨 위에 추가
+  // ⑤ 소식 저장 → 목록 맨 위에 추가
   form.addEventListener('submit', e => {
     e.preventDefault(); // 페이지 새로고침 막기
     const title = titleInput.value.trim();
@@ -78,11 +96,12 @@
     const date = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
     newsList.unshift({ id: Date.now(), title, category: selectedCategory, date });
     form.reset();
-    photoText.textContent = '추가할 사진을 선택해주세요';
+    photos.length = 0;
+    renderPhotos();
     render();
   });
 
-  // ⑤ 수정·삭제 버튼
+  // ⑥ 삭제·수정 버튼
   listEl.addEventListener('click', e => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
@@ -101,6 +120,12 @@
       DaroriAdmin.showDialog({ title: '수정 준비 중', description: '수정 기능은 다음 단계에서 연결할 예정입니다.' });
     }
   });
+
+  // ⑦ 주민 제보에서 넘어왔으면 내용 자동으로 채우기
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('content')) {
+    contentInput.value = params.get('content');
+  }
 
   render();
 })();

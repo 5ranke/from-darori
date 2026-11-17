@@ -8,22 +8,30 @@ window.DaroriAdmin = (() => {
     subscribers: null,
     operators: null,
     news: 'news.html',
-    reports: null,
+    reports: 'reports.html',
+    schedule: null,
     letters: null,
     unsubscribe: null
   };
   const labels = {
     visitor: '방문자 페이지', newsletter: '뉴스레터 제작', notices: '공지사항 작성',
-    subscribers: '구독자 관리', operators: '운영자 관리', news: '소식 관리',
-    reports: '주민 제보', letters: '편지 발행', unsubscribe: '구독 해지'
+    subscribers: '구독자 관리', operators: '운영자 관리', news: '소식 작성',
+    reports: '주민 제보', schedule: '발행 예약', letters: '편지 발행', unsubscribe: '구독 해지'
   };
   const header = document.querySelector('[data-admin-header]');
   if (header) header.innerHTML = `<header class="admin-header"><div class="admin-container admin-header-inner"><a class="admin-logo" href="dashboard.html">From. 다로리</a><button type="button" class="admin-button admin-button--dark" data-admin-route="visitor">방문자 페이지로</button></div></header>`;
   const sidebar = document.querySelector('[data-admin-sidebar]');
   if (sidebar) {
-    const items = [['dashboard', '대시보드'], ['news', '소식 작성'], ['notices', '공지사항 작성'], ['subscribers', '구독자 관리'], ['operators', '운영자 관리']];
+    // 탭별 메뉴 묶음
+    const menuGroups = {
+      manage: [['dashboard', '대시보드'], ['notices', '공지사항 작성'], ['subscribers', '구독자 관리'], ['operators', '운영자 관리']],
+      newsletter: [['news', '소식 작성'], ['reports', '주민 제보'], ['newsletter', '뉴스레터 제작'], ['schedule', '발행 예약']]
+    };
+    const page = document.body.dataset.adminPage;
+    const isNewsletterTab = menuGroups.newsletter.some(([key]) => key === page);
+    const items = isNewsletterTab ? menuGroups.newsletter : menuGroups.manage;
     items.forEach(([key, label]) => {
-      const active = document.body.dataset.adminPage === key;
+      const active = page === key;
       const item = document.createElement(active ? 'a' : 'button');
       item.className = `admin-menu${active ? ' admin-menu--active' : ''}`;
       item.textContent = label;
