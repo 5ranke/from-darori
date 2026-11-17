@@ -47,6 +47,15 @@ public class AdminUser {
     @Column(name = "refresh_token_hash", length = 255)
     private String refreshTokenHash;
 
+    public static AdminUser create(String displayName, String email, String passwordHash, AdminRole role) {
+        AdminUser user = new AdminUser();
+        user.displayName = displayName;
+        user.email = email;
+        user.passwordHash = passwordHash;
+        user.role = role;
+        return user;
+    }
+
     public void updateRefreshToken(String tokenHash, OffsetDateTime expiresAt) {
         this.refreshTokenHash = tokenHash;
         this.refreshTokenExpiresAt = expiresAt;

@@ -3,6 +3,9 @@ package com.daroring.fromdarori.domain.admin.repository;
 import com.daroring.fromdarori.domain.admin.entity.AdminUser;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.List;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
 import java.time.OffsetDateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,6 +14,12 @@ import org.springframework.data.repository.query.Param;
 
 public interface AdminUserRepository extends JpaRepository<AdminUser, UUID> {
     Optional<AdminUser> findByEmail(String email);
+
+    boolean existsByEmail(String email);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select u from AdminUser u order by u.id")
+    List<AdminUser> findAllForDeletion();
 
     Optional<AdminUser> findByRefreshTokenHash(String refreshTokenHash);
 
