@@ -12,6 +12,8 @@ import org.springframework.data.repository.query.Param;
 public interface AdminUserRepository extends JpaRepository<AdminUser, UUID> {
     Optional<AdminUser> findByEmail(String email);
 
+    boolean existsByEmail(String email);
+
     Optional<AdminUser> findByRefreshTokenHash(String refreshTokenHash);
 
     // Compare-and-set: only one concurrent request can consume the old token.

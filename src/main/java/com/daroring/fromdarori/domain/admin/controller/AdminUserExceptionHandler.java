@@ -1,6 +1,10 @@
 package com.daroring.fromdarori.domain.admin.controller;
 
 import com.daroring.fromdarori.global.response.ApiResponse;
+import com.daroring.fromdarori.domain.admin.exception.DuplicateAdminEmailException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -9,6 +13,18 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 @RestControllerAdvice(assignableTypes = AdminUserController.class)
 public class AdminUserExceptionHandler {
+    @ExceptionHandler(DuplicateAdminEmailException.class)
+    public ResponseEntity<ApiResponse<Void>> duplicateEmail(DuplicateAdminEmailException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ApiResponse.failure("USER4091", exception.getMessage()));
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
+    public ResponseEntity<ApiResponse<Void>> invalidCreateRequest(Exception exception) {
+        return ResponseEntity.badRequest().body(ApiResponse.failure(
+                "USER4001", "이름·이메일·비밀번호·역할의 입력값을 확인해 주세요."));
+    }
+
     @ExceptionHandler({HandlerMethodValidationException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ApiResponse<Void>> invalidPagination(Exception exception) {
         return ResponseEntity.badRequest().body(ApiResponse.failure(
