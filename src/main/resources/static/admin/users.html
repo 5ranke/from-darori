@@ -27,24 +27,24 @@
       <section class="admin-card user-panel" id="user-main" aria-labelledby="user-heading">
         <h2 id="user-heading">운영자 관리</h2>
         <p class="user-intro">운영자를 추가하거나 삭제할 수 있어요.</p>
-        <p class="user-demo">예시 데이터 미리보기 · 실제 API와 연결되지 않았습니다.<br>추가·삭제는 이 화면에만 적용되며 새로고침하면 초기화됩니다. 실제 계정 생성·로그인은 처리하지 않습니다.</p>
+        <p class="user-demo">서버에 저장된 운영자 계정을 조회·추가·삭제합니다. 이메일은 임의로 소문자로 변환하지 않습니다.</p>
         <form id="user-form" novalidate>
           <div class="user-field">
             <label for="user-name">이름 <span class="admin-sr-only">필수</span></label>
-            <input class="admin-input" id="user-name" name="display_name" autocomplete="name" placeholder="이름을 입력하세요." required aria-describedby="user-name-hint user-name-error">
+            <input class="admin-input" id="user-name" name="displayName" maxlength="50" autocomplete="name" placeholder="이름을 입력하세요." required aria-describedby="user-name-hint user-name-error">
             <p class="user-hint" id="user-name-hint">최대 50자까지 입력할 수 있습니다.</p>
             <p class="user-error" id="user-name-error" hidden></p>
           </div>
           <div class="user-field">
             <label for="user-email">이메일 <span class="admin-sr-only">필수</span></label>
-            <input type="email" class="admin-input" id="user-email" name="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="name@example.com" required aria-describedby="user-email-hint user-email-error">
-            <p class="user-hint" id="user-email-hint">최대 254자 · 예시 화면에서는 대소문자 구분 없이 중복을 확인합니다.</p>
+            <input type="email" class="admin-input" id="user-email" name="email" maxlength="254" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="name@example.com" required aria-describedby="user-email-hint user-email-error">
+            <p class="user-hint" id="user-email-hint">최대 254자 · 이메일 중복 여부는 서버에서 확인합니다.</p>
             <p class="user-error" id="user-email-error" hidden></p>
           </div>
           <div class="user-field">
             <label for="user-password">비밀번호 <span class="admin-sr-only">필수</span></label>
-            <input type="password" class="admin-input" id="user-password" name="password" autocomplete="new-password" placeholder="비밀번호를 입력하세요." required aria-describedby="user-password-hint user-password-error">
-            <p class="user-hint" id="user-password-hint">미리보기에서는 입력 여부만 확인하고 저장·전송하지 않습니다. 실제 길이·복잡도 규칙은 미확정입니다.</p>
+            <input type="password" class="admin-input" id="user-password" name="password" minlength="8" maxlength="72" autocomplete="new-password" placeholder="비밀번호를 입력하세요." required aria-describedby="user-password-hint user-password-error">
+            <p class="user-hint" id="user-password-hint">8~72자 · 영문·숫자·특수문자 포함 · 공백 불가 · UTF-8 기준 72바이트 이하</p>
             <p class="user-error" id="user-password-error" hidden></p>
           </div>
           <div class="user-field">
@@ -62,6 +62,7 @@
           <h2 id="user-list-heading" tabindex="-1">운영자 목록</h2>
           <p class="user-summary" id="user-summary" role="status" aria-live="polite"></p>
           <ul class="user-list" id="user-list"></ul>
+          <button type="button" class="admin-button admin-button--outline user-retry" id="user-retry" hidden>목록 다시 조회</button>
           <button type="button" class="user-more" id="user-more" aria-controls="user-list" hidden><span class="user-chevron" aria-hidden="true"></span><span id="user-more-label">더 보기</span></button>
         </section>
       </section>
@@ -70,7 +71,7 @@
   <div data-admin-footer></div>
   <dialog class="admin-dialog user-delete-dialog" id="user-delete-dialog" aria-labelledby="user-delete-title" aria-describedby="user-delete-description">
     <h2 id="user-delete-title">운영자를 삭제하시겠습니까?</h2>
-    <p id="user-delete-description">이 예시 목록에서만 계정을 제거하며, 새로고침하면 복구됩니다.<br>실제 계정 삭제 권한과 제한은 API 계약 확정 후 적용됩니다.</p>
+    <p id="user-delete-description">서버의 운영자 계정을 삭제합니다. 삭제한 계정은 복구할 수 없습니다.<br>본인 계정과 마지막 운영자 계정은 삭제할 수 없습니다.</p>
     <div class="user-delete-card"><p>운영자</p><div class="user-delete-person"><strong id="user-delete-name"></strong><span id="user-delete-email"></span></div><span class="user-role-badge" id="user-delete-role"></span></div>
     <p class="user-error" id="user-delete-error" role="alert" hidden></p>
     <div class="admin-dialog-actions"><form method="dialog"><button class="admin-button admin-button--outline" id="user-delete-cancel" value="cancel" autofocus>취소</button></form><button type="button" class="admin-button admin-button--primary" id="user-delete-confirm">삭제하기</button></div>
@@ -78,6 +79,6 @@
   <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-dialog-title" aria-describedby="admin-dialog-description">
     <form method="dialog"><h2 id="admin-dialog-title"></h2><p id="admin-dialog-description"></p><div class="admin-dialog-actions"><button class="admin-button admin-button--outline" value="cancel" id="admin-dialog-cancel">취소</button><button class="admin-button admin-button--primary" value="confirm" id="admin-dialog-confirm">확인</button></div></form>
   </dialog>
-  <noscript><p class="admin-container">인증 확인을 위해 JavaScript를 활성화해 주세요.</p><p class="admin-container">운영자 관리 미리보기를 사용하려면 JavaScript를 활성화해 주세요.</p></noscript>
+  <noscript><p class="admin-container">인증 확인을 위해 JavaScript를 활성화해 주세요.</p><p class="admin-container">운영자 관리를 사용하려면 JavaScript를 활성화해 주세요.</p></noscript>
 </body>
 </html>
