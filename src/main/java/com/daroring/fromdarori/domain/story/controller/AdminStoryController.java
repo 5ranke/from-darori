@@ -1,11 +1,8 @@
 package com.daroring.fromdarori.domain.story.controller;
 
-import com.daroring.fromdarori.domain.story.dto.StoryCreateRequest;
-import com.daroring.fromdarori.domain.story.dto.StoryCreateResponse;
-import com.daroring.fromdarori.domain.story.dto.StoryIdInfoResponse;
+import com.daroring.fromdarori.domain.story.dto.*;
 import com.daroring.fromdarori.domain.story.exception.ApiException;
 import com.daroring.fromdarori.domain.story.service.AdminStoryService;
-import com.daroring.fromdarori.domain.story.dto.StoryInfoResponse;
 import com.daroring.fromdarori.domain.story.entity.StoryPublicationStatus;
 import com.daroring.fromdarori.domain.story.entity.StorySourceType;
 import com.daroring.fromdarori.global.response.ApiResponse;
@@ -70,7 +67,6 @@ public class AdminStoryController {
         }
     }
 
-
     // 저장된 소식 목록 조회
     // GET /api/v1/admin/stories
     @GetMapping
@@ -119,6 +115,14 @@ public class AdminStoryController {
 
     // 소식 수정
     // PATCH /api/v1/admin/stories/{storyId}
+    @PatchMapping("/{storyId}")
+    public ResponseEntity<ApiResponse<StoryUpdateResponse>> update(
+            @PathVariable String storyId,
+            @RequestBody @Valid StoryUpdateRequest request
+    ) {
+        StoryUpdateResponse response = adminStoryService.update(parseStoryId(storyId), request);
+        return ResponseEntity.ok(ApiResponse.success("소식이 수정되었습니다.",response));
+    }
 
     // 소식 삭제
     // DELETE /api/v1/admin/stories/{storyId}

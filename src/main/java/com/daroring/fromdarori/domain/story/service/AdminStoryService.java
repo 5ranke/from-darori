@@ -114,4 +114,42 @@ public class AdminStoryService {
                 .toList();
         return StoryCreateResponse.from(story, imageResponses);
     }
+
+    @Transactional
+    public StoryUpdateResponse update(UUID storyId, StoryUpdateRequest request) {
+        if (request.categoryId() == null
+                && request.title() == null
+                && request.body() == null
+                && request.actionUrl() == null
+                && request.applicationDeadline() == null
+                && request.images() == null) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "STORY4002", "수정할 내용이 없습니다.");
+        }
+
+        Story story = adminStoryRepository.findById(storyId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "STORY4041", "소식을 찾을 수 없습니다."));
+
+        var category = request.categoryId() == null ? null
+                : categoryRepository.findById(request.categoryId())
+                        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND,
+                                "CATEGORY4041", "카테고리를 찾을 수 없습니다."));
+
+        story.update(category, request.title(), request.body(),
+                request.actionUrl(), request.applicationDeadline());
+
+        if (request.images() != null) {
+            adminStoryImageRepository.deleteByStory_Id(storyId);
+            adminStoryImageRepository.saveAll(request.images().stream()
+                    .map(image -> StoryImage.create(story, image.objectKey(), image.displayOrder()))
+                    .toList());
+        }
+
+        adminStoryRepository.flush();
+        List<StoryImageResponse> imageResponses = adminStoryImageRepository
+                .findByStory_IdOrderByDisplayOrderAsc(storyId)
+                .stream()
+                .map(image -> new StoryImageResponse(image.getId(), image.getDisplayOrder()))
+                .toList();
+        return StoryUpdateResponse.from(story, imageResponses);
+    }
 }
