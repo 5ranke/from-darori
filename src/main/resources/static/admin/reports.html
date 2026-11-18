@@ -44,6 +44,36 @@
     </div>
   </main>
   <div data-admin-footer></div>
+
+  <!-- 제보 상세 팝업 -->
+  <dialog class="report-dialog" id="report-detail-dialog" aria-labelledby="report-detail-title">
+    <div class="report-dialog-inner">
+      <div class="report-dialog-head">
+        <span class="report-badge">주민 제보</span>
+        <button type="button" class="report-btn report-btn--lg" id="report-detail-close">닫기</button>
+      </div>
+      <h2 class="report-detail-title" id="report-detail-title"></h2>
+      <p class="report-detail-body" id="report-detail-body"></p>
+    </div>
+  </dialog>
+
+  <!-- 제보 삭제 팝업 -->
+  <dialog class="report-dialog" id="report-delete-dialog" aria-labelledby="report-delete-heading">
+    <div class="report-dialog-inner report-dialog-inner--center">
+      <h2 class="report-delete-heading" id="report-delete-heading">제보를 삭제 하시겠습니까?</h2>
+      <p class="report-delete-desc">아래 항목이 삭제되며, 삭제하면 되돌릴 수 없어요.</p>
+      <div class="report-delete-box">
+        <span>제보</span>
+        <strong id="report-delete-target"></strong>
+      </div>
+      <div class="report-delete-actions">
+        <button type="button" class="report-btn report-btn--lg" id="report-delete-cancel">취소</button>
+        <button type="button" class="report-btn report-btn--lg report-btn--dark report-delete-confirm" id="report-delete-confirm">삭제하기</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 공통 팝업 (소식으로 등록 확인용) -->
   <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-dialog-title" aria-describedby="admin-dialog-description">
     <form method="dialog">
       <h2 id="admin-dialog-title"></h2>

@@ -1,9 +1,10 @@
 /* 주민 제보 화면 전용 */
-.admin-page .admin-report-page {
+.admin-page .admin-report-page,
+.admin-page .report-dialog {
   --report-accent: #ff6b45;
   --report-line: #e3e3e3;
-  padding: 32px;
 }
+.admin-page .admin-report-page { padding: 32px; }
 .admin-page .report-title { margin: 0; font-size: 17px; font-weight: 700; }
 .admin-page .report-desc { margin: 6px 0 28px; font-size: 13px; color: #666; }
 
@@ -13,7 +14,13 @@
   display: flex; justify-content: space-between; align-items: center; gap: 16px;
   padding: 14px 0; border-bottom: 1px solid var(--report-line);
 }
-.admin-page .report-item-title { margin: 0 0 4px; font-size: 13px; }
+/* 제목을 누를 수 있는 버튼으로 */
+.admin-page .report-item-title {
+  display: block; margin: 0 0 4px; padding: 0;
+  border: none; background: none; color: inherit;
+  font: inherit; font-size: 13px; text-align: left; cursor: pointer;
+}
+.admin-page .report-item-title:hover { text-decoration: underline; }
 .admin-page .report-item-meta { margin: 0; font-size: 12px; color: #888; }
 .admin-page .report-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
@@ -21,6 +28,7 @@
   padding: 4px 12px; border: 1px solid #333; border-radius: 8px;
   background: #fff; font-size: 12px; cursor: pointer;
 }
+.admin-page .report-btn--lg { padding: 8px 16px; font-size: 13px; }
 .admin-page .report-btn--dark { border-color: var(--report-accent); background: var(--report-accent); color: #fff; }
 
 /* 더 보기 화살표 */
@@ -30,3 +38,36 @@
 }
 .admin-page .report-more[hidden] { display: none; }
 .admin-page .report-more--open svg { transform: rotate(180deg); }
+
+/* ── 팝업 공통 ── */
+.admin-page .report-dialog {
+  width: min(420px, calc(100% - 32px)); padding: 0;
+  border: none; border-radius: 16px; background: #fff;
+}
+.admin-page .report-dialog::backdrop { background: rgba(0, 0, 0, 0.4); }
+.admin-page .report-dialog-inner { padding: 28px; }
+.admin-page .report-dialog-inner--center { text-align: center; }
+
+/* 상세 팝업 */
+.admin-page .report-dialog-head { display: flex; justify-content: space-between; align-items: center; }
+.admin-page .report-badge {
+  padding: 5px 12px; border-radius: 999px;
+  background: #ffece6; color: #333; font-size: 12px;
+}
+.admin-page .report-detail-title { margin: 24px 0 16px; font-size: 18px; font-weight: 700; line-height: 1.4; }
+.admin-page .report-detail-body {
+  margin: 0; font-size: 13px; line-height: 1.7; color: #333;
+  white-space: pre-line; /* 줄바꿈 그대로 보여주기 */
+}
+
+/* 삭제 팝업 */
+.admin-page .report-delete-heading { margin: 0; font-size: 16px; font-weight: 700; }
+.admin-page .report-delete-desc { margin: 8px 0 20px; font-size: 13px; color: #888; }
+.admin-page .report-delete-box {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 16px 20px; border: 1px solid var(--report-line); border-radius: 12px;
+  font-size: 13px; text-align: left;
+}
+.admin-page .report-delete-box strong { font-size: 14px; line-height: 1.4; }
+.admin-page .report-delete-actions { display: flex; justify-content: center; gap: 8px; margin-top: 24px; }
+.admin-page .report-delete-confirm { padding-left: 36px; padding-right: 36px; }
