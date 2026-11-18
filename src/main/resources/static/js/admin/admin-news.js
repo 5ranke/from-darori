@@ -1,24 +1,32 @@
 (() => {
-  // 예시 데이터를 복사해서 사용 (원본은 그대로)
-  const newsList = window.NEWS_SAMPLE.map(n => ({ ...n, photos: [...(n.photos || [])] }));
-  let selectedCategory = '다로리의 요즘'; // 지금 선택된 카테고리
-  let photos = [];                        // 지금 올라간 사진들 [{ url, name }]
-  let editingId = null;                   // 수정 중인 소식 id (null = 새로 작성)
+  const api = window.NewsApi;
+  const PAGE_SIZE = 10;
 
-  // 카테고리별 내용 안내 문구
-  const placeholders = {
-    '다로리의 요즘': '다로리의 요즘 소식을 입력하세요.',
-    '프로젝트 후속': '어떤 프로젝트였는지, 참여 이후 어떤 변화가 있었는지 적어 주세요.',
-    '구인 / 참여': '모집 대상, 역할, 활동 일정, 신청 방법을 적어 주세요.',
-    '제철 정보': '무엇이 제철인지, 판매 시기와 구매 방법을 적어 주세요.'
+  // 카테고리 code별 설정 (이름이 바뀌어도 code는 그대로라 안전)
+  const CATEGORY_UI = {
+    VILLAGE_NEWS: { emoji: '', placeholder: '다로리의 요즘 소식을 입력하세요.' },
+    PROJECT_FOLLOW_UP: { emoji: '🌱 ', placeholder: '어떤 프로젝트였는지, 참여 이후 어떤 변화가 있었는지 적어 주세요.' },
+    RECRUITMENT: { emoji: '🙋 ', placeholder: '모집 대상, 역할, 활동 일정, 신청 방법을 적어 주세요.' },
+    SEASONAL: { emoji: '🍑 ', placeholder: '무엇이 제철인지, 판매 시기와 구매 방법을 적어 주세요.' }
   };
 
-  // 화면 요소 가져오기
+  let categories = [];   // 서버에서 받은 카테고리
+  let selected = null;   // 선택된 카테고리
+  let photos = [];       // [{ imageId?, objectKey?, url, name, uploading }]
+  let editingId = null;  // 수정 중인 소식 id (null = 새로 작성)
+  let stories = [];      // 화면에 보이는 소식 목록
+  let page = 0;
+  let hasNext = false;
+  let totalCount = 0;
+  let saving = false;
+
+  // 화면 요소
   const $ = id => document.getElementById(id);
   const form = $('news-form');
   const formTitle = $('news-form-title');
   const titleInput = $('news-title-input');
   const contentInput = $('news-content-input');
+  const categoryBox = $('news-categories');
   const linkField = $('news-link-field');
   const recruitField = $('news-recruit-field');
   const buyField = $('news-buy-field');
@@ -34,26 +42,70 @@
   const statusEl = $('news-status');
   const listEl = $('news-list');
   const countEl = $('news-count');
+  const listStatus = $('news-list-status');
+  const moreBtn = $('news-more');
 
-  // ① 카테고리 선택 (버튼 색 + 안내 문구 + 추가 입력칸)
-  function selectCategory(category) {
-    selectedCategory = category;
-    document.querySelectorAll('.news-chip').forEach(chip => {
-      chip.classList.toggle('news-chip--active', chip.dataset.category === category);
-    });
-    contentInput.placeholder = placeholders[category];
-    linkField.hidden = category !== '프로젝트 후속';
-    recruitField.hidden = category !== '구인 / 참여';
-    buyField.hidden = category !== '제철 정보';
+  // 에러 처리: 로그인 만료면 로그인 화면으로, 아니면 팝업
+  function handleError(error, title = '요청 실패') {
+    if (error.kind === 'session') {
+      window.location.replace('login.html?reason=expired');
+      return;
+    }
+    DaroriAdmin.showDialog({ title, description: error.message || '요청을 처리하지 못했습니다.' });
   }
 
-  // ② 저장된 소식 목록 그리기
-  function render() {
+  // '2026-11-10T14:00:00+09:00' → '2026.11.10'
+  const formatDate = iso => (iso ? iso.slice(0, 10).replaceAll('-', '.') : '');
+
+  // ── ① 카테고리 ──
+  function renderCategories() {
+    categoryBox.innerHTML = '';
+    if (!categories.length) {
+      const empty = document.createElement('p');
+      empty.className = 'news-empty';
+      empty.textContent = '카테고리를 불러오지 못했어요. 새로고침해 주세요.';
+      categoryBox.append(empty);
+      return;
+    }
+    categories.forEach(category => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'news-chip';
+      chip.dataset.id = category.categoryId;
+      chip.textContent = `${CATEGORY_UI[category.code]?.emoji || ''}${category.name}`;
+      categoryBox.append(chip);
+    });
+  }
+
+  function selectCategory(categoryId) {
+    selected = categories.find(c => c.categoryId === categoryId) || null;
+    categoryBox.querySelectorAll('.news-chip').forEach(chip => {
+      chip.classList.toggle('news-chip--active', chip.dataset.id === categoryId);
+    });
+    const code = selected?.code;
+    contentInput.placeholder = CATEGORY_UI[code]?.placeholder || '내용을 입력하세요.';
+    linkField.hidden = code !== 'PROJECT_FOLLOW_UP';
+    recruitField.hidden = code !== 'RECRUITMENT';
+    buyField.hidden = code !== 'SEASONAL';
+  }
+
+  async function loadCategories() {
+    try {
+      categories = await api.getCategories();
+    } catch {
+      categories = [];
+    }
+    renderCategories();
+    if (categories.length) selectCategory(categories[0].categoryId);
+  }
+
+  // ── ② 저장된 소식 목록 ──
+  function renderList() {
     listEl.innerHTML = '';
-    newsList.forEach(news => {
+    stories.forEach(story => {
       const li = document.createElement('li');
       li.className = 'news-item';
-      li.dataset.id = news.id;
+      li.dataset.id = story.storyId;
       li.innerHTML = `
         <div>
           <p class="news-item-title"></p>
@@ -63,19 +115,40 @@
           <button type="button" class="news-small-btn" data-action="delete">삭제</button>
           <button type="button" class="news-small-btn news-small-btn--accent" data-action="edit">수정</button>
         </div>`;
-      li.querySelector('.news-item-title').textContent = news.title;
-      li.querySelector('.news-item-meta').textContent = `${news.category} | ${news.date}`;
+      li.querySelector('.news-item-title').textContent = story.title;
+      li.querySelector('.news-item-meta').textContent = `${story.categoryName} | ${formatDate(story.createdAt)}`;
       listEl.append(li);
     });
-    countEl.textContent = newsList.length;
+    countEl.textContent = totalCount;
+    listStatus.hidden = stories.length > 0;
+    if (!stories.length) listStatus.textContent = '아직 저장된 소식이 없어요.';
+    moreBtn.hidden = !hasNext;
   }
 
-  // ③ 사진 미리보기 그리기 (사진마다 × 버튼, 추가 칸은 항상 맨 뒤)
+  // reset = true면 처음부터, false면 다음 페이지 이어 붙이기
+  async function loadStories(reset = true) {
+    if (reset) page = 0;
+    listStatus.hidden = false;
+    listStatus.textContent = '소식을 불러오는 중이에요…';
+    try {
+      const result = await api.getStories(page, PAGE_SIZE);
+      stories = reset ? result.stories : [...stories, ...result.stories];
+      totalCount = result.totalCount;
+      hasNext = result.hasNext;
+      renderList();
+    } catch (error) {
+      listStatus.textContent = '소식을 불러오지 못했어요.';
+      handleError(error, '목록 불러오기 실패');
+    }
+  }
+
+  // ── ③ 사진 ──
   function renderPhotos() {
     photoGrid.querySelectorAll('.news-photo-wrap').forEach(el => el.remove());
     photos.forEach((photo, index) => {
       const wrap = document.createElement('div');
       wrap.className = 'news-photo-wrap';
+      wrap.classList.toggle('news-photo-wrap--uploading', photo.uploading);
 
       const img = document.createElement('img');
       img.className = 'news-photo-item';
@@ -94,63 +167,27 @@
     });
   }
 
-  // ④ 입력칸을 '새로 작성' 상태로 되돌리기
-  function resetForm() {
-    form.reset();
-    photos = [];
-    renderPhotos();
-    editingId = null;
-    selectCategory('다로리의 요즘');
-    formTitle.textContent = '소식 작성';
-    saveBtn.textContent = '소식 저장';
-    cancelBtn.hidden = true;
-    statusEl.hidden = true;
-  }
-
-  // ⑤ 수정 시작: 선택한 소식 내용을 입력칸에 채우기
-  function startEdit(news) {
-    editingId = news.id;
-    titleInput.value = news.title;
-    contentInput.value = news.content || '';
-    selectCategory(news.category);
-    linkInput.value = news.link || '';
-    deadlineInput.value = news.deadline || '';
-    applyInput.value = news.applyLink || '';
-    buyInput.value = news.buyLink || '';
-    photos = [...(news.photos || [])];
-    renderPhotos();
-
-    formTitle.textContent = '소식 수정';
-    saveBtn.textContent = '수정 저장';
-    cancelBtn.hidden = false;
-    statusEl.hidden = false;
-    formTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  // 오늘 날짜를 2026.11.18 형식으로
-  function today() {
-    const d = new Date();
-    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
-  }
-
-  // ── 이벤트 연결 ──
-
-  // 카테고리 버튼
-  $('news-categories').addEventListener('click', e => {
-    const chip = e.target.closest('.news-chip');
-    if (chip) selectCategory(chip.dataset.category);
-  });
-
-  // 사진 추가 (여러 장 가능)
+  // 사진 고르면 바로 서버에 업로드 → objectKey 기억
   photoInput.addEventListener('change', () => {
-    [...photoInput.files].forEach(file => {
-      photos.push({ url: URL.createObjectURL(file), name: file.name });
+    const files = [...photoInput.files];
+    photoInput.value = ''; // 같은 사진 다시 고를 수 있게
+    files.forEach(async file => {
+      const photo = { url: URL.createObjectURL(file), name: file.name, uploading: true };
+      photos.push(photo);
+      renderPhotos();
+      try {
+        const result = await api.uploadImage(file);
+        photo.objectKey = result.objectKey;
+        photo.uploading = false;
+      } catch (error) {
+        photos = photos.filter(p => p !== photo); // 실패한 사진은 빼기
+        handleError(error, '사진 업로드 실패');
+      }
+      renderPhotos();
     });
-    photoInput.value = ''; // 같은 사진을 다시 고를 수 있게
-    renderPhotos();
   });
 
-  // 사진 × 버튼 → 빼기
+  // × 버튼 → 사진 빼기
   photoGrid.addEventListener('click', e => {
     const btn = e.target.closest('.news-photo-remove');
     if (!btn) return;
@@ -158,73 +195,166 @@
     renderPhotos();
   });
 
+  // ── ④ 작성 / 수정 ──
+  function resetForm() {
+    form.reset();
+    photos = [];
+    renderPhotos();
+    editingId = null;
+    if (categories.length) selectCategory(categories[0].categoryId);
+    formTitle.textContent = '소식 작성';
+    saveBtn.textContent = '소식 저장';
+    cancelBtn.hidden = true;
+    statusEl.hidden = true;
+  }
+
+  async function startEdit(storyId) {
+    try {
+      const story = await api.getStory(storyId);
+      editingId = story.storyId;
+      titleInput.value = story.title;
+      contentInput.value = story.body || '';
+      selectCategory(story.categoryId);
+
+      // 링크는 카테고리에 맞는 칸에 넣기
+      linkInput.value = '';
+      applyInput.value = '';
+      buyInput.value = '';
+      const code = selected?.code;
+      if (code === 'PROJECT_FOLLOW_UP') linkInput.value = story.actionUrl || '';
+      if (code === 'RECRUITMENT') applyInput.value = story.actionUrl || '';
+      if (code === 'SEASONAL') buyInput.value = story.actionUrl || '';
+      deadlineInput.value = story.applicationDeadline || '';
+
+      // 기존 사진은 imageId로 기억
+      photos = (story.images || []).map(img => ({
+        imageId: img.imageId, url: img.imageUrl, name: '기존 사진', uploading: false
+      }));
+      renderPhotos();
+
+      formTitle.textContent = '소식 수정';
+      saveBtn.textContent = '수정 저장';
+      cancelBtn.hidden = false;
+      statusEl.hidden = false;
+      formTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (error) {
+      handleError(error, '소식 불러오기 실패');
+    }
+  }
+
+  // 지금 카테고리에 맞는 링크 값 (없으면 null)
+  function getActionUrl() {
+    const code = selected?.code;
+    const value = code === 'PROJECT_FOLLOW_UP' ? linkInput.value
+      : code === 'RECRUITMENT' ? applyInput.value
+      : code === 'SEASONAL' ? buyInput.value
+      : '';
+    return value.trim() || null;
+  }
+
   // 저장 (새로 작성 / 수정 둘 다)
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async e => {
     e.preventDefault(); // 페이지 새로고침 막기
+    if (saving) return;
+
     const title = titleInput.value.trim();
     const content = contentInput.value.trim();
+    if (!selected) {
+      DaroriAdmin.showDialog({ title: '입력 확인', description: '카테고리를 선택해 주세요.' });
+      return;
+    }
     if (!title || !content) {
       DaroriAdmin.showDialog({ title: '입력 확인', description: '제목과 내용을 입력해 주세요.' });
       return;
     }
+    if (photos.some(p => p.uploading)) {
+      DaroriAdmin.showDialog({ title: '잠시만요', description: '사진을 업로드하고 있어요. 끝난 뒤 다시 저장해 주세요.' });
+      return;
+    }
 
-    const data = {
+    // 서버에 보낼 데이터
+    const body = {
+      categoryId: selected.categoryId,
       title,
-      content,
-      category: selectedCategory,
-      link: linkInput.value.trim(),
-      deadline: deadlineInput.value,
-      applyLink: applyInput.value.trim(),
-      buyLink: buyInput.value.trim(),
-      photos: [...photos]
+      body: content,
+      actionUrl: getActionUrl(),
+      applicationDeadline: selected.code === 'RECRUITMENT' ? (deadlineInput.value || null) : null,
+      // 기존 사진은 imageId, 새 사진은 objectKey. 순서는 화면 순서대로
+      images: photos.map((p, i) => (p.imageId
+        ? { imageId: p.imageId, displayOrder: i + 1 }
+        : { objectKey: p.objectKey, displayOrder: i + 1 }))
     };
 
-    if (editingId) {
-      // 수정: 기존 소식 내용 바꾸기 (날짜는 그대로)
-      const target = newsList.find(n => n.id === editingId);
-      Object.assign(target, data);
-    } else {
-      // 새로 작성: 목록 맨 위에 추가
-      newsList.unshift({ id: Date.now(), date: today(), ...data });
+    saving = true;
+    saveBtn.disabled = true;
+    const wasEditing = Boolean(editingId);
+    try {
+      if (wasEditing) await api.updateStory(editingId, body);
+      else await api.createStory(body);
+      resetForm();
+      await loadStories();
+      DaroriAdmin.showDialog({
+        title: wasEditing ? '수정 완료' : '저장 완료',
+        description: wasEditing ? '소식을 수정했어요.' : '소식을 저장했어요.'
+      });
+    } catch (error) {
+      handleError(error, '저장 실패');
+    } finally {
+      saving = false;
+      saveBtn.disabled = false;
     }
-    resetForm();
-    render();
   });
 
-  // 수정 취소
+  // ── 이벤트 연결 ──
+  categoryBox.addEventListener('click', e => {
+    const chip = e.target.closest('.news-chip');
+    if (chip) selectCategory(chip.dataset.id);
+  });
+
   cancelBtn.addEventListener('click', resetForm);
+
+  moreBtn.addEventListener('click', () => {
+    page += 1;
+    loadStories(false);
+  });
 
   // 목록의 삭제·수정 버튼
   listEl.addEventListener('click', e => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
-    const id = Number(btn.closest('.news-item').dataset.id);
-    const news = newsList.find(n => n.id === id);
+    const id = btn.closest('.news-item').dataset.id;
 
     if (btn.dataset.action === 'edit') {
-      startEdit(news);
+      startEdit(id);
     } else {
       DaroriAdmin.showDialog({
         title: '소식 삭제',
         description: '이 소식을 삭제할까요?',
         confirmLabel: '삭제하기',
-        onConfirm: () => {
-          newsList.splice(newsList.findIndex(n => n.id === id), 1);
-          if (editingId === id) resetForm(); // 수정 중이던 소식이면 입력칸도 비우기
-          render();
+        onConfirm: async () => {
+          try {
+            await api.deleteStory(id);
+            if (editingId === id) resetForm();
+            await loadStories();
+          } catch (error) {
+            handleError(error, '삭제 실패');
+          }
         }
       });
     }
   });
 
-  // 주민 제보에서 넘어왔으면 제목·내용 자동으로 채우기
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('title')) {
-    titleInput.value = params.get('title');
-  }
-  if (params.get('content')) {
-    contentInput.value = params.get('content');
+  // ── 시작: 로그인 확인이 끝난 뒤 ──
+  async function init() {
+    await Promise.all([loadCategories(), loadStories()]);
+
+    // 주민 제보에서 넘어왔으면 제목·내용 채우기 (제보 API 연결 전까지 임시)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('title')) titleInput.value = params.get('title');
+    if (params.get('content')) contentInput.value = params.get('content');
   }
 
-  render();
+  window.DaroriAdminAuthPage.ready.then(account => {
+    if (account) init();
+  });
 })();

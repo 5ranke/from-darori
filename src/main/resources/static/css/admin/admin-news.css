@@ -72,3 +72,17 @@
   background: #fff; font-size: 12px; cursor: pointer;
 }
 .admin-page .news-small-btn--accent { border-color: var(--news-accent); background: var(--news-accent); color: #fff; }
+
+
+/* ── API 연결용 추가 ── */
+.admin-page .news-empty,
+.admin-page .news-list-status { margin: 8px 0 0; font-size: 12px; color: #888; }
+.admin-page .news-list-status[hidden] { display: none; }
+.admin-page .news-more {
+  display: block; margin: 16px auto 0; padding: 6px 16px;
+  border: 1px solid #333; border-radius: 8px; background: #fff;
+  font-size: 12px; cursor: pointer;
+}
+.admin-page .news-more[hidden] { display: none; }
+.admin-page .news-photo-wrap--uploading { opacity: 0.5; } /* 업로드 중인 사진은 흐리게 */
+.admin-page .news-save:disabled { opacity: 0.6; cursor: wait; }
