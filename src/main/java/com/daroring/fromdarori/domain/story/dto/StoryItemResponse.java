@@ -19,7 +19,9 @@ public record StoryItemResponse(
         return new StoryItemResponse(
                 story.getId(),
                 story.getSourceType(),
-                story.getCategory().getId(),
+                story.getCategory() == null
+                        ? null
+                        : story.getCategory().getId(),
                 story.getCategory().getName(),
                 story.getTitle(),
                 story.getCreatedAt(),

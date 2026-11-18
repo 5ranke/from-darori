@@ -1,8 +1,10 @@
 package com.daroring.fromdarori.domain.story.repository;
 
+import com.daroring.fromdarori.domain.story.dto.StoryIdInfoResponse;
 import com.daroring.fromdarori.domain.story.entity.Story;
 import com.daroring.fromdarori.domain.story.entity.StorySourceType;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

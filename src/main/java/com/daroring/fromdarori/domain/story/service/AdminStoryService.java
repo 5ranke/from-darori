@@ -12,6 +12,7 @@ import com.daroring.fromdarori.domain.story.repository.AdminStoryImageRepository
 import com.daroring.fromdarori.domain.story.repository.AdminStoryRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +67,22 @@ public class AdminStoryService {
                         .map(story -> StoryItemResponse.from(story, publishedStoryIds.contains(story.getId())))
                         .toList()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public StoryIdInfoResponse getStory(UUID storyId) {
+        Story story = adminStoryRepository.findById(storyId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "STORY4041", "소식을 찾을 수 없습니다.") );
+
+        List<StoryIdImageResponse> images = adminStoryImageRepository
+                .findByStory_IdOrderByDisplayOrderAsc(storyId)
+                .stream()
+                .map(image -> new StoryIdImageResponse(
+                        image.getId(),
+                        image.getObjectKey(),
+                        image.getDisplayOrder()))
+                .toList();
+        return StoryIdInfoResponse.from(story,images);
     }
 
     @Transactional

@@ -2,6 +2,7 @@ package com.daroring.fromdarori.domain.story.controller;
 
 import com.daroring.fromdarori.domain.story.dto.StoryCreateRequest;
 import com.daroring.fromdarori.domain.story.dto.StoryCreateResponse;
+import com.daroring.fromdarori.domain.story.dto.StoryIdInfoResponse;
 import com.daroring.fromdarori.domain.story.exception.ApiException;
 import com.daroring.fromdarori.domain.story.service.AdminStoryService;
 import com.daroring.fromdarori.domain.story.dto.StoryInfoResponse;
@@ -61,6 +62,15 @@ public class AdminStoryController {
         }
     }
 
+    private static UUID parseStoryId(String value) {
+        try {
+            return UUID.fromString(value);
+        } catch (IllegalArgumentException exception) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "STORY4001", "storyId는 올바른 UUID 형식이어야 합니다.");
+        }
+    }
+
+
     // 저장된 소식 목록 조회
     // GET /api/v1/admin/stories
     @GetMapping
@@ -89,6 +99,11 @@ public class AdminStoryController {
 
     // 소식 상세 조회
     // GET /api/v1/admin/stories/{storyId}
+    @GetMapping("/{storyId}")
+    public ResponseEntity<ApiResponse<StoryIdInfoResponse>> getStory(@PathVariable String storyId) {
+        StoryIdInfoResponse response = adminStoryService.getStory(parseStoryId(storyId));
+        return ResponseEntity.ok(ApiResponse.success("소식 상세 조회에 성공했습니다.", response));
+    }
 
     // 소식 등록
     // POST /api/v1/admin/stories
