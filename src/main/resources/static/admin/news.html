@@ -26,7 +26,7 @@
 
       <!-- ===== 여기부터 윤서님이 만드는 부분 ===== -->
       <section class="admin-news admin-card" id="admin-content">
-        <h2 class="news-title">소식 작성</h2>
+        <h2 class="news-title" id="news-form-title">소식 작성</h2>
         <p class="news-desc">저장한 소식은 뉴스레터 제작에서 AI가 재료로 사용해요.</p>
 
         <form id="news-form" class="news-form">
@@ -78,7 +78,12 @@
           </div>
           <input id="news-photo-input" type="file" accept="image/*" multiple hidden>
 
-          <button type="submit" class="news-save">소식 저장</button>
+          <!-- 저장 버튼 (수정 중엔 '수정 저장' + '수정 취소') -->
+          <div class="news-actions">
+            <button type="submit" class="news-save" id="news-save">소식 저장</button>
+            <button type="button" class="news-cancel" id="news-cancel" hidden>수정 취소</button>
+          </div>
+          <p class="news-status" id="news-status" hidden>선택한 소식을 수정하고 있습니다.</p>
         </form>
 
         <h3 class="news-list-title">저장된 소식 (<span id="news-count">0</span>)</h3>
