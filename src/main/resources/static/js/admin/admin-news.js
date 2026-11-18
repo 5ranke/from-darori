@@ -217,8 +217,11 @@
     }
   });
 
-  // 주민 제보에서 넘어왔으면 내용 자동으로 채우기
+  // 주민 제보에서 넘어왔으면 제목·내용 자동으로 채우기
   const params = new URLSearchParams(window.location.search);
+  if (params.get('title')) {
+    titleInput.value = params.get('title');
+  }
   if (params.get('content')) {
     contentInput.value = params.get('content');
   }
