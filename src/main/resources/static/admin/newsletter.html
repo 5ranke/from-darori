@@ -1,13 +1,16 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" class="admin-auth-pending">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>뉴스레터 제작 | From. 다로리 관리</title>
   <link rel="stylesheet" href="../css/admin/admin-common.css">
   <link rel="stylesheet" href="../css/admin/admin-newsletter.css">
+  <link rel="stylesheet" href="../css/admin/admin-auth.css">
+  <script defer src="../js/admin/admin-auth.js"></script>
   <script defer src="../js/admin/admin-common.js"></script>
-  <script defer src="../js/admin/admin-news-data.js"></script>
+  <script defer src="../js/admin/admin-auth-guard.js"></script>
+  <script defer src="../js/admin/admin-newsletter-api.js"></script>
   <script defer src="../js/admin/admin-newsletter.js"></script>
 </head>
 <body class="admin-page" data-admin-page="newsletter">
@@ -31,11 +34,13 @@
 
         <form id="nl-form" class="nl-form">
           <label class="nl-label" for="nl-title-input">제목</label>
-          <input id="nl-title-input" class="nl-input" type="text" placeholder="제목을 입력하세요.">
+          <input id="nl-title-input" class="nl-input" type="text" maxlength="80" placeholder="제목을 입력하세요.">
 
           <p class="nl-label nl-label--tight">소식 선택</p>
           <p class="nl-help">선택한 소식으로 퀴즈 1문항이 자동으로 만들어집니다. 미리보기에서 확인할 수 있어요.</p>
           <ul class="nl-news-list" id="nl-news-list"></ul>
+          <p class="nl-list-status" id="nl-list-status" role="status">소식을 불러오는 중이에요…</p>
+          <button type="button" class="nl-more" id="nl-more" hidden>더 보기</button>
 
           <button type="button" class="nl-generate" id="nl-generate">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -45,10 +50,11 @@
             <span id="nl-generate-text">GPT로 뉴스레터 만들기</span>
           </button>
 
-          <label class="nl-label" for="nl-draft">뉴스레터 초안</label>
-          <textarea id="nl-draft" class="nl-input nl-draft" placeholder="뉴스레터를 만들면 여기에 초안이 나타나요."></textarea>
+          <p class="nl-label">뉴스레터 초안</p>
+          <!-- 초안은 칸별로 나눠서 자동으로 그려요 -->
+          <div class="nl-draft-box" id="nl-draft"></div>
 
-          <button type="submit" class="nl-save">발행 내역에 저장</button>
+          <button type="submit" class="nl-save" id="nl-save">발행 내역에 저장</button>
         </form>
       </section>
       <!-- ===== 여기까지 ===== -->

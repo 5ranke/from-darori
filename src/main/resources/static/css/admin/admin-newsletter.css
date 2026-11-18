@@ -44,3 +44,42 @@
   border: none; border-radius: 8px; background: var(--nl-accent); color: #fff;
   font-size: 13px; cursor: pointer;
 }
+
+
+/* ── API 연결용 추가 ── */
+.admin-page .nl-list-status { margin: 8px 0 0; font-size: 12px; color: #888; }
+.admin-page .nl-list-status[hidden] { display: none; }
+.admin-page .nl-more {
+  display: block; margin: 12px auto 0; padding: 6px 16px;
+  border: 1px solid #333; border-radius: 8px; background: #fff;
+  font-size: 12px; cursor: pointer;
+}
+.admin-page .nl-more[hidden] { display: none; }
+.admin-page .nl-save:disabled { opacity: 0.6; cursor: wait; }
+
+/* 초안 칸 나누기 */
+.admin-page .nl-draft-box {
+  display: flex; flex-direction: column; gap: 14px;
+  padding: 16px; border: 1px solid var(--nl-line); border-radius: 8px;
+}
+.admin-page .nl-draft-empty { margin: 0; padding: 40px 0; font-size: 13px; color: #aaa; text-align: center; }
+.admin-page .nl-draft-field { display: flex; flex-direction: column; gap: 6px; }
+.admin-page .nl-draft-label { font-size: 12px; font-weight: 700; color: #555; }
+.admin-page .nl-draft-field textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
+
+/* 소식별 묶음 */
+.admin-page .nl-draft-story {
+  display: flex; flex-direction: column; gap: 10px;
+  padding-top: 14px; border-top: 1px dashed var(--nl-line);
+}
+.admin-page .nl-draft-story-head { margin: 0; font-size: 13px; font-weight: 700; }
+.admin-page .nl-draft-badge {
+  margin-left: 6px; padding: 2px 8px; border-radius: 999px;
+  background: #ffece6; color: #d9532c; font-size: 11px; font-weight: 500;
+}
+
+/* 퀴즈 */
+.admin-page .nl-quiz-options { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.admin-page .nl-quiz-option { padding: 8px 12px; border: 1px solid var(--nl-line); border-radius: 8px; font-size: 13px; }
+.admin-page .nl-quiz-option--answer { border-color: var(--nl-accent); background: #fff6f3; }
+.admin-page .nl-quiz-answer-tag { margin-left: 6px; color: var(--nl-accent); font-size: 12px; font-weight: 700; }

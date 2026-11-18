@@ -2,6 +2,7 @@
 window.NewsApi = (() => {
   const auth = window.DaroriAdminAuth;
   const storyPath = id => `/api/v1/admin/stories/${encodeURIComponent(id)}`;
+  const reportPath = id => `/api/v1/admin/resident-reports/${encodeURIComponent(id)}`;
 
   // 카테고리 (로그인 필요 없는 API라 일반 fetch 사용)
   async function getCategories() {
@@ -24,6 +25,10 @@ window.NewsApi = (() => {
   const updateStory = (id, body) => auth.request(storyPath(id), { method: 'PATCH', body });
   const deleteStory = id => auth.request(storyPath(id), { method: 'DELETE' });
 
+  // 주민 제보 → 소식
+  const getReport = id => auth.request(reportPath(id));
+  const registerReportStory = (id, body) => auth.request(`${reportPath(id)}/story`, { method: 'POST', body });
+
   // 사진 업로드 (key 이름: file)
   function uploadImage(file) {
     const form = new FormData();
@@ -31,5 +36,8 @@ window.NewsApi = (() => {
     return auth.request('/api/v1/admin/story-images', { method: 'POST', body: form });
   }
 
-  return { getCategories, getStories, getStory, createStory, updateStory, deleteStory, uploadImage };
+  return {
+    getCategories, getStories, getStory, createStory, updateStory, deleteStory,
+    getReport, registerReportStory, uploadImage
+  };
 })();

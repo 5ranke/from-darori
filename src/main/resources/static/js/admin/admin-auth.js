@@ -10,9 +10,9 @@ window.DaroriAdminAuth = (() => {
     }
   }
   function clear() { accessToken = null; revision += 1; }
-  async function send(path, { method = 'GET', body, token } = {}) {
+  async function send(path, { method = 'GET', body, token, timeoutMs = 15000 } = {}) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
     try {
       const headers = { Accept: 'application/json' };
       const isForm = body instanceof FormData; // 사진 같은 파일이면 브라우저가 형식을 정함
