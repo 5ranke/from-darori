@@ -15,13 +15,14 @@ window.DaroriAdminAuth = (() => {
     const timeout = setTimeout(() => controller.abort(), 15000);
     try {
       const headers = { Accept: 'application/json' };
-      if (body !== undefined) headers['Content-Type'] = 'application/json';
+      const isForm = body instanceof FormData; // 사진 같은 파일이면 브라우저가 형식을 정함
+      if (body !== undefined && !isForm) headers['Content-Type'] = 'application/json';
       if (token) headers.Authorization = `Bearer ${token}`;
       let response;
       try {
         response = await fetch(path, { method, headers, credentials: 'same-origin', cache: 'no-store',
           signal: controller.signal, redirect: 'error',
-          ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+          ...(body === undefined ? {} : { body: isForm ? body : JSON.stringify(body) }) });
       } catch (error) {
         throw new AuthError('network', error.name === 'AbortError'
           ? '서버 응답이 지연되고 있습니다. 다시 시도해 주세요.'

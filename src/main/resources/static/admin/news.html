@@ -1,13 +1,16 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" class="admin-auth-pending">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>소식 작성 | From. 다로리 관리</title>
   <link rel="stylesheet" href="../css/admin/admin-common.css">
   <link rel="stylesheet" href="../css/admin/admin-news.css">
+  <link rel="stylesheet" href="../css/admin/admin-auth.css">
+  <script defer src="../js/admin/admin-auth.js"></script>
   <script defer src="../js/admin/admin-common.js"></script>
-  <script defer src="../js/admin/admin-news-data.js"></script>
+  <script defer src="../js/admin/admin-auth-guard.js"></script>
+  <script defer src="../js/admin/admin-news-api.js"></script>
   <script defer src="../js/admin/admin-news.js"></script>
 </head>
 <body class="admin-page" data-admin-page="news">
@@ -31,18 +34,14 @@
 
         <form id="news-form" class="news-form">
           <label class="news-label" for="news-title-input">제목</label>
-          <input id="news-title-input" class="news-input" type="text" placeholder="제목을 입력하세요.">
+          <input id="news-title-input" class="news-input" type="text" maxlength="80" placeholder="제목을 입력하세요.">
 
           <p class="news-label">카테고리</p>
-          <div class="news-categories" id="news-categories">
-            <button type="button" class="news-chip news-chip--active" data-category="다로리의 요즘">다로리의 요즘</button>
-            <button type="button" class="news-chip" data-category="프로젝트 후속">🌱 프로젝트 후속</button>
-            <button type="button" class="news-chip" data-category="구인 / 참여">🙋 구인 / 참여</button>
-            <button type="button" class="news-chip" data-category="제철 정보">🍑 제철 정보</button>
-          </div>
+          <!-- 카테고리 버튼은 API로 불러와서 자동으로 만들어요 -->
+          <div class="news-categories" id="news-categories"></div>
 
           <label class="news-label" for="news-content-input">내용</label>
-          <textarea id="news-content-input" class="news-input news-textarea" placeholder="다로리의 요즘 소식을 입력하세요."></textarea>
+          <textarea id="news-content-input" class="news-input news-textarea" maxlength="3000" placeholder="다로리의 요즘 소식을 입력하세요."></textarea>
 
           <!-- 프로젝트 후속일 때만 보임 -->
           <div id="news-link-field" hidden>
@@ -88,6 +87,8 @@
 
         <h3 class="news-list-title">저장된 소식 (<span id="news-count">0</span>)</h3>
         <ul class="news-list" id="news-list"></ul>
+        <p class="news-list-status" id="news-list-status" role="status">소식을 불러오는 중이에요…</p>
+        <button type="button" class="news-more" id="news-more" hidden>더 보기</button>
       </section>
       <!-- ===== 여기까지 ===== -->
 
