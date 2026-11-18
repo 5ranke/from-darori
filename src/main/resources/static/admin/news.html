@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>소식 작성 | From. 다로리 관리</title>
+  <link rel="stylesheet" href="../css/admin/admin-common.css">
+  <link rel="stylesheet" href="../css/admin/admin-news.css">
+  <script defer src="../js/admin/admin-common.js"></script>
+  <script defer src="../js/admin/admin-news-data.js"></script>
+  <script defer src="../js/admin/admin-news.js"></script>
+</head>
+<body class="admin-page" data-admin-page="news">
+  <div data-admin-header></div>
+  <main class="admin-container admin-main">
+    <h1 class="admin-greeting">안녕하세요, <span id="admin-name">OOO</span>님</h1>
+
+    <!-- 탭 -->
+    <nav class="admin-tabs" aria-label="운영자 영역">
+      <a class="admin-tab admin-tab--active" href="news.html" aria-current="page">뉴스레터 제작</a>
+      <a class="admin-tab" href="dashboard.html">관리</a>
+    </nav>
+
+    <div class="admin-workspace">
+      <nav class="admin-sidebar admin-card" aria-label="뉴스레터 메뉴" data-admin-sidebar></nav>
+
+      <!-- ===== 여기부터 윤서님이 만드는 부분 ===== -->
+      <section class="admin-news admin-card" id="admin-content">
+        <h2 class="news-title" id="news-form-title">소식 작성</h2>
+        <p class="news-desc">저장한 소식은 뉴스레터 제작에서 AI가 재료로 사용해요.</p>
+
+        <form id="news-form" class="news-form">
+          <label class="news-label" for="news-title-input">제목</label>
+          <input id="news-title-input" class="news-input" type="text" placeholder="제목을 입력하세요.">
+
+          <p class="news-label">카테고리</p>
+          <div class="news-categories" id="news-categories">
+            <button type="button" class="news-chip news-chip--active" data-category="다로리의 요즘">다로리의 요즘</button>
+            <button type="button" class="news-chip" data-category="프로젝트 후속">🌱 프로젝트 후속</button>
+            <button type="button" class="news-chip" data-category="구인 / 참여">🙋 구인 / 참여</button>
+            <button type="button" class="news-chip" data-category="제철 정보">🍑 제철 정보</button>
+          </div>
+
+          <label class="news-label" for="news-content-input">내용</label>
+          <textarea id="news-content-input" class="news-input news-textarea" placeholder="다로리의 요즘 소식을 입력하세요."></textarea>
+
+          <!-- 프로젝트 후속일 때만 보임 -->
+          <div id="news-link-field" hidden>
+            <label class="news-label" for="news-link-input">프로젝트 링크</label>
+            <input id="news-link-input" class="news-input" type="url" placeholder="https://">
+          </div>
+
+          <!-- 구인 / 참여일 때만 보임 -->
+          <div id="news-recruit-field" hidden>
+            <label class="news-label" for="news-deadline-input">모집 마감일</label>
+            <input id="news-deadline-input" class="news-input" type="date">
+            <label class="news-label" for="news-apply-input">신청 링크</label>
+            <input id="news-apply-input" class="news-input" type="url" placeholder="https://">
+          </div>
+
+          <!-- 제철 정보일 때만 보임 -->
+          <div id="news-buy-field" hidden>
+            <label class="news-label" for="news-buy-input">구매 링크</label>
+            <input id="news-buy-input" class="news-input" type="url" placeholder="https://">
+          </div>
+
+          <!-- 사진: 고른 사진이 3칸씩 깔리고, 마지막 칸이 추가 버튼 -->
+          <p class="news-label">사진</p>
+          <div class="news-photos" id="news-photos">
+            <label class="news-photo-add" for="news-photo-input">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="15" rx="3"/>
+                <path d="M3 16l5-5 4 4 3-3 6 6"/>
+                <path d="M17 2v6M14 5h6"/>
+              </svg>
+              <span>추가할 사진을 선택해주세요</span>
+            </label>
+          </div>
+          <input id="news-photo-input" type="file" accept="image/*" multiple hidden>
+
+          <!-- 저장 버튼 (수정 중엔 '수정 저장' + '수정 취소') -->
+          <div class="news-actions">
+            <button type="submit" class="news-save" id="news-save">소식 저장</button>
+            <button type="button" class="news-cancel" id="news-cancel" hidden>수정 취소</button>
+          </div>
+          <p class="news-status" id="news-status" hidden>선택한 소식을 수정하고 있습니다.</p>
+        </form>
+
+        <h3 class="news-list-title">저장된 소식 (<span id="news-count">0</span>)</h3>
+        <ul class="news-list" id="news-list"></ul>
+      </section>
+      <!-- ===== 여기까지 ===== -->
+
+    </div>
+  </main>
+  <div data-admin-footer></div>
+  <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-dialog-title" aria-describedby="admin-dialog-description">
+    <form method="dialog">
+      <h2 id="admin-dialog-title"></h2>
+      <p id="admin-dialog-description"></p>
+      <div class="admin-dialog-actions"><button class="admin-button admin-button--outline" value="cancel" id="admin-dialog-cancel">취소</button><button class="admin-button admin-button--primary" value="confirm" id="admin-dialog-confirm">확인</button></div>
+    </form>
+  </dialog>
+</body>
+</html>

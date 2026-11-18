@@ -1,0 +1,32 @@
+/* 주민 제보 화면 전용 */
+.admin-page .admin-report-page {
+  --report-accent: #ff6b45;
+  --report-line: #e3e3e3;
+  padding: 32px;
+}
+.admin-page .report-title { margin: 0; font-size: 17px; font-weight: 700; }
+.admin-page .report-desc { margin: 6px 0 28px; font-size: 13px; color: #666; }
+
+.admin-page .report-list-title { margin: 0 0 8px; font-size: 15px; font-weight: 700; }
+.admin-page .report-list { margin: 0; padding: 0; list-style: none; }
+.admin-page .report-item {
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  padding: 14px 0; border-bottom: 1px solid var(--report-line);
+}
+.admin-page .report-item-title { margin: 0 0 4px; font-size: 13px; }
+.admin-page .report-item-meta { margin: 0; font-size: 12px; color: #888; }
+.admin-page .report-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+.admin-page .report-btn {
+  padding: 4px 12px; border: 1px solid #333; border-radius: 8px;
+  background: #fff; font-size: 12px; cursor: pointer;
+}
+.admin-page .report-btn--dark { border-color: var(--report-accent); background: var(--report-accent); color: #fff; }
+
+/* 더 보기 화살표 */
+.admin-page .report-more {
+  display: block; margin: 16px auto 0; padding: 4px 8px;
+  border: none; background: none; color: #333; cursor: pointer;
+}
+.admin-page .report-more[hidden] { display: none; }
+.admin-page .report-more--open svg { transform: rotate(180deg); }
