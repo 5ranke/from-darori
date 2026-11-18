@@ -13,7 +13,8 @@
   let categories = [];   // 서버에서 받은 카테고리
   let selected = null;   // 선택된 카테고리
   let photos = [];       // [{ imageId?, objectKey?, url, name, uploading }]
-  let editingId = null;  // 수정 중인 소식 id (null = 새로 작성)
+  let editingId = null;  // 수정 중인 소식 id
+  let reportId = null;   // 주민 제보에서 넘어온 경우 제보 id
   let stories = [];      // 화면에 보이는 소식 목록
   let page = 0;
   let hasNext = false;
@@ -40,6 +41,7 @@
   const saveBtn = $('news-save');
   const cancelBtn = $('news-cancel');
   const statusEl = $('news-status');
+  const reportStatus = $('news-report-status');
   const listEl = $('news-list');
   const countEl = $('news-count');
   const listStatus = $('news-list-status');
@@ -195,15 +197,40 @@
     renderPhotos();
   });
 
-  // ── ④ 작성 / 수정 ──
+  // ── ④ 주민 제보 모드 ──
+  function leaveReportMode() {
+    reportId = null;
+    reportStatus.hidden = true;
+    window.history.replaceState(null, '', 'news.html'); // 주소에서 reportId 지우기
+  }
+
+  async function startReportMode(id) {
+    try {
+      const report = await api.getReport(id);
+      reportId = report.reportId;
+      titleInput.value = report.title;
+      contentInput.value = report.body;
+      saveBtn.textContent = '소식으로 등록';
+      cancelBtn.textContent = '등록 취소';
+      cancelBtn.hidden = false;
+      reportStatus.hidden = false;
+    } catch (error) {
+      leaveReportMode();
+      handleError(error, '제보 불러오기 실패');
+    }
+  }
+
+  // ── ⑤ 작성 / 수정 ──
   function resetForm() {
     form.reset();
     photos = [];
     renderPhotos();
     editingId = null;
+    if (reportId) leaveReportMode();
     if (categories.length) selectCategory(categories[0].categoryId);
     formTitle.textContent = '소식 작성';
     saveBtn.textContent = '소식 저장';
+    cancelBtn.textContent = '수정 취소';
     cancelBtn.hidden = true;
     statusEl.hidden = true;
   }
@@ -211,6 +238,7 @@
   async function startEdit(storyId) {
     try {
       const story = await api.getStory(storyId);
+      if (reportId) leaveReportMode(); // 제보 등록 중이었으면 빠져나오기
       editingId = story.storyId;
       titleInput.value = story.title;
       contentInput.value = story.body || '';
@@ -234,6 +262,7 @@
 
       formTitle.textContent = '소식 수정';
       saveBtn.textContent = '수정 저장';
+      cancelBtn.textContent = '수정 취소';
       cancelBtn.hidden = false;
       statusEl.hidden = false;
       formTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -252,7 +281,7 @@
     return value.trim() || null;
   }
 
-  // 저장 (새로 작성 / 수정 둘 다)
+  // 저장 (새로 작성 / 수정 / 제보로 등록)
   form.addEventListener('submit', async e => {
     e.preventDefault(); // 페이지 새로고침 막기
     if (saving) return;
@@ -272,7 +301,7 @@
       return;
     }
 
-    // 서버에 보낼 데이터
+    // 서버에 보낼 데이터 (세 경우 모두 같은 모양)
     const body = {
       categoryId: selected.categoryId,
       title,
@@ -285,18 +314,22 @@
         : { objectKey: p.objectKey, displayOrder: i + 1 }))
     };
 
+    const mode = editingId ? 'edit' : reportId ? 'report' : 'create';
+    const doneMessage = {
+      edit: { title: '수정 완료', description: '소식을 수정했어요.' },
+      report: { title: '등록 완료', description: '주민 제보를 소식으로 등록했어요.' },
+      create: { title: '저장 완료', description: '소식을 저장했어요.' }
+    }[mode];
+
     saving = true;
     saveBtn.disabled = true;
-    const wasEditing = Boolean(editingId);
     try {
-      if (wasEditing) await api.updateStory(editingId, body);
+      if (mode === 'edit') await api.updateStory(editingId, body);
+      else if (mode === 'report') await api.registerReportStory(reportId, body);
       else await api.createStory(body);
       resetForm();
       await loadStories();
-      DaroriAdmin.showDialog({
-        title: wasEditing ? '수정 완료' : '저장 완료',
-        description: wasEditing ? '소식을 수정했어요.' : '소식을 저장했어요.'
-      });
+      DaroriAdmin.showDialog(doneMessage);
     } catch (error) {
       handleError(error, '저장 실패');
     } finally {
@@ -348,10 +381,9 @@
   async function init() {
     await Promise.all([loadCategories(), loadStories()]);
 
-    // 주민 제보에서 넘어왔으면 제목·내용 채우기 (제보 API 연결 전까지 임시)
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('title')) titleInput.value = params.get('title');
-    if (params.get('content')) contentInput.value = params.get('content');
+    // 주민 제보에서 넘어왔으면 (news.html?reportId=...) 제보 내용 불러오기
+    const fromReport = new URLSearchParams(window.location.search).get('reportId');
+    if (fromReport) await startReportMode(fromReport);
   }
 
   window.DaroriAdminAuthPage.ready.then(account => {
