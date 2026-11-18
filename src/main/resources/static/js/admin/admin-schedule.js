@@ -95,6 +95,7 @@
         const cancel = document.createElement('button');
         cancel.type = 'button';
         cancel.className = 'sc-cancel';
+        cancel.dataset.id = letter.newsletterId;
         cancel.textContent = '예약 취소';
         li.append(cancel);
       }
@@ -134,7 +135,7 @@
     }
   }
 
-  // ④ 예약 (주기를 바꿨으면 주기 먼저 저장 → 예약)
+  // ④ 예약 (주기를 바꿨으면 주기 먼저 저장 → 성공하면 예약)
   async function reserve(letter, day, time, cycleChanged) {
     busy = true;
     submitBtn.disabled = true;
@@ -185,10 +186,32 @@
     });
   });
 
-  // ⑤ 예약 취소 (API 준비 전까지 안내만)
+  // ⑤ 예약 취소
+  async function cancelReservation(letter) {
+    busy = true;
+    try {
+      await api.cancelReservation(letter.newsletterId);
+      delete reservedAt[letter.newsletterId];
+      await loadLetters();
+      DaroriAdmin.showDialog({ title: '예약 취소 완료', description: `'${letter.title}'의 발행 예약을 취소했어요.` });
+    } catch (error) {
+      handleError(error, '예약 취소 실패'); // 이미 발송이 시작된 경우(409) 등
+    } finally {
+      busy = false;
+    }
+  }
+
   listEl.addEventListener('click', e => {
-    if (!e.target.closest('.sc-cancel')) return;
-    DaroriAdmin.showDialog({ title: '예약 취소', description: '예약 취소 기능은 준비 중이에요. 조금만 기다려 주세요!' });
+    const btn = e.target.closest('.sc-cancel');
+    if (!btn || busy) return;
+    const letter = letters.find(l => l.newsletterId === btn.dataset.id);
+
+    DaroriAdmin.showDialog({
+      title: '예약 취소',
+      description: `'${letter.title}'의 발행 예약을 취소할까요?`,
+      confirmLabel: '예약 취소',
+      onConfirm: () => cancelReservation(letter)
+    });
   });
 
   // ── 시작: 로그인 확인이 끝난 뒤 ──
