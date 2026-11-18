@@ -9,7 +9,7 @@ window.DaroriAdmin = (() => {
     operators: null,
     news: 'news.html',
     reports: 'reports.html',
-    schedule: null,
+    schedule: 'schedule.html',
     letters: null,
     unsubscribe: null
   };
