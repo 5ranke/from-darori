@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>뉴스레터 제작 | From. 다로리 관리</title>
+  <link rel="stylesheet" href="../css/admin/admin-common.css">
+  <link rel="stylesheet" href="../css/admin/admin-newsletter.css">
+  <script defer src="../js/admin/admin-common.js"></script>
+  <script defer src="../js/admin/admin-news-data.js"></script>
+  <script defer src="../js/admin/admin-newsletter.js"></script>
+</head>
+<body class="admin-page" data-admin-page="newsletter">
+  <div data-admin-header></div>
+  <main class="admin-container admin-main">
+    <h1 class="admin-greeting">안녕하세요, <span id="admin-name">OOO</span>님</h1>
+
+    <!-- 탭 -->
+    <nav class="admin-tabs" aria-label="운영자 영역">
+      <a class="admin-tab admin-tab--active" href="news.html" aria-current="page">뉴스레터 제작</a>
+      <a class="admin-tab" href="dashboard.html">관리</a>
+    </nav>
+
+    <div class="admin-workspace">
+      <nav class="admin-sidebar admin-card" aria-label="뉴스레터 메뉴" data-admin-sidebar></nav>
+
+      <!-- ===== 여기부터 윤서님이 만드는 부분 ===== -->
+      <section class="admin-newsletter admin-card" id="admin-content">
+        <h2 class="nl-title">뉴스레터 제작</h2>
+        <p class="nl-desc">편지에 담을 소식을 선택하고 초안을 검토하세요. 결과는 자유롭게 수정할 수 있어요.</p>
+
+        <form id="nl-form" class="nl-form">
+          <label class="nl-label" for="nl-title-input">제목</label>
+          <input id="nl-title-input" class="nl-input" type="text" placeholder="제목을 입력하세요.">
+
+          <p class="nl-label nl-label--tight">소식 선택</p>
+          <p class="nl-help">선택한 소식으로 퀴즈 1문항이 자동으로 만들어집니다. 미리보기에서 확인할 수 있어요.</p>
+          <ul class="nl-news-list" id="nl-news-list"></ul>
+
+          <button type="button" class="nl-generate" id="nl-generate">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9z"/>
+              <path d="M19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9z"/>
+            </svg>
+            <span id="nl-generate-text">GPT로 뉴스레터 만들기</span>
+          </button>
+
+          <label class="nl-label" for="nl-draft">뉴스레터 초안</label>
+          <textarea id="nl-draft" class="nl-input nl-draft" placeholder="뉴스레터를 만들면 여기에 초안이 나타나요."></textarea>
+
+          <button type="submit" class="nl-save">발행 내역에 저장</button>
+        </form>
+      </section>
+      <!-- ===== 여기까지 ===== -->
+
+    </div>
+  </main>
+  <div data-admin-footer></div>
+  <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-dialog-title" aria-describedby="admin-dialog-description">
+    <form method="dialog">
+      <h2 id="admin-dialog-title"></h2>
+      <p id="admin-dialog-description"></p>
+      <div class="admin-dialog-actions"><button class="admin-button admin-button--outline" value="cancel" id="admin-dialog-cancel">취소</button><button class="admin-button admin-button--primary" value="confirm" id="admin-dialog-confirm">확인</button></div>
+    </form>
+  </dialog>
+</body>
+</html>
