@@ -126,4 +126,11 @@ public class AdminStoryController {
 
     // 소식 삭제
     // DELETE /api/v1/admin/stories/{storyId}
+    @DeleteMapping("/{storyId}")
+    public ResponseEntity<ApiResponse<UUID>> delete(
+            @PathVariable String storyId
+    ) {
+        UUID response = adminStoryService.delete(parseStoryId(storyId));
+        return ResponseEntity.ok(ApiResponse.success("소식이 삭제되었습니다.",response));
+    }
 }

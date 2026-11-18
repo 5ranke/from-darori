@@ -152,4 +152,12 @@ public class AdminStoryService {
                 .toList();
         return StoryUpdateResponse.from(story, imageResponses);
     }
+
+    @Transactional
+    public UUID delete(UUID storyId) {
+        Story story = adminStoryRepository.findById(storyId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "STORY4041", "소식을 찾을 수 없습니다."));
+        adminStoryRepository.delete(story);
+        return story.getId();
+    }
 }
