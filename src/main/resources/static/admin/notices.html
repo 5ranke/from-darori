@@ -1,12 +1,15 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" class="admin-auth-pending">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>공지사항 관리 | From. 다로리</title>
   <link rel="stylesheet" href="../css/admin/admin-common.css">
   <link rel="stylesheet" href="../css/admin/admin-notice.css">
+  <link rel="stylesheet" href="../css/admin/admin-auth.css">
+  <script defer src="../js/admin/admin-auth.js"></script>
   <script defer src="../js/admin/admin-common.js"></script>
+  <script defer src="../js/admin/admin-auth-guard.js"></script>
   <script defer src="../js/admin/admin-notice-data.js"></script>
   <script defer src="../js/admin/admin-notice.js"></script>
 </head>
@@ -78,6 +81,6 @@
     <div class="notice-detail-body" id="notice-detail-body"></div>
     <p class="notice-detail-demo">예시 공지입니다. 실제 서버 데이터가 아닙니다.</p>
   </dialog>
-  <noscript><p class="admin-container">공지사항 미리보기를 사용하려면 JavaScript를 활성화해 주세요.</p></noscript>
+  <noscript><p class="admin-container">인증 확인을 위해 JavaScript를 활성화해 주세요.</p><p class="admin-container">공지사항 미리보기를 사용하려면 JavaScript를 활성화해 주세요.</p></noscript>
 </body>
 </html>

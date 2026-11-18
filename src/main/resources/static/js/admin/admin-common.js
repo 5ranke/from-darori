@@ -19,7 +19,7 @@ window.DaroriAdmin = (() => {
     reports: '주민 제보', schedule: '발행 예약', letters: '편지 발행', unsubscribe: '구독 해지'
   };
   const header = document.querySelector('[data-admin-header]');
-  if (header) header.innerHTML = `<header class="admin-header"><div class="admin-container admin-header-inner"><a class="admin-logo" href="dashboard.html">From. 다로리</a><button type="button" class="admin-button admin-button--dark" data-admin-route="visitor">방문자 페이지로</button></div></header>`;
+  if (header) header.innerHTML = `<header class="admin-header"><div class="admin-container admin-header-inner"><a class="admin-logo" href="dashboard.html">From. 다로리</a><div class="admin-header-actions"><button type="button" class="admin-button admin-button--dark" data-admin-route="visitor">방문자 페이지로</button>${document.body.dataset.adminPage === 'login' ? '' : '<button type="button" class="admin-button admin-button--outline" id="admin-logout" hidden>로그아웃</button>'}</div></div></header>`;
   const sidebar = document.querySelector('[data-admin-sidebar]');
   if (sidebar) {
     // 탭별 메뉴 묶음
