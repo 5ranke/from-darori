@@ -91,16 +91,24 @@
     buyField.hidden = code !== 'SEASONAL';
   }
 
+    // 서버가 code를 안 보내줄 때를 대비해 이름으로 code 붙이기
+  const CODE_BY_NAME = {
+    '다로리의 요즘': 'VILLAGE_NEWS',
+    '프로젝트 후속': 'PROJECT_FOLLOW_UP',
+    '구인/참여': 'RECRUITMENT',
+    '제철 정보': 'SEASONAL'
+  };
+
   async function loadCategories() {
     try {
-      categories = await api.getCategories();
+      const list = await api.getCategories();
+      categories = list.map(c => ({ ...c, code: c.code || CODE_BY_NAME[c.name] }));
     } catch {
       categories = [];
     }
     renderCategories();
     if (categories.length) selectCategory(categories[0].categoryId);
   }
-
   // ── ② 저장된 소식 목록 ──
   function renderList() {
     listEl.innerHTML = '';
