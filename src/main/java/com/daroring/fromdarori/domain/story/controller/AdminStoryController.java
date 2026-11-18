@@ -2,12 +2,14 @@ package com.daroring.fromdarori.domain.story.controller;
 
 import com.daroring.fromdarori.domain.story.dto.StoryCreateRequest;
 import com.daroring.fromdarori.domain.story.dto.StoryCreateResponse;
+import com.daroring.fromdarori.domain.story.exception.ApiException;
 import com.daroring.fromdarori.domain.story.service.AdminStoryService;
 import com.daroring.fromdarori.domain.story.dto.StoryInfoResponse;
 import com.daroring.fromdarori.domain.story.entity.StoryPublicationStatus;
 import com.daroring.fromdarori.domain.story.entity.StorySourceType;
 import com.daroring.fromdarori.global.response.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +24,42 @@ import org.springframework.http.HttpStatus;
 public class AdminStoryController {
 
     private final AdminStoryService adminStoryService;
+
+    private static int parseIntOrDefault(String value, int defaultValue, String parameterName) {
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException exception) {
+            throw new ApiException(HttpStatus.BAD_REQUEST,
+                    "STORY_QUERY4002",parameterName + "은(는) 정수여야 합니다.");
+        }
+    }
+
+    private static UUID parseUuidOrNull(String value, String parameterName) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return UUID.fromString(value.trim());
+        } catch (IllegalArgumentException exception) {
+            throw new ApiException(HttpStatus.BAD_REQUEST,
+                    "STORY_QUERY4003",parameterName + "은(는) 올바른 UUID여야 합니다.");
+        }
+    }
+
+    private static <E extends Enum<E>> E parseEnumOrNull(String value, Class<E> enumType, String parameterName) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return Enum.valueOf(enumType, value.trim().toUpperCase());
+        } catch (IllegalArgumentException exception) {
+            throw new ApiException(HttpStatus.BAD_REQUEST,
+                    "STORY_QUERY4004",parameterName + " 값이 올바르지 않습니다.");
+        }
+    }
 
     // 저장된 소식 목록 조회
     // GET /api/v1/admin/stories
@@ -38,7 +74,7 @@ public class AdminStoryController {
         int pageValue = parseIntOrDefault(page, 0, "page");
         int sizeValue = parseIntOrDefault(size, 10, "size");
         if (pageValue < 0 || sizeValue < 1) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "page는 0 이상, size는 1 이상이어야 합니다.");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "STORY_QUERY4001", "page는 0 이상, size는 1 이상이어야 합니다.");
         }
 
         StoryInfoResponse response = adminStoryService.getStories(
@@ -49,42 +85,6 @@ public class AdminStoryController {
                 parseEnumOrNull(publicationStatus, StoryPublicationStatus.class, "publicationStatus")
         );
         return ResponseEntity.ok(ApiResponse.success("소식 목록 조회에 성공했습니다.", response));
-    }
-
-    private static int parseIntOrDefault(String value, int defaultValue, String parameterName) {
-        if (value == null || value.isBlank()) {
-            return defaultValue;
-        }
-        try {
-            return Integer.parseInt(value.trim());
-        } catch (NumberFormatException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    parameterName + "은(는) 정수여야 합니다.");
-        }
-    }
-
-    private static UUID parseUuidOrNull(String value, String parameterName) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        try {
-            return UUID.fromString(value.trim());
-        } catch (IllegalArgumentException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    parameterName + "은(는) 올바른 UUID여야 합니다.");
-        }
-    }
-
-    private static <E extends Enum<E>> E parseEnumOrNull(String value, Class<E> enumType, String parameterName) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        try {
-            return Enum.valueOf(enumType, value.trim().toUpperCase());
-        } catch (IllegalArgumentException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    parameterName + " 값이 올바르지 않습니다.");
-        }
     }
 
     // 소식 상세 조회
