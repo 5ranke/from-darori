@@ -3,7 +3,7 @@ window.DaroriAdmin = (() => {
   const routes = {
     dashboard: 'dashboard.html',
     visitor: null,
-    newsletter: null,
+    newsletter: 'newsletter.html',
     notices: null,
     subscribers: null,
     operators: null,
