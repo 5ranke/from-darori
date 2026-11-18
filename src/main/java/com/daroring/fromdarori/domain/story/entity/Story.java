@@ -59,4 +59,17 @@ public class Story {
 
     @Column(name = "title", nullable = false, length = 80)
     private String title;
+
+    public static Story create(Category category, AdminUser createdBy, String title, String body,
+                               String actionUrl, LocalDate applicationDeadline) {
+        Story story = new Story();
+        story.category = category;
+        story.createdBy = createdBy;
+        story.title = title;
+        story.body = body;
+        story.actionUrl = actionUrl;
+        story.applicationDeadline = applicationDeadline;
+        story.sourceType = StorySourceType.MANUAL;
+        return story;
+    }
 }
