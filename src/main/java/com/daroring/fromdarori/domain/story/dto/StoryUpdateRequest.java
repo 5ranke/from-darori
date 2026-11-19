@@ -1,22 +1,42 @@
 package com.daroring.fromdarori.domain.story.dto;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
-public record StoryUpdateRequest(
-        UUID categoryId,
+@Getter
+@Setter
+public class StoryUpdateRequest {
+    private UUID categoryId;
 
-        @Size(max=80, message = "제목은 최대 80자까지 작성할 수 있습니다.")
-        String title,
+    @Size(max = 80)
+    private String title;
 
-        @Size(max = 3000, message = "본문은 최대 3,000자까지 작성할 수 있습니다.")
-        String body,
-        String actionUrl,
-        LocalDate applicationDeadline,
-        List<@Valid StoryImageRequest> images
-) {
+    @Size(max = 3000)
+    private String body;
+
+    private String actionUrl;
+    private LocalDate applicationDeadline;
+    private List<@NotNull @Valid StoryImageUpdateRequest> images;
+
+    @Setter(lombok.AccessLevel.NONE)
+    private boolean actionUrlPresent;
+
+    @Setter(lombok.AccessLevel.NONE)
+    private boolean applicationDeadlinePresent;
+
+    public void setActionUrl(String actionUrl) {
+        this.actionUrl = actionUrl;
+        actionUrlPresent = true;
+    }
+
+    public void setApplicationDeadline(LocalDate applicationDeadline) {
+        this.applicationDeadline = applicationDeadline;
+        applicationDeadlinePresent = true;
+    }
 }

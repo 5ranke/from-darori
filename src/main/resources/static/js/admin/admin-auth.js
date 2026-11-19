@@ -10,11 +10,11 @@ window.DaroriAdminAuth = (() => {
     }
   }
   function clear() { accessToken = null; revision += 1; }
-  async function send(path, { method = 'GET', body, token, timeoutMs = 15000 } = {}) {
+  async function send(path, { method = 'GET', body, token, timeoutMs = 15000, responseType } = {}) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const headers = { Accept: 'application/json' };
+      const headers = { Accept: responseType === 'image' ? 'image/*, application/json' : 'application/json' };
       const isForm = body instanceof FormData; // 사진 같은 파일이면 브라우저가 형식을 정함
       if (body !== undefined && !isForm) headers['Content-Type'] = 'application/json';
       if (token) headers.Authorization = `Bearer ${token}`;
@@ -27,6 +27,9 @@ window.DaroriAdminAuth = (() => {
         throw new AuthError('network', error.name === 'AbortError'
           ? '서버 응답이 지연되고 있습니다. 다시 시도해 주세요.'
           : '서버에 연결할 수 없습니다. 연결 상태를 확인해 주세요.');
+      }
+      if (response.ok && responseType === 'image' && response.headers.get('Content-Type')?.startsWith('image/')) {
+        return await response.blob();
       }
       let data;
       try { data = await response.json(); }

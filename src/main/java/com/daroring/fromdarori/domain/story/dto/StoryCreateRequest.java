@@ -22,6 +22,6 @@ public record StoryCreateRequest(
 
         String actionUrl,
         LocalDate applicationDeadline,
-        List<@Valid StoryImageRequest> images
+        List<@NotNull @Valid StoryImageRequest> images
 ) {
 }

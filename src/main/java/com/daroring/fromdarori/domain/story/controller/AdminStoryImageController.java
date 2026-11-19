@@ -1,68 +1,45 @@
 package com.daroring.fromdarori.domain.story.controller;
 
 import com.daroring.fromdarori.domain.story.dto.StoryImagePostResponse;
-import com.daroring.fromdarori.domain.story.exception.ApiException;
+import com.daroring.fromdarori.domain.story.service.LocalStoryImageStorage;
 import com.daroring.fromdarori.global.response.ApiResponse;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/story-images")
 public class AdminStoryImageController {
-    // 소식 사진 업로드
-    // POST /api/v1/admin/story-images
-    @PostMapping
-    public ResponseEntity<ApiResponse<List<StoryImagePostResponse>>> upload(
-            @RequestParam("filename") List<MultipartFile> files) {
-        List<StoryImagePostResponse> results = new ArrayList<>();
+    private final LocalStoryImageStorage storage;
 
-        try {
-            for (MultipartFile file : files) {
-                if (file.isEmpty()) {
-                    throw new ApiException(HttpStatus.BAD_REQUEST, "IMAGE4001", "이미지가 없습니다.");
-                }
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<StoryImagePostResponse>> upload(@RequestParam("file") MultipartFile file) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.created("사진이 업로드되었습니다.", storage.save(file)));
+    }
 
-                String originalFilename = file.getOriginalFilename();
-                String contentType = file.getContentType();
-                long fileSize = file.getSize();
-
-                Path uploadPath = Paths.get("upload").toAbsolutePath().normalize();
-                Files.createDirectories(uploadPath);
-
-                String extension = "";
-                if (originalFilename != null) {
-                    int dotIndex = originalFilename.lastIndexOf('.');
-                    if (dotIndex >= 0) {
-                        extension = originalFilename.substring(dotIndex);
-                    }
-                }
-
-                String savedFilename = UUID.randomUUID() + extension;
-                file.transferTo(uploadPath.resolve(savedFilename));
-
-                results.add(new StoryImagePostResponse(
-                        savedFilename,
-                        "/upload/" + savedFilename,
-                        originalFilename,
-                        contentType,
-                        fileSize
-                ));
-            }
-        } catch (IOException exception) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "IMAGE4002", exception.getMessage());
+    @GetMapping("/{objectKey}")
+    public ResponseEntity<Resource> read(@PathVariable String objectKey) {
+        var path = storage.find(objectKey);
+        if (path == null) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(ApiResponse.success("사진이 업로드되었습니다.", results));
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore())
+                .header("X-Content-Type-Options", "nosniff")
+                .contentType(MediaType.parseMediaType(storage.contentType(objectKey)))
+                .body(new FileSystemResource(path));
     }
 }

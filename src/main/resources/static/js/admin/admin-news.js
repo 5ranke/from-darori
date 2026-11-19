@@ -155,7 +155,7 @@
 
       const img = document.createElement('img');
       img.className = 'news-photo-item';
-      img.src = photo.url;
+      if (photo.url) img.src = photo.url;
       img.alt = photo.name;
 
       const remove = document.createElement('button');
@@ -183,6 +183,7 @@
         photo.objectKey = result.objectKey;
         photo.uploading = false;
       } catch (error) {
+        URL.revokeObjectURL(photo.url);
         photos = photos.filter(p => p !== photo); // 실패한 사진은 빼기
         handleError(error, '사진 업로드 실패');
       }
@@ -194,7 +195,8 @@
   photoGrid.addEventListener('click', e => {
     const btn = e.target.closest('.news-photo-remove');
     if (!btn) return;
-    photos.splice(Number(btn.dataset.index), 1);
+    const [photo] = photos.splice(Number(btn.dataset.index), 1);
+    if (photo?.url) URL.revokeObjectURL(photo.url);
     renderPhotos();
   });
 
@@ -222,9 +224,16 @@
   }
 
   // ── ⑤ 작성 / 수정 ──
+  function clearPhotos() {
+    photos.forEach(photo => {
+      if (photo.url) URL.revokeObjectURL(photo.url);
+    });
+    photos = [];
+  }
+
   function resetForm() {
     form.reset();
-    photos = [];
+    clearPhotos();
     renderPhotos();
     editingId = null;
     if (reportId) leaveReportMode();
@@ -255,10 +264,23 @@
       if (code === 'SEASONAL') buyInput.value = story.actionUrl || '';
       deadlineInput.value = story.applicationDeadline || '';
 
-      // 기존 사진은 imageId로 기억
+      clearPhotos();
       photos = (story.images || []).map(img => ({
-        imageId: img.imageId, url: img.imageUrl, name: '기존 사진', uploading: false
+        imageId: img.imageId, name: '사진을 불러오는 중', uploading: false
       }));
+      photos.forEach(async (photo, index) => {
+        try {
+          const image = await api.getImage(story.images[index].imageUrl);
+          if (!photos.includes(photo)) return;
+          photo.url = URL.createObjectURL(image);
+          photo.name = '기존 사진';
+        } catch (error) {
+          if (!photos.includes(photo)) return;
+          photo.name = '사진을 불러올 수 없어요';
+          if (error.kind === 'session') handleError(error);
+        }
+        renderPhotos();
+      });
       renderPhotos();
 
       formTitle.textContent = '소식 수정';

@@ -1,12 +1,11 @@
 package com.daroring.fromdarori.domain.story.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 public record StoryImageRequest(
-        @NotNull
-        String objectKey,
-
-        // 서버가 images 배열 순서로 결정하므로 입력은 선택 사항입니다.
-        Integer displayOrder
+        @NotBlank String objectKey,
+        @NotNull @Positive Integer displayOrder
 ) {
 }
