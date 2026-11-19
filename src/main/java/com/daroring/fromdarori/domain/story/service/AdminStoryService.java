@@ -98,14 +98,7 @@ public class AdminStoryService {
 
         List<StoryImage> savedImages = request.images() == null
                 ? List.of()
-                : adminStoryImageRepository.saveAll(request.images().stream()
-                    .map(image -> StoryImage.create(
-                            story,
-                            image.objectKey(),
-                            image.displayOrder()
-                    ))
-                    .toList()
-                );
+                : adminStoryImageRepository.saveAll(addStoryImages(story, request.images()));
         List<StoryImageResponse> imageResponses = savedImages.stream()
                 .map(image -> new StoryImageResponse(
                         image.getId(),
@@ -139,12 +132,11 @@ public class AdminStoryService {
 
         if (request.images() != null) {
             adminStoryImageRepository.deleteByStory_Id(storyId);
-            adminStoryImageRepository.saveAll(request.images().stream()
-                    .map(image -> StoryImage.create(story, image.objectKey(), image.displayOrder()))
-                    .toList());
+            adminStoryRepository.flush();
+            if (!request.images().isEmpty()) {
+                addStoryImages(story, request.images());
+            }
         }
-
-        adminStoryRepository.flush();
         List<StoryImageResponse> imageResponses = adminStoryImageRepository
                 .findByStory_IdOrderByDisplayOrderAsc(storyId)
                 .stream()
@@ -159,5 +151,17 @@ public class AdminStoryService {
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "STORY4041", "소식을 찾을 수 없습니다."));
         adminStoryRepository.delete(story);
         return story.getId();
+    }
+
+    public List<StoryImage> addStoryImages(Story story, List<StoryImageRequest> savedFilenames) {
+        adminStoryRepository.findById(story.getId())
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "STORY4041", "소식을 찾을 수 없습니다."));
+        List<StoryImage> images = new java.util.ArrayList<>(savedFilenames.size());
+        for (int index = 0; index < savedFilenames.size(); index++) {
+            // request.images의 순서를 DB display_order(1부터 시작)로 사용합니다.
+            images.add(StoryImage.create(story, savedFilenames.get(index).objectKey(), index + 1));
+        }
+        adminStoryImageRepository.saveAll(images);
+        return images;
     }
 }
