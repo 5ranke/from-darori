@@ -2,16 +2,23 @@ package com.daroring.fromdarori.domain.story.repository;
 
 import com.daroring.fromdarori.domain.story.entity.Story;
 import com.daroring.fromdarori.domain.story.entity.StorySourceType;
+import jakarta.persistence.LockModeType;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import java.util.UUID;
 
 public interface AdminStoryRepository extends JpaRepository<Story, UUID> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select s from Story s where s.id = :id")
+    Optional<Story> findByIdForUpdate(@Param("id") UUID id);
 
     @Query(value = """
             select s from Story s

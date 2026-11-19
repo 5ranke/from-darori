@@ -110,7 +110,7 @@ public class AdminStoryController {
             ) {
         StoryCreateResponse response = adminStoryService.create(request, UUID.fromString(jwt.getSubject()));
         return ResponseEntity.status(201)
-                .body(ApiResponse.success("소식이 등록되었습니다.", response));
+                .body(ApiResponse.created("소식이 등록되었습니다.", response));
     }
 
     // 소식 수정
