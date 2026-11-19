@@ -1,0 +1,10 @@
+/* 인증 확인 전 관리 화면의 순간 노출을 막습니다. 기존 화면 스타일은 유지합니다. */
+html.admin-auth-pending .admin-page main,
+html.admin-auth-pending #admin-logout { display: none; }
+.admin-page .admin-header-actions { display: flex; align-items: center; gap: 8px; }
+.admin-page .admin-header-actions [hidden] { display: none; }
+.admin-page .admin-auth-status { padding-block: 60px; }
+.admin-page .admin-auth-status button { margin-top: 20px; }
+@media (max-width: 480px) {
+  .admin-page .admin-header-actions { flex-wrap: wrap; justify-content: flex-end; }
+}

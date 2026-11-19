@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="From. 다로리 운영자 로그인">
+  <title>운영자 로그인 | From. 다로리</title>
+  <link rel="stylesheet" href="../css/admin/admin-common.css">
+  <link rel="stylesheet" href="../css/admin/admin-login.css">
+  <link rel="stylesheet" href="../css/admin/admin-auth.css">
+  <script defer src="../js/admin/admin-auth.js"></script>
+  <script defer src="../js/admin/admin-common.js"></script>
+  <script defer src="../js/admin/admin-auth-guard.js"></script>
+  <script defer src="../js/admin/admin-login.js"></script>
+</head>
+<body class="admin-page admin-login-page" data-admin-page="login">
+  <a class="admin-skip" href="#admin-login-main">본문 바로가기</a>
+  <div data-admin-header></div>
+  <main class="admin-login-main" id="admin-login-main">
+    <h1>운영자 페이지</h1>
+    <section class="admin-card admin-login-card" aria-labelledby="admin-login-title">
+      <h2 id="admin-login-title">운영자 로그인</h2>
+      <!-- JavaScript가 같은 출처의 인증 API로 JSON을 전송합니다. -->
+      <form id="admin-login-form" method="post" novalidate>
+        <div class="admin-login-field">
+          <label for="admin-login-email">이메일</label>
+          <input class="admin-input" id="admin-login-email" name="email" type="email" maxlength="254" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="name@example.com" aria-describedby="admin-login-email-error" required>
+          <p class="admin-login-error" id="admin-login-email-error" hidden></p>
+        </div>
+        <div class="admin-login-field">
+          <label for="admin-login-password">비밀번호</label>
+          <input class="admin-input" id="admin-login-password" name="password" type="password" autocomplete="current-password" placeholder="비밀번호를 입력하세요." aria-describedby="admin-login-password-error" required>
+          <p class="admin-login-error" id="admin-login-password-error" hidden></p>
+        </div>
+        <div class="admin-login-options">
+          <label class="admin-login-remember" for="admin-login-remember"><input id="admin-login-remember" name="remember" type="checkbox">로그인 유지</label>
+        </div>
+        <button class="admin-button admin-button--primary admin-login-submit" id="admin-login-submit" type="submit" disabled>로그인</button>
+        <p class="admin-login-status" id="admin-login-status" role="status" aria-live="polite"></p>
+      </form>
+      <noscript><p>로그인 화면을 사용하려면 JavaScript를 활성화해 주세요.</p></noscript>
+    </section>
+  </main>
+  <div data-admin-footer></div>
+  <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-dialog-title" aria-describedby="admin-dialog-description">
+    <form method="dialog">
+      <h2 id="admin-dialog-title"></h2>
+      <p id="admin-dialog-description"></p>
+      <div class="admin-dialog-actions"><button class="admin-button admin-button--outline" value="cancel" id="admin-dialog-cancel">취소</button><button class="admin-button admin-button--primary" value="confirm" id="admin-dialog-confirm">확인</button></div>
+    </form>
+  </dialog>
+</body>
+</html>

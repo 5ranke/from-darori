@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko" class="admin-auth-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>주민 제보 | From. 다로리 관리</title>
+  <link rel="stylesheet" href="../css/admin/admin-common.css">
+  <link rel="stylesheet" href="../css/admin/admin-reports.css">
+  <link rel="stylesheet" href="../css/admin/admin-auth.css">
+  <script defer src="../js/admin/admin-auth.js"></script>
+  <script defer src="../js/admin/admin-common.js"></script>
+  <script defer src="../js/admin/admin-auth-guard.js"></script>
+  <script defer src="../js/admin/admin-reports-api.js"></script>
+  <script defer src="../js/admin/admin-reports.js"></script>
+</head>
+<body class="admin-page" data-admin-page="reports">
+  <div data-admin-header></div>
+  <main class="admin-container admin-main">
+    <h1 class="admin-greeting">안녕하세요, <span id="admin-name">OOO</span>님</h1>
+
+    <!-- 탭 -->
+    <nav class="admin-tabs" aria-label="운영자 영역">
+      <a class="admin-tab admin-tab--active" href="news.html" aria-current="page">뉴스레터 제작</a>
+      <a class="admin-tab" href="dashboard.html">관리</a>
+    </nav>
+
+    <div class="admin-workspace">
+      <nav class="admin-sidebar admin-card" aria-label="뉴스레터 메뉴" data-admin-sidebar></nav>
+
+      <!-- ===== 여기부터 윤서님이 만드는 부분 ===== -->
+      <section class="admin-report-page admin-card" id="admin-content">
+        <h2 class="report-title">주민 제보</h2>
+        <p class="report-desc">주민에게 받은 제보를 모아 두고, 소식으로 등록할 수 있어요.</p>
+
+        <h3 class="report-list-title">받은 제보 (<span id="report-count">0</span>)</h3>
+        <ul class="report-list" id="report-list"></ul>
+        <p class="report-list-status" id="report-list-status" role="status">제보를 불러오는 중이에요…</p>
+
+        <!-- 더 보기 / 접기 화살표 -->
+        <button type="button" class="report-more" id="report-more" aria-label="제보 더 보기" hidden>
+          <svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </button>
+      </section>
+      <!-- ===== 여기까지 ===== -->
+
+    </div>
+  </main>
+  <div data-admin-footer></div>
+
+  <!-- 제보 상세 팝업 -->
+  <dialog class="report-dialog" id="report-detail-dialog" aria-labelledby="report-detail-title">
+    <div class="report-dialog-inner">
+      <div class="report-dialog-head">
+        <span class="report-badge">주민 제보</span>
+        <button type="button" class="report-btn report-btn--lg" id="report-detail-close">닫기</button>
+      </div>
+      <h2 class="report-detail-title" id="report-detail-title"></h2>
+      <p class="report-detail-body" id="report-detail-body"></p>
+    </div>
+  </dialog>
+
+  <!-- 제보 삭제 팝업 -->
+  <dialog class="report-dialog" id="report-delete-dialog" aria-labelledby="report-delete-heading">
+    <div class="report-dialog-inner report-dialog-inner--center">
+      <h2 class="report-delete-heading" id="report-delete-heading">제보를 삭제 하시겠습니까?</h2>
+      <p class="report-delete-desc">아래 항목이 삭제되며, 삭제하면 되돌릴 수 없어요.</p>
+      <div class="report-delete-box">
+        <span>제보</span>
+        <strong id="report-delete-target"></strong>
+      </div>
+      <div class="report-delete-actions">
+        <button type="button" class="report-btn report-btn--lg" id="report-delete-cancel">취소</button>
+        <button type="button" class="report-btn report-btn--lg report-btn--dark report-delete-confirm" id="report-delete-confirm">삭제하기</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 공통 팝업 (소식으로 등록 확인, 에러 안내) -->
+  <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-dialog-title" aria-describedby="admin-dialog-description">
+    <form method="dialog">
+      <h2 id="admin-dialog-title"></h2>
+      <p id="admin-dialog-description"></p>
+      <div class="admin-dialog-actions"><button class="admin-button admin-button--outline" value="cancel" id="admin-dialog-cancel">취소</button><button class="admin-button admin-button--primary" value="confirm" id="admin-dialog-confirm">확인</button></div>
+    </form>
+  </dialog>
+</body>
+</html>

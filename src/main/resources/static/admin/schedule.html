@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko" class="admin-auth-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>발행 예약 | From. 다로리 관리</title>
+  <link rel="stylesheet" href="../css/admin/admin-common.css">
+  <link rel="stylesheet" href="../css/admin/admin-schedule.css">
+  <link rel="stylesheet" href="../css/admin/admin-auth.css">
+  <script defer src="../js/admin/admin-auth.js"></script>
+  <script defer src="../js/admin/admin-common.js"></script>
+  <script defer src="../js/admin/admin-auth-guard.js"></script>
+  <script defer src="../js/admin/admin-schedule-api.js"></script>
+  <script defer src="../js/admin/admin-schedule.js"></script>
+</head>
+<body class="admin-page" data-admin-page="schedule">
+  <div data-admin-header></div>
+  <main class="admin-container admin-main">
+    <h1 class="admin-greeting">안녕하세요, <span id="admin-name">OOO</span>님</h1>
+
+    <!-- 탭 -->
+    <nav class="admin-tabs" aria-label="운영자 영역">
+      <a class="admin-tab admin-tab--active" href="news.html" aria-current="page">뉴스레터 제작</a>
+      <a class="admin-tab" href="dashboard.html">관리</a>
+    </nav>
+
+    <div class="admin-workspace">
+      <nav class="admin-sidebar admin-card" aria-label="뉴스레터 메뉴" data-admin-sidebar></nav>
+
+      <!-- ===== 여기부터 윤서님이 만드는 부분 ===== -->
+      <section class="admin-schedule admin-card" id="admin-content">
+        <h2 class="sc-title">발행 예약</h2>
+        <p class="sc-desc">뉴스레터 발행을 예약하세요.</p>
+
+        <form id="sc-form" class="sc-form">
+          <p class="sc-label" id="sc-cycle-label">발행 주기</p>
+          <div class="sc-cycle" role="group" aria-labelledby="sc-cycle-label">
+            <span>매월</span>
+            <select id="sc-day" class="sc-select" aria-label="발행일"></select>
+            <span>일</span>
+            <input id="sc-time" class="sc-time" type="time" value="10:00" aria-label="발행 시간">
+          </div>
+
+          <p class="sc-label sc-label--tight">뉴스레터 선택</p>
+          <p class="sc-help">발행할 뉴스레터 하나를 선택해주세요.</p>
+          <ul class="sc-list" id="sc-list"></ul>
+          <p class="sc-list-status" id="sc-list-status" role="status">뉴스레터를 불러오는 중이에요…</p>
+
+          <button type="submit" class="sc-submit" id="sc-submit">예약하기</button>
+        </form>
+      </section>
+      <!-- ===== 여기까지 ===== -->
+
+    </div>
+  </main>
+  <div data-admin-footer></div>
+  <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-dialog-title" aria-describedby="admin-dialog-description">
+    <form method="dialog">
+      <h2 id="admin-dialog-title"></h2>
+      <p id="admin-dialog-description"></p>
+      <div class="admin-dialog-actions"><button class="admin-button admin-button--outline" value="cancel" id="admin-dialog-cancel">취소</button><button class="admin-button admin-button--primary" value="confirm" id="admin-dialog-confirm">확인</button></div>
+    </form>
+  </dialog>
+</body>
+</html>

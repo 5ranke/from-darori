@@ -1,0 +1,70 @@
+/* 헤더·탭·메뉴·푸터·반응형 레이아웃은 admin-common.css를 그대로 사용합니다.
+ * 공지사항 카드와 폼·목록·팝업에만 전용 스타일을 적용합니다. */
+.admin-notice-page .notice-demo br { display: none; }
+/* 공지사항 페이지 안에서만 적용합니다. 공통/대시보드 스타일은 수정하지 않습니다. */
+.admin-notice-page .notice-panel { min-width: 0; padding: 40px 30px 68px; border-radius: 15px; }
+.admin-notice-page .notice-panel h2 { font-size: 23px; font-weight: 750; letter-spacing: -.6px; }
+.admin-notice-page .notice-intro { margin-top: 4px; color: var(--admin-muted); font-size: 18px; }
+.admin-notice-page .notice-demo { margin-top: 10px; padding: 0; font-size: 12px; color: #777780; line-height: 1.6; }
+.admin-notice-page #notice-form { margin-top: 28px; }
+.admin-notice-page .notice-field { margin: 0 0 22px; padding: 0; border: 0; min-width: 0; }
+.admin-notice-page .notice-field > label, .admin-notice-page .notice-label-row label, .admin-notice-page legend { font-size: 18px; font-weight: 700; }
+.admin-notice-page .notice-label-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.admin-notice-page .notice-count { font-size: 13px; color: #777780; }
+.admin-notice-page .notice-field .admin-input { margin-top: 14px; min-height: 48px; padding: 12px 15px; border-radius: 12px; font-size: 15px; }
+.admin-notice-page .notice-field textarea.admin-input { resize: vertical; height: 116px; min-height: 116px; }
+.admin-notice-page .notice-category-options { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+.admin-notice-page .notice-category-options label { position: relative; cursor: pointer; }
+.admin-notice-page .notice-category-options input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.admin-notice-page .notice-category-options span { display: block; padding: 7px 15px; border: 1px solid #99999f; border-radius: 999px; color: #777780; }
+.admin-notice-page .notice-category-options input:checked + span { background: var(--admin-orange); border-color: var(--admin-orange); color: white; }
+.admin-notice-page .notice-category-options input:focus-visible + span { outline: 3px solid #bd3d20; outline-offset: 4px; }
+.admin-notice-page .notice-pin-label { font-size: 16px; display: inline-flex; align-items: center; gap: 9px; cursor: pointer; }
+.admin-notice-page .notice-pin-label input { appearance: none; display: grid; place-content: center; width: 22px; height: 22px; margin: 0; border: 1px solid #c7c7ce; border-radius: 6px; background: white; cursor: pointer; }
+.admin-notice-page .notice-pin-label input:checked { background: var(--admin-orange); border-color: var(--admin-orange); }
+.admin-notice-page .notice-pin-label input:checked::after { content: ""; width: 6px; height: 11px; border: solid white; border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }
+.admin-notice-page .notice-form-actions { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+.admin-notice-page [hidden] { display: none !important; }
+.admin-notice-page .notice-error { margin-top: 7px; color: #b43c25; font-size: 13px; }
+.admin-notice-page [aria-invalid="true"] { border-color: #b43c25; }
+.admin-notice-page .notice-status:not(:empty) { margin-top: 16px; color: #7b4331; }
+.admin-notice-page .notice-list-section { margin-top: 48px; }
+.admin-notice-page .notice-form-actions .admin-button { min-height: 46px; padding: 9px 21px; font-size: 18px; border-radius: 12px; }
+.admin-notice-page .notice-search { display: flex; gap: 8px; margin-top: 20px; align-items: center; }
+.admin-notice-page .notice-search .admin-input { padding: 10px 14px; font-size: 14px; }
+.admin-notice-page .notice-search .admin-button { min-height: 42px; padding: 8px 14px; font-size: 14px; }
+.admin-notice-page .notice-search input { min-width: 0; }
+.admin-notice-page .notice-list-summary { margin-top: 14px; color: #777780; font-size: 13px; }
+.admin-notice-page .notice-list { list-style: none; margin: 8px 0 0; padding: 0; }
+.admin-notice-page .notice-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 26px 0; border-bottom: 1px solid var(--admin-border); }
+.admin-notice-page .notice-copy { min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; column-gap: 12px; row-gap: 10px; }
+.admin-notice-page .notice-copy .notice-badges { grid-column: 1; grid-row: 1; }
+.admin-notice-page .notice-copy .notice-title { grid-column: 2; grid-row: 1; margin-top: 0; line-height: 1.6; }
+.admin-notice-page .notice-copy .notice-meta { grid-column: 2; grid-row: 2; margin-top: 0; }
+.admin-notice-page .notice-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.admin-notice-page .notice-badge { display: inline-block; padding: 4px 12px; background: #fff0eb; border-radius: 999px; font-size: 13px; }
+.admin-notice-page .notice-title { display: block; border: 0; padding: 0; margin-top: 9px; color: var(--admin-text); background: transparent; text-align: left; font-size: 16px; font-weight: 650; overflow-wrap: anywhere; }
+.admin-notice-page .notice-title:hover { text-decoration: underline; text-underline-offset: 4px; }
+.admin-notice-page .notice-meta { color: var(--admin-muted); font-size: 14px; margin-top: 8px; }
+.admin-notice-page .notice-row-actions { display: flex; gap: 12px; flex-shrink: 0; flex-wrap: wrap; }
+.admin-notice-page .notice-row-actions .admin-button { min-height: 38px; padding: 7px 15px; font-size: 14px; }
+.admin-notice-page .notice-pagination { display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; margin-top: 28px; }
+.admin-notice-page .notice-page-button { min-width: 38px; min-height: 40px; border: 1px solid var(--admin-border); border-radius: 10px; background: white; color: var(--admin-text); padding: 7px 12px; }
+.admin-notice-page .notice-page-button[aria-current="page"] { background: var(--admin-orange); color: white; border-color: var(--admin-orange); }
+.admin-notice-page button:disabled { opacity: .5; cursor: not-allowed; }
+.admin-notice-page .notice-empty { padding: 40px 10px; text-align: center; color: #777780; }
+.admin-notice-page .notice-detail { width: min(720px, calc(100% - 32px)); max-height: calc(100svh - 48px); overflow-y: auto; }
+.admin-notice-page .notice-detail-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 32px; }
+.admin-notice-page .notice-detail h2 { overflow-wrap: anywhere; }
+.admin-notice-page .notice-detail-body { white-space: pre-wrap; overflow-wrap: anywhere; margin-top: 28px; line-height: 1.9; }
+.admin-notice-page .notice-detail .notice-detail-demo { margin-top: 30px; font-size: 12px; color: #777780; }
+@media (max-width: 1050px) { .admin-notice-page .notice-row { align-items: flex-start; flex-direction: column; } .admin-notice-page .notice-row-actions { align-self: flex-end; } }
+@media (max-width: 600px) { .admin-notice-page .notice-panel { padding: 26px 18px; } .admin-notice-page .notice-search { flex-wrap: wrap; } .admin-notice-page .notice-search input { flex-basis: 100%; } .admin-notice-page .notice-panel h2 { font-size: 22px; } }
+
+@media (max-width: 600px) {
+  .admin-notice-page .notice-intro { font-size: 16px; }
+  .admin-notice-page .notice-copy { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .admin-notice-page .notice-copy .notice-badges, .admin-notice-page .notice-copy .notice-title, .admin-notice-page .notice-copy .notice-meta { grid-column: 1; grid-row: auto; }
+  .admin-notice-page .notice-row-actions { gap: 8px; }
+  .admin-notice-page .notice-row-actions .admin-button { padding-inline: 12px; }
+}

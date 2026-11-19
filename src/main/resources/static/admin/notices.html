@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko" class="admin-auth-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>공지사항 관리 | From. 다로리</title>
+  <link rel="stylesheet" href="../css/admin/admin-common.css">
+  <link rel="stylesheet" href="../css/admin/admin-notice.css">
+  <link rel="stylesheet" href="../css/admin/admin-auth.css">
+  <script defer src="../js/admin/admin-auth.js"></script>
+  <script defer src="../js/admin/admin-common.js"></script>
+  <script defer src="../js/admin/admin-auth-guard.js"></script>
+  <script defer src="../js/admin/admin-notice-data.js"></script>
+  <script defer src="../js/admin/admin-notice.js"></script>
+</head>
+<body class="admin-page admin-notice-page" data-admin-page="notices">
+  <a class="admin-skip" href="#notice-main">본문 바로가기</a>
+  <div data-admin-header></div>
+  <main class="admin-container admin-main">
+    <h1 class="admin-greeting">안녕하세요, OOO님</h1>
+    <nav class="admin-tabs" aria-label="운영자 영역">
+      <button type="button" class="admin-tab" data-admin-route="newsletter">뉴스레터 제작</button>
+      <a href="notices.html" class="admin-tab admin-tab--active" aria-current="page">관리</a>
+    </nav>
+    <div class="admin-workspace">
+      <nav class="admin-sidebar admin-card" aria-label="관리 메뉴" data-admin-sidebar></nav>
+      <section class="admin-card notice-panel" id="notice-main" aria-labelledby="notice-form-heading">
+        <h2 id="notice-form-heading" tabindex="-1">공지사항 작성</h2>
+        <p class="notice-intro">작성한 공지는 공지사항 목록에 올릴 내용으로 저장돼요.</p>
+        <p class="notice-demo">예시 데이터 미리보기 · 실제 서버와 연결되지 않았습니다.<br>등록·수정·삭제·고정 변경은 이 화면에서만 적용되며 새로고침하면 초기화됩니다.</p>
+        <form id="notice-form" novalidate>
+          <div class="notice-field">
+            <div class="notice-label-row"><label for="notice-title">제목 <span class="admin-sr-only">필수</span></label><span class="notice-count" id="notice-title-count">0 / 80자</span></div>
+            <input class="admin-input" id="notice-title" name="title" placeholder="제목을 입력하세요." required aria-describedby="notice-title-count notice-title-error">
+            <p class="notice-error" id="notice-title-error" hidden></p>
+          </div>
+          <fieldset class="notice-field notice-categories" aria-describedby="notice-category-error">
+            <legend>카테고리 <span class="admin-sr-only">필수</span></legend>
+            <div class="notice-category-options">
+              <label><input type="radio" name="category" value="GUIDE" required checked><span>안내</span></label>
+              <label><input type="radio" name="category" value="NEWS" required><span>소식</span></label>
+              <label><input type="radio" name="category" value="PROGRAM" required><span>프로그램</span></label>
+              <label><input type="radio" name="category" value="CLOSED" required><span>마감</span></label>
+            </div>
+            <p class="notice-error" id="notice-category-error" hidden></p>
+          </fieldset>
+          <div class="notice-field">
+            <label for="notice-body">내용 <span class="admin-sr-only">필수</span></label>
+            <textarea class="admin-input" id="notice-body" name="body" rows="7" placeholder="공지사항을 입력하세요." required aria-describedby="notice-body-error"></textarea>
+            <p class="notice-error" id="notice-body-error" hidden></p>
+          </div>
+          <label class="notice-pin-label"><input type="checkbox" id="notice-pinned" name="is_pinned">목록 맨 위에 고정</label>
+          <div class="notice-form-actions"><button type="submit" class="admin-button admin-button--primary" id="notice-save">공지 등록</button><button type="button" class="admin-button admin-button--outline" id="notice-cancel-edit" hidden>수정 취소</button></div>
+        </form>
+        <p class="notice-status" id="notice-status" role="status" aria-live="polite"></p>
+        <section class="notice-list-section" aria-labelledby="notice-list-heading">
+          <h2 id="notice-list-heading" tabindex="-1">등록된 공지 <span id="notice-total"></span></h2>
+          <form class="notice-search" id="notice-search-form" role="search">
+            <label for="notice-search" class="admin-sr-only">공지 제목 검색</label>
+            <input type="search" class="admin-input" id="notice-search" placeholder="공지 제목으로 검색하세요.">
+            <button type="submit" class="admin-button admin-button--outline">검색</button>
+            <button type="button" class="admin-button admin-button--outline" id="notice-search-reset">초기화</button>
+          </form>
+          <p class="notice-list-summary" id="notice-list-summary" role="status" aria-live="polite"></p>
+          <ul class="notice-list" id="notice-list"></ul>
+          <nav class="notice-pagination" id="notice-pagination" aria-label="공지사항 페이지"></nav>
+        </section>
+      </section>
+    </div>
+  </main>
+  <div data-admin-footer></div>
+  <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-dialog-title" aria-describedby="admin-dialog-description">
+    <form method="dialog"><h2 id="admin-dialog-title"></h2><p id="admin-dialog-description"></p>
+      <div class="admin-dialog-actions"><button class="admin-button admin-button--outline" value="cancel" id="admin-dialog-cancel">취소</button><button class="admin-button admin-button--primary" value="confirm" id="admin-dialog-confirm">확인</button></div>
+    </form>
+  </dialog>
+  <dialog class="admin-dialog notice-detail" id="notice-detail" aria-labelledby="notice-detail-title">
+    <div class="notice-detail-top"><div id="notice-detail-badges" class="notice-badges"></div><form method="dialog"><button class="admin-button admin-button--outline">닫기</button></form></div>
+    <h2 id="notice-detail-title"></h2>
+    <p class="notice-meta" id="notice-detail-date"></p>
+    <div class="notice-detail-body" id="notice-detail-body"></div>
+    <p class="notice-detail-demo">예시 공지입니다. 실제 서버 데이터가 아닙니다.</p>
+  </dialog>
+  <noscript><p class="admin-container">인증 확인을 위해 JavaScript를 활성화해 주세요.</p><p class="admin-container">공지사항 미리보기를 사용하려면 JavaScript를 활성화해 주세요.</p></noscript>
+</body>
+</html>

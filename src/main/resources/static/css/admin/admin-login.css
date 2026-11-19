@@ -1,0 +1,31 @@
+/* 로그인 전용 스타일: 대시보드에는 적용되지 않습니다. */
+.admin-page.admin-login-page { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
+.admin-login-page .admin-container { width: min(1120px, calc(100% - 64px)); }
+.admin-login-page .admin-header-inner { min-height: 88px; }
+.admin-login-page .admin-logo { font-size: 23px; }
+.admin-login-page .admin-login-main { flex: 1; width: 100%; padding: 72px 24px 150px; }
+.admin-login-page .admin-login-main h1 { text-align: center; font-size: 32px; font-weight: 750; letter-spacing: -1px; }
+.admin-login-page .admin-login-card { width: min(100%, 680px); margin: 52px auto 0; padding: 36px 46px 30px; border-radius: 16px; }
+.admin-login-page .admin-login-card h2 { font-size: 23px; font-weight: 700; margin-bottom: 28px; letter-spacing: -.5px; }
+.admin-login-page .admin-login-field + .admin-login-field { margin-top: 18px; }
+.admin-login-page .admin-login-field label { display: block; margin-bottom: 10px; font-size: 17px; font-weight: 650; }
+.admin-login-page .admin-input { min-height: 47px; padding: 11px 14px; font-size: 14px; border-radius: 12px; }
+.admin-login-page .admin-input[aria-invalid="true"] { border-color: #b43c25; }
+.admin-login-page .admin-login-error { margin-top: 6px; font-size: 13px; color: #b43c25; }
+.admin-login-page .admin-login-options { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--admin-border); }
+.admin-login-page .admin-login-remember { display: inline-flex; align-items: center; gap: 9px; cursor: pointer; font-size: 14px; min-height: 24px; }
+.admin-login-page .admin-login-remember input { appearance: none; width: 22px; height: 22px; margin: 0; border: 1px solid #cfcfd5; border-radius: 6px; background: white; cursor: pointer; display: grid; place-content: center; }
+.admin-login-page .admin-login-remember input:checked { background: var(--admin-orange); border-color: var(--admin-orange); }
+.admin-login-page .admin-login-remember input:checked::after { content: ''; width: 6px; height: 11px; border: solid white; border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }
+.admin-login-page .admin-login-submit { width: 100%; min-height: 56px; margin-top: 26px; border-radius: 12px; }
+.admin-login-page .admin-login-submit:disabled { background: #ffccbf; color: #704438; cursor: not-allowed; }
+.admin-login-page .admin-login-status:not(:empty) { margin-top: 14px; color: #66666d; font-size: 14px; }
+.admin-login-page .admin-footer-inner { min-height: 88px; }
+@media (max-width: 600px) {
+  .admin-login-page .admin-container { width: calc(100% - 40px); }
+  .admin-login-page .admin-login-main { padding: 48px 20px 64px; }
+  .admin-login-page .admin-login-main h1 { font-size: 28px; }
+  .admin-login-page .admin-login-card { padding: 28px 24px; margin-top: 32px; }
+  .admin-login-page .admin-login-card h2 { font-size: 21px; }
+  .admin-login-page .admin-logo { font-size: 21px; }
+}
