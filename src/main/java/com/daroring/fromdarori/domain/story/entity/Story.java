@@ -74,11 +74,12 @@ public class Story {
     }
 
     public void update(Category category, String title, String body, String actionUrl,
-                       LocalDate applicationDeadline) {
+                       boolean actionUrlPresent, LocalDate applicationDeadline, boolean applicationDeadlinePresent) {
         if (category != null) this.category = category;
         if (title != null) this.title = title;
         if (body != null) this.body = body;
-        if (actionUrl != null) this.actionUrl = actionUrl;
-        if (applicationDeadline != null) this.applicationDeadline = applicationDeadline;
+        if (actionUrlPresent) this.actionUrl = actionUrl;
+        if (applicationDeadlinePresent) this.applicationDeadline = applicationDeadline;
+        this.updatedAt = OffsetDateTime.now();
     }
 }

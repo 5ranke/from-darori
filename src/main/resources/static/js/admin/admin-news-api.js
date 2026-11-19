@@ -21,6 +21,7 @@ window.NewsApi = (() => {
   // 소식
   const getStories = (page = 0, size = 10) => auth.request(`/api/v1/admin/stories?page=${page}&size=${size}`);
   const getStory = id => auth.request(storyPath(id));
+  const getImage = path => auth.request(path, { responseType: 'image' });
   const createStory = body => auth.request('/api/v1/admin/stories', { method: 'POST', body });
   const updateStory = (id, body) => auth.request(storyPath(id), { method: 'PATCH', body });
   const deleteStory = id => auth.request(storyPath(id), { method: 'DELETE' });
@@ -31,17 +32,16 @@ window.NewsApi = (() => {
 
   async function uploadImage(file) {
     const form = new FormData();
-    form.append('filename', file);
-    let result;
+    form.append('file', file);
+    let image;
     try {
-      result = await auth.request('/api/v1/admin/story-images', { method: 'POST', body: form });
+      image = await auth.request('/api/v1/admin/story-images', { method: 'POST', body: form });
     } catch (error) {
       if (error.status === 413) {
         throw new Error('사진 용량이 업로드 제한을 초과했어요. 더 작은 사진을 선택해 주세요.');
       }
       throw error;
     }
-    const image = Array.isArray(result) ? result[0] : undefined;
     if (typeof image?.objectKey !== 'string' || !image.objectKey) {
       throw new Error('업로드한 사진의 저장 정보를 확인할 수 없어요.');
     }
@@ -50,6 +50,6 @@ window.NewsApi = (() => {
 
   return {
     getCategories, getStories, getStory, createStory, updateStory, deleteStory,
-    getReport, registerReportStory, uploadImage
+    getReport, registerReportStory, uploadImage, getImage
   };
 })();
