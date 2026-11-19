@@ -12,10 +12,10 @@ window.NewsApi = (() => {
       cache: 'no-store'
     });
     const data = await response.json().catch(() => null);
-    if (!response.ok || !data || data.isSuccess !== true) {
+    if (!response.ok || data?.isSuccess !== true || !Array.isArray(data.result)) {
       throw new Error((data && data.message) || '카테고리를 불러오지 못했습니다.');
     }
-    return [...data.result].sort((a, b) => a.displayOrder - b.displayOrder);
+    return data.result;
   }
 
   // 소식
@@ -29,11 +29,23 @@ window.NewsApi = (() => {
   const getReport = id => auth.request(reportPath(id));
   const registerReportStory = (id, body) => auth.request(`${reportPath(id)}/story`, { method: 'POST', body });
 
-  // 사진 업로드 (key 이름: file)
-  function uploadImage(file) {
+  async function uploadImage(file) {
     const form = new FormData();
-    form.append('file', file);
-    return auth.request('/api/v1/admin/story-images', { method: 'POST', body: form });
+    form.append('filename', file);
+    let result;
+    try {
+      result = await auth.request('/api/v1/admin/story-images', { method: 'POST', body: form });
+    } catch (error) {
+      if (error.status === 413) {
+        throw new Error('사진 용량이 업로드 제한을 초과했어요. 더 작은 사진을 선택해 주세요.');
+      }
+      throw error;
+    }
+    const image = Array.isArray(result) ? result[0] : undefined;
+    if (typeof image?.objectKey !== 'string' || !image.objectKey) {
+      throw new Error('업로드한 사진의 저장 정보를 확인할 수 없어요.');
+    }
+    return image;
   }
 
   return {

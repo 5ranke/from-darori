@@ -60,12 +60,12 @@
   const formatDate = iso => (iso ? iso.slice(0, 10).replaceAll('-', '.') : '');
 
   // ── ① 카테고리 ──
-  function renderCategories() {
+  function renderCategories(emptyMessage) {
     categoryBox.innerHTML = '';
     if (!categories.length) {
       const empty = document.createElement('p');
       empty.className = 'news-empty';
-      empty.textContent = '카테고리를 불러오지 못했어요. 새로고침해 주세요.';
+      empty.textContent = emptyMessage;
       categoryBox.append(empty);
       return;
     }
@@ -91,23 +91,16 @@
     buyField.hidden = code !== 'SEASONAL';
   }
 
-    // 서버가 code를 안 보내줄 때를 대비해 이름으로 code 붙이기
-  const CODE_BY_NAME = {
-    '다로리의 요즘': 'VILLAGE_NEWS',
-    '프로젝트 후속': 'PROJECT_FOLLOW_UP',
-    '구인/참여': 'RECRUITMENT',
-    '제철 정보': 'SEASONAL'
-  };
-
   async function loadCategories() {
+    let emptyMessage = '등록된 카테고리가 없어요.';
     try {
-      const list = await api.getCategories();
-      categories = list.map(c => ({ ...c, code: c.code || CODE_BY_NAME[c.name] }));
+      categories = await api.getCategories();
     } catch {
       categories = [];
+      emptyMessage = '카테고리를 불러오지 못했어요. 새로고침해 주세요.';
     }
-    renderCategories();
-    if (categories.length) selectCategory(categories[0].categoryId);
+    renderCategories(emptyMessage);
+    selectCategory(categories[0]?.categoryId);
   }
   // ── ② 저장된 소식 목록 ──
   function renderList() {
