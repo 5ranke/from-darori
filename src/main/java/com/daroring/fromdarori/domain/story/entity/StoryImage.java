@@ -28,4 +28,12 @@ public class StoryImage {
 
     @Column(name = "display_order", nullable = false)
     private Integer displayOrder;
+
+    public static StoryImage create(Story story, String objectKey, Integer displayOrder){
+        StoryImage image = new StoryImage();
+        image.story = story;
+        image.objectKey = objectKey;
+        image.displayOrder = displayOrder;
+        return image;
+    }
 }
