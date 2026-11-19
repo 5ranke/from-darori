@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AdminStoryImageRepository extends JpaRepository<StoryImage, UUID> {
-    List<StoryImage> findByObjectKeyIn(List<String> objectKey);
     List<StoryImage> findByStory_IdOrderByDisplayOrderAsc(UUID storyId);
     void deleteByStory_Id(UUID storyId);
 }

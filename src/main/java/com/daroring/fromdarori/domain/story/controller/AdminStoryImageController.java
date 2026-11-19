@@ -2,7 +2,6 @@ package com.daroring.fromdarori.domain.story.controller;
 
 import com.daroring.fromdarori.domain.story.dto.StoryImagePostResponse;
 import com.daroring.fromdarori.domain.story.exception.ApiException;
-import com.daroring.fromdarori.domain.story.service.AdminStoryImageService;
 import com.daroring.fromdarori.global.response.ApiResponse;
 import java.io.IOException;
 import java.nio.file.Files;
