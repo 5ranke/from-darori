@@ -17,6 +17,9 @@ public class Category {
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
+    @Column(name = "code", nullable = false, unique = true, updatable = false, length = 50)
+    private String code;
+
     @Column(name = "display_order", nullable = false, unique = true)
     private Integer displayOrder;
 

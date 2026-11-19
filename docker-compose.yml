@@ -4,6 +4,8 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:8080:8080"
+    volumes:
+      - story_uploads:/app/upload
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/darori
       SPRING_DATASOURCE_USERNAME: ${DB_USER:?Set DB_USER in .env}
@@ -38,3 +40,4 @@ services:
 
 volumes:
   postgres18_data:
+  story_uploads:

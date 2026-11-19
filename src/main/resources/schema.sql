@@ -3,15 +3,16 @@ BEGIN;
 CREATE TABLE category
 (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code          VARCHAR(50) NOT NULL UNIQUE,
     name          VARCHAR(50) NOT NULL UNIQUE,
     display_order INT         NOT NULL UNIQUE CHECK (display_order >= 1)
 );
 
-INSERT INTO category (name, display_order)
-VALUES ('다로리의 요즘', 1),
-       ('프로젝트 후속', 2),
-       ('구인/참여', 3),
-       ('제철 정보', 4);
+INSERT INTO category (code, name, display_order)
+VALUES ('VILLAGE_NEWS', '다로리의 요즘', 1),
+       ('PROJECT_FOLLOW_UP', '프로젝트 후속', 2),
+       ('RECRUITMENT', '구인/참여', 3),
+       ('SEASONAL', '제철 정보', 4);
 
 CREATE TABLE admin_user
 (
