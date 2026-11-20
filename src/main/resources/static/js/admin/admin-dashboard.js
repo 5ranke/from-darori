@@ -1,8 +1,8 @@
-/* 대시보드 조회와 화면 상태 처리. 소식 상세·수정·삭제 API는 아직 연결하지 않습니다. */
+/* 대시보드 조회·소식 상세/삭제와 기존 화면 이동. 미구현 기능은 안내합니다. */
 (async () => {
   const authenticatedUser = await window.DaroriAdminAuthPage.ready;
   if (!authenticatedUser) return;
-  const { routes, showDialog } = window.DaroriAdmin;
+  const { routes, showDialog, navigate } = window.DaroriAdmin;
   Object.assign(routes, { notices: 'notices.html', subscribers: 'subscribers.html', operators: 'users.html' });
   const $ = id => document.getElementById(id);
   const panel = $('admin-content');
@@ -13,6 +13,56 @@
   const count = $('admin-report-count');
   const values = [];
   let busy = false;
+  let uncertainDeletion = false;
+  function setBusy(value) {
+    busy = value; panel.setAttribute('aria-busy', String(value));
+    retry.disabled = value;
+    for (const button of list.querySelectorAll('button')) {
+      button.disabled = value || (uncertainDeletion && button.dataset.dashboardDelete === 'true');
+    }
+  }
+  function sessionExpired(error) {
+    if (error.kind !== 'session') return false;
+    status.textContent = '인증 상태가 만료되었습니다. 로그인 화면으로 이동합니다.';
+    window.location.replace('login.html?reason=expired'); return true;
+  }
+  async function openStory(news) {
+    if (busy || $('admin-dialog').open) return;
+    setBusy(true); status.textContent = '소식 상세를 불러오는 중입니다.';
+    try {
+      const story = await window.DaroriAdminDashboardData.getStory(news.id);
+      showDialog({ title: story.title, description: `${story.category} | ${story.date}\n\n${story.body}`, confirmLabel: '닫기' });
+      status.textContent = '소식 상세를 불러왔습니다.';
+    } catch (error) {
+      if (!sessionExpired(error)) {
+        status.textContent = '소식 상세를 불러오지 못했습니다.';
+        showDialog({ title: '소식 상세 조회 실패', description: error.message || '다시 시도해 주세요.', confirmLabel: '닫기' });
+      }
+    } finally { setBusy(false); }
+  }
+  function confirmDelete(news) {
+    if (busy || uncertainDeletion || $('admin-dialog').open) return;
+    showDialog({ title: '소식을 삭제하시겠습니까?',
+      description: `서버에 저장된 아래 소식을 삭제합니다. 삭제한 소식은 복구할 수 없습니다.\n\n${news.title}`,
+      confirmLabel: '삭제하기', onConfirm: () => deleteStory(news.id) });
+  }
+  async function deleteStory(id) {
+    if (busy || uncertainDeletion) return;
+    setBusy(true); status.textContent = '소식을 삭제하는 중입니다.';
+    try {
+      await window.DaroriAdminDashboardData.deleteStory(id);
+      // 삭제 성공과 목록 재조회 실패를 구분합니다. 삭제 요청은 재시도하지 않습니다.
+      setBusy(false); await load('소식을 삭제했습니다.');
+    } catch (error) {
+      if (sessionExpired(error)) return;
+      const knownFailure = error.status >= 400 && error.status < 500;
+      uncertainDeletion = !knownFailure;
+      status.textContent = knownFailure
+        ? (error.message || '소식을 삭제하지 못했습니다. 목록을 다시 조회해 주세요.')
+        : '삭제 요청의 처리 결과를 확인하지 못했습니다. 다시 삭제하기 전에 목록을 재조회해 주세요.';
+      retry.hidden = false;
+    } finally { setBusy(false); }
+  }
   $('admin-name').textContent = authenticatedUser.displayName;
   function unlinked(label) {
     showDialog({ title: `${label} 미연동`, description: '이 동작은 아직 연결되지 않았습니다. 서버 데이터는 변경하지 않습니다.', confirmLabel: '닫기' });
@@ -27,12 +77,15 @@
     const button = document.createElement('button'); button.type = 'button';
     button.className = 'admin-button admin-button--primary admin-stat-link'; button.textContent = '↗';
     button.setAttribute('aria-label', `${stat.label} 관리로 이동`); button.dataset.adminRoute = stat.route;
-    if (stat.route !== 'subscribers') button.addEventListener('click', event => { event.stopPropagation(); unlinked(`${stat.label} 관리`); });
+    if (stat.route === 'letters') button.addEventListener('click', event => { event.stopPropagation(); unlinked(`${stat.label} 관리`); });
     const value = document.createElement('strong'); value.className = 'admin-stat-value'; value.textContent = '—';
     values.push(value); top.append(title, button); card.append(top, value); stats.append(card);
   }
   document.querySelector('[data-admin-route="reports"]').addEventListener('click', event => {
-    event.stopPropagation(); unlinked('주민 제보 조회');
+    event.stopPropagation();
+    showDialog({ title: '주민 제보 조회 미연동',
+      description: '주민 제보 화면은 준비되어 있지만 목록·상세·삭제 API는 아직 구현되지 않았습니다. 화면으로 이동해도 실제 제보를 조회할 수 없습니다.',
+      confirmLabel: '화면으로 이동', onConfirm: () => navigate('reports') });
   });
   function listMessage(message) {
     list.replaceChildren();
@@ -47,37 +100,41 @@
       const item = document.createElement('li'); item.className = 'admin-news-item';
       const copy = document.createElement('div'); copy.className = 'admin-news-copy';
       const title = document.createElement('button'); title.type = 'button'; title.className = 'admin-news-title'; title.textContent = news.title;
-      title.addEventListener('click', () => unlinked('소식 상세 조회'));
+      title.addEventListener('click', () => openStory(news));
       const meta = document.createElement('p'); meta.className = 'admin-news-meta'; meta.textContent = `${news.category} | ${news.date}`;
       copy.append(title, meta);
       const actions = document.createElement('div'); actions.className = 'admin-news-actions';
       const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'admin-button admin-button--outline'; remove.textContent = '삭제';
-      remove.setAttribute('aria-label', `${news.title} 삭제`); remove.addEventListener('click', () => unlinked('소식 삭제'));
+      remove.dataset.dashboardDelete = 'true';
+      remove.setAttribute('aria-label', `${news.title} 삭제`); remove.addEventListener('click', () => confirmDelete(news));
       const edit = document.createElement('button'); edit.type = 'button'; edit.className = 'admin-button admin-button--primary'; edit.textContent = '수정';
-      edit.setAttribute('aria-label', `${news.title} 수정`); edit.addEventListener('click', () => unlinked('소식 수정'));
+      edit.setAttribute('aria-label', `${news.title} 수정`); edit.addEventListener('click', () => {
+        if (busy) return;
+        showDialog({ title: '소식 관리에서 수정',
+          description: '소식 관리 화면의 목록에서 수정할 소식을 선택해 주세요. 해당 소식의 편집 화면으로 자동 진입하는 기능은 아직 연결되지 않았습니다.',
+          confirmLabel: '소식 관리로 이동', onConfirm: () => navigate('news') });
+      });
       actions.append(remove, edit); item.append(copy, actions); list.append(item);
     });
   }
-  async function load() {
+  async function load(successMessage = '') {
     if (busy) return;
-    busy = true; panel.setAttribute('aria-busy', 'true'); retry.hidden = true; retry.disabled = true;
+    setBusy(true); retry.hidden = true;
     values.forEach(value => { value.textContent = '—'; }); count.textContent = '—';
-    listMessage('소식을 불러오는 중입니다.'); status.textContent = '대시보드를 불러오는 중입니다.';
+    listMessage('소식을 불러오는 중입니다.'); status.textContent = successMessage ? `${successMessage} 목록을 다시 조회하는 중입니다.` : '대시보드를 불러오는 중입니다.';
     try {
       const data = await window.DaroriAdminDashboardData.getDashboard();
-      render(data); status.textContent = '대시보드를 불러왔습니다.';
+      uncertainDeletion = false; render(data); status.textContent = successMessage || '대시보드를 불러왔습니다.';
     } catch (error) {
       listMessage('소식을 조회하지 못했습니다.');
-      if (error.kind === 'session') {
-        status.textContent = '인증 상태가 만료되었습니다. 로그인 화면으로 이동합니다.';
-        window.location.replace('login.html?reason=expired'); return;
-      }
-      status.textContent = error.kind === 'network' ? error.message
+      if (sessionExpired(error)) return;
+      const message = error.kind === 'network' ? error.message
         : error.kind === 'forbidden' ? '대시보드 조회 권한이 없습니다.'
           : '대시보드를 조회하지 못했습니다. 다시 시도해 주세요.';
+      status.textContent = successMessage ? `${successMessage} 다만 목록 재조회에 실패했습니다. ${message}` : message;
       retry.hidden = false;
-    } finally { busy = false; retry.disabled = false; panel.setAttribute('aria-busy', 'false'); }
+    } finally { setBusy(false); }
   }
-  retry.addEventListener('click', load);
+  retry.addEventListener('click', () => load());
   await load();
 })();
