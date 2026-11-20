@@ -55,7 +55,7 @@
       await window.DaroriAdminAuth.login({ email: email.value, password: password.value,
         rememberMe: document.getElementById('admin-login-remember').checked });
       password.value = '';
-      window.location.replace('dashboard.html');
+      window.location.replace('newsletter.html');
     } catch (error) {
       status.textContent = error.message;
       password.value = '';

@@ -19,7 +19,7 @@ window.DaroriAdminAuthPage = (() => {
   async function check() {
     try {
       const account = await auth.restore();
-      if (isLogin) { window.location.replace('dashboard.html'); return null; }
+      if (isLogin) { window.location.replace('newsletter.html'); return null; }
       reveal(account); return account;
     } catch (error) {
       if (isLogin) {

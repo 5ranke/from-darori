@@ -4,7 +4,7 @@ window.DaroriAdmin = (() => {
     dashboard: 'dashboard.html',
     visitor: null,
     newsletter: 'newsletter.html',
-    notices: null,
+    notices: 'notices.html',
     subscribers: 'subscribers.html',
     operators: 'users.html',
     news: 'news.html',
