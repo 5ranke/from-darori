@@ -1,6 +1,6 @@
 /* 사용법은 visitor/dev/common-preview.html 참고. defer로 불러옵니다.
- * 방문자 페이지 경로는 아직 미확정이므로 null입니다. 팀 합의 후 routes로 전달하세요.
- * 예: DaroriVisitor.render({ page: 'about', routes: { about: '../about.html' } });
+ * 구현된 마을 소개는 기본 경로를 사용하며, 미확정 메뉴는 null입니다.
+ * 페이지별 경로는 DaroriVisitor.render({ page: 'about', routes: {...} })로 지정할 수 있습니다.
  * 경로는 해당 HTML 기준입니다. 없는 페이지를 생성하거나 API를 호출하지 않습니다.
  */
 (() => {
@@ -8,7 +8,7 @@
   const script = document.currentScript;
   const staticRoot = new URL('../../', script.src);
   const routes = {
-    home: null, about: null, letters: null, notices: null,
+    home: null, about: new URL('visitor/village.html', staticRoot).href, letters: null, notices: null,
     subscribe: null, report: null, unsubscribe: null,
     admin: new URL('admin/login.html', staticRoot).href
   };
