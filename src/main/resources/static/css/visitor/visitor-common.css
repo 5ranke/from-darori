@@ -1,0 +1,85 @@
+/* 첨부 이미지의 비율을 참고한 근사값입니다. 원본 폰트·수치·모바일 시안 확인 후 조정합니다. */
+.visitor-page {
+  --visitor-text: #242424;
+  --visitor-accent: #ff633f;
+  --visitor-line: #e4e4e7;
+  --visitor-muted: #b8b8bf;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  color: var(--visitor-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  line-height: 1.5;
+}
+.visitor-page *, .visitor-page *::before, .visitor-page *::after { box-sizing: border-box; }
+.visitor-page .visitor-container { width: min(1520px, 79.1667%); margin-inline: auto; }
+.visitor-page [data-visitor-header], .visitor-page [data-visitor-footer] { flex-shrink: 0; }
+.visitor-page .visitor-header { border-bottom: 1px solid var(--visitor-line); }
+.visitor-page .visitor-header-inner {
+  min-height: clamp(94px, 6.25vw, 120px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+.visitor-page .visitor-logo {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  flex-shrink: 0;
+  color: var(--visitor-text);
+  font-size: clamp(24px, 1.667vw, 32px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  white-space: nowrap;
+}
+.visitor-page .visitor-header a, .visitor-page .visitor-footer a { text-decoration: none; }
+.visitor-page .visitor-header button, .visitor-page .visitor-footer button { font-family: inherit; cursor: pointer; }
+.visitor-page .visitor-navigation { display: flex; align-items: center; gap: clamp(20px, 2.083vw, 40px); }
+.visitor-page .visitor-menu, .visitor-page .visitor-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--visitor-text);
+  font-size: clamp(16px, 1.146vw, 22px);
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.visitor-page .visitor-menu[aria-current="page"] { color: var(--visitor-accent); font-weight: 700; }
+.visitor-page .visitor-header-actions { display: flex; align-items: center; gap: 12px; }
+.visitor-page .visitor-action { min-height: clamp(44px, 3.021vw, 58px); padding: 10px 26px; border: 1px solid var(--visitor-text); border-radius: 16px; }
+.visitor-page .visitor-action--admin { background: var(--visitor-text); color: #fff; }
+.visitor-page .visitor-header :focus-visible, .visitor-page .visitor-footer :focus-visible { outline: 3px solid var(--visitor-accent); outline-offset: 5px; }
+.visitor-page .visitor-footer { border-top: 1px solid var(--visitor-line); }
+.visitor-page .visitor-footer-inner { min-height: clamp(94px, 6.25vw, 120px); display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.visitor-page .visitor-footer-info { display: flex; align-items: center; gap: 16px; color: var(--visitor-muted); font-size: clamp(14px, 1.146vw, 22px); }
+.visitor-page .visitor-footer-action { border: 0; padding: 0; background: transparent; color: inherit; font-size: inherit; white-space: nowrap; }
+.visitor-page .visitor-contact { color: inherit; }
+.visitor-page .visitor-status { margin: 0; padding-block: 8px; font-size: 14px; color: #737379; }
+.visitor-page .visitor-status:empty { display: none; }
+/* 개발용 확인 화면에만 적용. 실제 홈 본문 스타일이 아닙니다. */
+.visitor-page .visitor-preview { flex: 1; padding-block: 64px; }
+.visitor-page .visitor-preview h1 { font-size: 20px; margin: 0 0 12px; }
+.visitor-page .visitor-preview p { font-size: 14px; color: #737379; margin: 0 0 12px; }
+.visitor-page .visitor-preview select { font: inherit; padding: 8px; border: 1px solid var(--visitor-line); border-radius: 8px; background: #fff; }
+/* 모바일 시안 미제공: 메뉴를 숨기거나 새 메뉴를 추가하지 않고 줄바꿈합니다. */
+@media (max-width: 1100px) {
+  .visitor-page .visitor-container { width: calc(100% - 48px); }
+  .visitor-page .visitor-header-inner { flex-wrap: wrap; padding-block: 20px; gap: 20px; }
+  .visitor-page .visitor-navigation { flex-wrap: wrap; gap: 20px; }
+}
+@media (max-width: 600px) {
+  .visitor-page .visitor-container { width: calc(100% - 32px); }
+  .visitor-page .visitor-navigation { width: 100%; gap: 16px; }
+  .visitor-page .visitor-menu { min-height: 44px; }
+  .visitor-page .visitor-header-actions { width: 100%; }
+  .visitor-page .visitor-footer-inner { align-items: flex-start; flex-direction: column; padding-block: 28px; gap: 16px; }
+  .visitor-page .visitor-footer-info { flex-wrap: wrap; gap: 12px; }
+  .visitor-page .visitor-contact { overflow-wrap: anywhere; }
+}
