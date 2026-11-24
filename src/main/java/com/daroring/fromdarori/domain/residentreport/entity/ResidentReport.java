@@ -56,4 +56,10 @@ public class ResidentReport {
         residentReport.reporterEmail = reporterEmail;
         return residentReport;
     }
+
+    public void update(AdminUser approvedBy) {
+        this.status = ResidentReportStatus.APPROVED;
+        this.approvedBy = approvedBy;
+        this.approvedAt = OffsetDateTime.now();
+    }
 }
