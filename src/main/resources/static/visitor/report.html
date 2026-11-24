@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>제보하기 | From. 다로리</title>
+  <link rel="stylesheet" href="../css/visitor/visitor-common.css">
+  <link rel="stylesheet" href="../css/visitor/visitor-report.css">
+  <script defer src="../js/visitor/visitor-common.js"></script>
+  <script defer src="../js/visitor/visitor-report.js"></script>
+</head>
+<body class="visitor-page" data-visitor-page="report">
+  <div data-visitor-header></div>
+
+  <main class="visitor-container vr-main">
+    <!-- ===== 작성 화면 ===== -->
+    <section id="vr-form-section">
+      <h1 class="vr-title">다로리 마을 제보함</h1>
+      <p class="vr-desc">마을의 좋은 소식, 알리고 싶은 이야기를 들려 주세요.<br>보내 주신 내용은 운영자만 볼 수 있어요.</p>
+
+      <form class="vr-card" id="vr-form" novalidate>
+        <label class="vr-label" for="vr-title-input">제목</label>
+        <input id="vr-title-input" class="vr-input" type="text" maxlength="80" placeholder="제목을 입력하세요.">
+
+        <label class="vr-label" for="vr-body-input">내용</label>
+        <textarea id="vr-body-input" class="vr-input vr-textarea" maxlength="3000" placeholder="내용을 입력하세요."></textarea>
+
+        <label class="vr-label" for="vr-name-input">제보자 이름 (선택)</label>
+        <input id="vr-name-input" class="vr-input" type="text" maxlength="100" placeholder="이름을 입력하세요.">
+
+        <label class="vr-label" for="vr-email-input">제보자 이메일 (선택)</label>
+        <p class="vr-help" id="vr-email-help">답변이 필요한 경우 남겨 주세요.</p>
+        <input id="vr-email-input" class="vr-input" type="email" maxlength="254" placeholder="이메일을 입력하세요." aria-describedby="vr-email-help">
+
+        <p class="vr-error" id="vr-error" role="alert" hidden></p>
+        <button type="submit" class="vr-submit" id="vr-submit" disabled>제보하기</button>
+      </form>
+    </section>
+
+    <!-- ===== 접수 완료 화면 ===== -->
+    <section class="vr-done" id="vr-done" hidden>
+      <div class="vr-done-icon" aria-hidden="true">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h8"/>
+          <path d="M3 7l9 6 9-6"/>
+          <path d="M16 18h6M19 15l3 3-3 3"/>
+        </svg>
+      </div>
+      <h1 class="vr-done-title" id="vr-done-title" tabindex="-1">제보가 접수되었어요!</h1>
+      <p class="vr-desc">소중한 이야기를 들려주셔서 고마워요.<br>운영자가 확인한 뒤 마을 소식이나 공지에 반영할 수 있어요.</p>
+      <!-- 홈 경로가 정해지면 href 바꾸기 -->
+      <a class="vr-home" href="/">홈으로 돌아가기</a>
+    </section>
+  </main>
+
+  <div data-visitor-footer></div>
+</body>
+</html>
