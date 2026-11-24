@@ -136,11 +136,11 @@ public class AdminStoryService {
     }
 
     @Transactional
-    public UUID delete(UUID storyId) {
+    public StoryDeleteResponse delete(UUID storyId) {
         Story story = adminStoryRepository.findById(storyId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "STORY4041", "소식을 찾을 수 없습니다."));
         adminStoryRepository.delete(story);
-        return story.getId();
+        return new StoryDeleteResponse(story.getId());
     }
 
     private List<StoryImage> saveNewImages(Story story, List<StoryImageRequest> requests) {
