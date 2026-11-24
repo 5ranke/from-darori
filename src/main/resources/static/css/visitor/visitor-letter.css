@@ -1,7 +1,50 @@
-/* 다로리 편지.png의 콘텐츠와 편지 상세 페이지.png의 헤더·푸터 틀을 조합한 독립 페이지.
- * 내부 너비·글꼴·여백은 이미지 기반 근사값이며 모바일 별도 시안은 미확인입니다.
- * 공통 헤더·푸터 및 홈 페이지 선택자를 덮어쓰지 않습니다. */
 .visitor-letter-page .visitor-letter-main { flex: 1; width: min(960px, calc(100% - 48px)); margin-inline: auto; padding-block: 64px 96px; }
+.visitor-letter-page .visitor-letter-main:has(.visitor-letter-layout--with-sidebar) {
+  width: min(1520px, 79.1667%);
+  padding-block: clamp(64px, 8vw, 128px) clamp(72px, 8vw, 120px);
+}
+.visitor-letter-page .visitor-letter-layout--with-sidebar {
+  display: grid;
+  grid-template-columns: minmax(0, 19.25fr) minmax(0, 59fr);
+  align-items: start;
+  column-gap: 6.3%;
+  padding-inline-end: 16.5%;
+}
+.visitor-letter-page .visitor-letter-layout--with-sidebar .visitor-letter-paper {
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.visitor-letter-page .visitor-letter-sidebar:not([hidden]) {
+  position: sticky;
+  top: 24px;
+  display: grid;
+  gap: 10px;
+  padding: clamp(12px, 1vw, 20px);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 3px 14px rgb(0 0 0 / 14%);
+}
+.visitor-letter-page .visitor-letter-menu {
+  display: flex;
+  align-items: center;
+  min-height: clamp(44px, 3.6vw, 68px);
+  padding: 8px clamp(10px, 1.4vw, 26px);
+  border: 1px solid #909095;
+  border-radius: 14px;
+  color: #737379;
+  font-size: clamp(15px, 1.17vw, 22px);
+  font-weight: 600;
+  text-decoration: none;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.visitor-letter-page .visitor-letter-menu[aria-current="location"] {
+  border-color: var(--visitor-accent);
+  background: var(--visitor-accent);
+  color: #fff;
+  font-weight: 750;
+}
 .visitor-letter-page .visitor-letter-example { margin: 0 0 16px; color: #737379; font-size: 14px; line-height: 1.6; }
 .visitor-letter-page .visitor-letter-paper { padding: 56px; background: #fff; border-radius: 24px; box-shadow: 0 3px 18px rgb(0 0 0 / 9%); }
 .visitor-letter-page .visitor-letter-top { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
@@ -16,10 +59,11 @@
 .visitor-letter-page .visitor-letter-section p + p { margin-top: 18px; }
 .visitor-letter-page .visitor-letter-section .visitor-letter-placeholder-link { margin-top: 20px; }
 .visitor-letter-page .visitor-letter-placeholder-link span { display: block; color: #909095; font-size: 18px; }
-.visitor-letter-page .visitor-letter-photos { display: flex; gap: 20px; margin-top: 28px; overflow-x: auto; overscroll-behavior-x: contain; }
-.visitor-letter-page .visitor-letter-photo { flex: 0 0 41%; width: 41%; min-width: 0; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 24px; background: #f3f3f3; }
+.visitor-letter-page .visitor-letter-photos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(6px, 0.85vw, 16px); margin-top: 24px; }
+.visitor-letter-page .visitor-letter-photo { display: block; width: 100%; height: auto; border-radius: clamp(8px, 1.25vw, 24px); }
+.visitor-letter-page .visitor-letter-section h2, .visitor-letter-page .visitor-letter-quiz { scroll-margin-block-start: 24px; }
 .visitor-letter-page .visitor-letter-quiz { margin-top: 48px; padding: 32px; background: #f6f6f7; border-radius: 24px; }
-.visitor-letter-page .visitor-letter-quiz h2 { margin: 0 0 24px; font-size: 24px; }
+.visitor-letter-page .visitor-letter-quiz h2 { margin: 0 0 24px; padding-bottom: 12px; border-bottom: 1px solid var(--visitor-line); font-size: 24px; }
 .visitor-letter-page .visitor-letter-quiz fieldset { border: 0; min-width: 0; margin: 0; padding: 0; }
 .visitor-letter-page .visitor-letter-quiz legend { padding: 0; margin-bottom: 20px; font-size: 18px; line-height: 1.6; }
 .visitor-letter-page .visitor-letter-quiz label { display: flex; align-items: center; gap: 10px; margin-block: 12px; font-size: 18px; }
@@ -28,8 +72,16 @@
 .visitor-letter-page .visitor-letter-unavailable { margin: 32px 0 0; font-size: 20px; line-height: 1.7; color: #737379; }
 .visitor-letter-page .visitor-letter-intro:empty { display: none; }
 .visitor-letter-page .visitor-letter-main :focus-visible { outline: 3px solid var(--visitor-accent); outline-offset: 4px; }
+@media (max-width: 1100px) {
+  .visitor-letter-page .visitor-letter-main:has(.visitor-letter-layout--with-sidebar) { width: calc(100% - 48px); }
+}
+@media (max-width: 800px) {
+  .visitor-letter-page .visitor-letter-layout--with-sidebar { grid-template-columns: minmax(0, 1fr); row-gap: 28px; padding-inline-end: 0; }
+  .visitor-letter-page .visitor-letter-sidebar:not([hidden]) { position: static; grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); }
+}
 @media (max-width: 600px) {
-  .visitor-letter-page .visitor-letter-main { width: calc(100% - 32px); padding-block: 32px 56px; }
+  .visitor-letter-page .visitor-letter-main,
+  .visitor-letter-page .visitor-letter-main:has(.visitor-letter-layout--with-sidebar) { width: calc(100% - 32px); padding-block: 32px 56px; }
   .visitor-letter-page .visitor-letter-paper { padding: 24px; border-radius: 20px; }
   .visitor-letter-page .visitor-letter-top { gap: 12px; }
   .visitor-letter-page .visitor-letter-issue { padding: 8px 12px; font-size: 14px; }
@@ -39,8 +91,6 @@
   .visitor-letter-page .visitor-letter-section { margin-top: 36px; }
   .visitor-letter-page .visitor-letter-section h2, .visitor-letter-page .visitor-letter-quiz h2 { font-size: 21px; }
   .visitor-letter-page .visitor-letter-section h3 { font-size: 18px; }
-  .visitor-letter-page .visitor-letter-photos { gap: 12px; }
-  .visitor-letter-page .visitor-letter-photo { flex-basis: 80%; width: 80%; border-radius: 16px; }
   .visitor-letter-page .visitor-letter-quiz { padding: 24px; }
   .visitor-letter-page .visitor-letter-quiz legend, .visitor-letter-page .visitor-letter-quiz label { font-size: 16px; }
 }

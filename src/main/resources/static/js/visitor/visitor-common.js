@@ -7,6 +7,7 @@
   if (!document.body.classList.contains('visitor-page')) return;
   const script = document.currentScript;
   const staticRoot = new URL('../../', script.src);
+  const logoUrl = new URL('images/visitor/darori-envelope-logo.svg', staticRoot).href;
   const routes = {
     home: null, about: new URL('visitor/village.html', staticRoot).href, letters: null, notices: null,
     subscribe: null, report: null, unsubscribe: null,
@@ -37,6 +38,16 @@
     if (active) node.setAttribute('aria-current', 'page');
     return node;
   }
+  function logo() {
+    const link = item('home', 'From. 다로리', 'visitor-logo');
+    const icon = element('img', 'visitor-logo-icon');
+    icon.src = logoUrl;
+    icon.alt = '';
+    icon.width = 66;
+    icon.height = 49;
+    link.prepend(icon);
+    return link;
+  }
   function render(options = {}) {
     if (options.routes) Object.assign(routes, options.routes);
     if (options.page) currentPage = options.page;
@@ -44,7 +55,7 @@
     if (headerHost) {
       const header = element('header', 'visitor-header');
       const inner = element('div', 'visitor-container visitor-header-inner');
-      inner.append(item('home', 'From. 다로리', 'visitor-logo'));
+      inner.append(logo());
       const nav = element('nav', 'visitor-navigation');
       nav.setAttribute('aria-label', '방문자 주 메뉴');
       for (const [key, label] of [['about', '마을 소개'], ['letters', '지난 편지'], ['notices', '공지사항'], ['subscribe', '구독하기']]) {
@@ -65,7 +76,7 @@
       const contact = element('span', 'visitor-contact', `문의 | ${placeholderEmail}`);
       contact.dataset.visitorPlaceholder = 'true';
       info.append(contact, item('unsubscribe', '구독해지', 'visitor-footer-action'));
-      inner.append(item('home', 'From. 다로리', 'visitor-logo'), info);
+      inner.append(logo(), info);
       footer.append(inner); footerHost.replaceChildren(footer);
     }
   }
