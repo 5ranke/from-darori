@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>지난 편지 | From. 다로리</title>
+  <link rel="stylesheet" href="../css/visitor/visitor-common.css">
+  <link rel="stylesheet" href="../css/visitor/visitor-letters.css">
+  <script defer src="../js/visitor/visitor-common.js"></script>
+  <script defer src="../js/visitor/visitor-letters.js"></script>
+</head>
+<body class="visitor-page" data-visitor-page="letters">
+  <div data-visitor-header></div>
+
+  <main class="visitor-container vl-main">
+    <h1 class="vl-title">지난 편지</h1>
+    <p class="vl-desc">발행된 모든 뉴스레터를 최신순으로 모았습니다.</p>
+
+    <!-- 탭 + 연도 선택 -->
+    <div class="vl-toolbar">
+      <div class="vl-tabs" id="vl-tabs" role="group" aria-label="편지 분류"></div>
+      <select id="vl-year" class="vl-year" aria-label="발행 연도" hidden></select>
+    </div>
+
+    <p class="vl-status" id="vl-status" role="status">불러오는 중이에요…</p>
+    <div class="vl-grid" id="vl-grid"></div>
+
+    <!-- 더 보기 / 접기 -->
+    <button type="button" class="vl-more" id="vl-more" aria-label="더 보기" hidden>
+      <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+    </button>
+  </main>
+
+  <!-- 자세히 보기 팝업 -->
+  <dialog class="vl-dialog" id="vl-dialog" aria-labelledby="vl-d-title">
+    <div class="vl-dialog-inner">
+      <div class="vl-d-head">
+        <span class="vl-badge" id="vl-d-badge"></span>
+        <span class="vl-issue" id="vl-d-issue"></span>
+        <button type="button" class="vl-close" id="vl-d-close">닫기</button>
+      </div>
+      <h2 class="vl-d-title" id="vl-d-title"></h2>
+      <p class="vl-d-body" id="vl-d-body"></p>
+      <div class="vl-d-images" id="vl-d-images"></div>
+      <div class="vl-d-extra" id="vl-d-extra"></div>
+      <a class="vl-btn" id="vl-d-go" href="#">보러가기</a>
+    </div>
+  </dialog>
+
+  <div data-visitor-footer></div>
+</body>
+</html>
