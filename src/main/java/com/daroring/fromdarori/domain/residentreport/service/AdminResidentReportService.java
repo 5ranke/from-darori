@@ -2,13 +2,13 @@ package com.daroring.fromdarori.domain.residentreport.service;
 
 import com.daroring.fromdarori.domain.admin.repository.AdminUserRepository;
 import com.daroring.fromdarori.domain.category.repository.CategoryRepository;
+import com.daroring.fromdarori.domain.residentreport.dto.ReportIdInfoResponse;
 import com.daroring.fromdarori.domain.residentreport.dto.ReportInfoResponse;
 import com.daroring.fromdarori.domain.residentreport.dto.ReportItemResponse;
 import com.daroring.fromdarori.domain.residentreport.dto.ReportToStoryResponse;
 import com.daroring.fromdarori.domain.residentreport.entity.ResidentReport;
 import com.daroring.fromdarori.domain.residentreport.repository.AdminResidentReportRepository;
 import com.daroring.fromdarori.domain.story.dto.StoryCreateRequest;
-import com.daroring.fromdarori.domain.story.dto.StoryCreateResponse;
 import com.daroring.fromdarori.domain.story.dto.StoryImageRequest;
 import com.daroring.fromdarori.domain.story.dto.StoryImageResponse;
 import com.daroring.fromdarori.domain.story.entity.Story;
@@ -51,6 +51,13 @@ public class AdminResidentReportService {
                 Math.toIntExact(reportPage.getTotalElements()),
                 reportPage.hasNext()
         );
+    }
+
+    @Transactional
+    public ReportIdInfoResponse getReport(UUID reportId) {
+        ResidentReport report = adminResidentReportRepository.findById(reportId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "REPORT4041", "제보를 찾을 수 없습니다."));
+        return ReportIdInfoResponse.from(report);
     }
 
     @Transactional

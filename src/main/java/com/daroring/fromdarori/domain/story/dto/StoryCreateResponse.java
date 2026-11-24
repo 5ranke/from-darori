@@ -1,6 +1,5 @@
 package com.daroring.fromdarori.domain.story.dto;
 
-import com.daroring.fromdarori.domain.residentreport.dto.ReportToStoryResponse;
 import com.daroring.fromdarori.domain.story.entity.Story;
 import com.daroring.fromdarori.domain.story.entity.StorySourceType;
 

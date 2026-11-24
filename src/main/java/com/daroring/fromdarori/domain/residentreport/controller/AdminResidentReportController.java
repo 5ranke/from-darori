@@ -1,5 +1,6 @@
 package com.daroring.fromdarori.domain.residentreport.controller;
 
+import com.daroring.fromdarori.domain.residentreport.dto.ReportIdInfoResponse;
 import com.daroring.fromdarori.domain.residentreport.dto.ReportInfoResponse;
 import com.daroring.fromdarori.domain.residentreport.dto.ReportToStoryResponse;
 import com.daroring.fromdarori.domain.residentreport.service.AdminResidentReportService;
@@ -62,6 +63,14 @@ public class AdminResidentReportController {
 
     // 제보 상세 조회
     // GET /api/v1/admin/resident-reports/{reportId}
+    @GetMapping("/{reportId}")
+    public ResponseEntity<ApiResponse<ReportIdInfoResponse>> getReport(
+            @PathVariable String reportId,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        ReportIdInfoResponse response = adminResidentReportService.getReport(parseReportId(reportId));
+        return ResponseEntity.ok(ApiResponse.success("제보 상세 조회에 성공했습니다.", response));
+    }
 
     // 제보를 소식으로 등록
     // POST /api/v1/admin/resident-reports/{reportId}/story
