@@ -25,6 +25,9 @@
   gap: 32px;
 }
 .visitor-page .visitor-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
   border: 0;
   padding: 0;
   background: transparent;
@@ -34,6 +37,11 @@
   font-weight: 800;
   letter-spacing: -1px;
   white-space: nowrap;
+}
+.visitor-page .visitor-logo-icon {
+  flex: none;
+  width: 2em;
+  height: auto;
 }
 .visitor-page .visitor-header a, .visitor-page .visitor-footer a { text-decoration: none; }
 .visitor-page .visitor-header button, .visitor-page .visitor-footer button { font-family: inherit; cursor: pointer; }
