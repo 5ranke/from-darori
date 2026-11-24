@@ -2,11 +2,9 @@ package com.daroring.fromdarori.domain.residentreport.service;
 
 import com.daroring.fromdarori.domain.admin.repository.AdminUserRepository;
 import com.daroring.fromdarori.domain.category.repository.CategoryRepository;
-import com.daroring.fromdarori.domain.residentreport.dto.ReportIdInfoResponse;
-import com.daroring.fromdarori.domain.residentreport.dto.ReportInfoResponse;
-import com.daroring.fromdarori.domain.residentreport.dto.ReportItemResponse;
-import com.daroring.fromdarori.domain.residentreport.dto.ReportToStoryResponse;
+import com.daroring.fromdarori.domain.residentreport.dto.*;
 import com.daroring.fromdarori.domain.residentreport.entity.ResidentReport;
+import com.daroring.fromdarori.domain.residentreport.entity.ResidentReportStatus;
 import com.daroring.fromdarori.domain.residentreport.repository.AdminResidentReportRepository;
 import com.daroring.fromdarori.domain.story.dto.StoryCreateRequest;
 import com.daroring.fromdarori.domain.story.dto.StoryImageRequest;
@@ -79,6 +77,18 @@ public class AdminResidentReportService {
                 ? List.of()
                 : saveNewImages(story, request.images());
         return ReportToStoryResponse.from(story, report, imageResponses(savedImages));
+    }
+
+    @Transactional
+    public ReportDeleteResponse delete(UUID reportId) {
+        ResidentReport report = adminResidentReportRepository.findById(reportId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "REPORT4041", "제보를 찾을 수 없습니다."));
+        if (report.getStatus() == ResidentReportStatus.APPROVED) {
+            throw new ApiException(HttpStatus.CONFLICT, "REPORT4091", "이미 소식에 등록되었습니다.");
+        } else {
+            adminResidentReportRepository.delete(report);
+        }
+        return new ReportDeleteResponse(report.getId());
     }
 
     private List<StoryImage> saveNewImages(Story story, List<StoryImageRequest> requests) {

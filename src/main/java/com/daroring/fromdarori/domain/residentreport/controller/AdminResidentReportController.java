@@ -1,5 +1,6 @@
 package com.daroring.fromdarori.domain.residentreport.controller;
 
+import com.daroring.fromdarori.domain.residentreport.dto.ReportDeleteResponse;
 import com.daroring.fromdarori.domain.residentreport.dto.ReportIdInfoResponse;
 import com.daroring.fromdarori.domain.residentreport.dto.ReportInfoResponse;
 import com.daroring.fromdarori.domain.residentreport.dto.ReportToStoryResponse;
@@ -87,4 +88,11 @@ public class AdminResidentReportController {
 
     // 제보 삭제
     // DELETE /api/v1/admin/resident-reports/{reportId}
+    @DeleteMapping("/{reportId}")
+    public ResponseEntity<ApiResponse<ReportDeleteResponse>> delete(
+            @PathVariable String reportId
+    ) {
+        ReportDeleteResponse response = adminResidentReportService.delete(parseReportId(reportId));
+        return ResponseEntity.ok(ApiResponse.success("제보 삭제에 성공했습니다.", response));
+    }
 }
