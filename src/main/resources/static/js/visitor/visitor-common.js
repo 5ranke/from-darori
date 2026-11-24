@@ -1,5 +1,5 @@
 /* 사용법은 visitor/dev/common-preview.html 참고. defer로 불러옵니다.
- * 구현된 마을 소개는 기본 경로를 사용하며, 미확정 메뉴는 null입니다.
+ * 경로가 확정된 페이지는 기본 경로를 사용하며, 미확정 메뉴는 null입니다.
  * 페이지별 경로는 DaroriVisitor.render({ page: 'about', routes: {...} })로 지정할 수 있습니다.
  * 경로는 해당 HTML 기준입니다. 없는 페이지를 생성하거나 API를 호출하지 않습니다.
  */
@@ -9,8 +9,13 @@
   const staticRoot = new URL('../../', script.src);
   const logoUrl = new URL('images/visitor/darori-envelope-logo.svg', staticRoot).href;
   const routes = {
-    home: null, about: new URL('visitor/village.html', staticRoot).href, letters: null, notices: null,
-    subscribe: null, report: null, unsubscribe: null,
+    home: new URL('index.html', staticRoot).href,
+    about: new URL('visitor/village.html', staticRoot).href,
+    letters: new URL('visitor/letters.html', staticRoot).href,
+    notices: null,
+    subscribe: null,
+    report: new URL('visitor/report.html', staticRoot).href,
+    unsubscribe: new URL('visitor/unsubscribe.html', staticRoot).href,
     admin: new URL('admin/login.html', staticRoot).href
   };
   // Figma 푸터의 임시 값입니다. 운영용 이메일 확정 전까지 메일 발송 링크로 연결하지 않습니다.
