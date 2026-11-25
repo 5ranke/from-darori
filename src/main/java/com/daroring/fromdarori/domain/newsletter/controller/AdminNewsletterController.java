@@ -2,12 +2,19 @@ package com.daroring.fromdarori.domain.newsletter.controller;
 
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterGenerateRequest;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterGenerateResponse;
+import com.daroring.fromdarori.domain.newsletter.dto.NewsletterSaveRequest;
+import com.daroring.fromdarori.domain.newsletter.dto.NewsletterSaveResponse;
 import com.daroring.fromdarori.domain.newsletter.mail.NewsletterEmailRenderer;
 import com.daroring.fromdarori.domain.newsletter.mail.NewsletterMailDraft;
 import com.daroring.fromdarori.domain.newsletter.service.NewsletterGenerationService;
+import com.daroring.fromdarori.domain.newsletter.service.NewsletterSaveService;
 import com.daroring.fromdarori.global.response.ApiResponse;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +28,7 @@ public class AdminNewsletterController {
 
     private final NewsletterGenerationService generationService;
     private final NewsletterEmailRenderer emailRenderer;
+    private final NewsletterSaveService saveService;
 
     @PostMapping("/generate")
     public ApiResponse<NewsletterGenerateResponse> generate(@RequestBody(required = false) NewsletterGenerateRequest request) {
@@ -38,8 +46,13 @@ public class AdminNewsletterController {
     public record EmailPreview(String html) {
     }
 
-    // 뉴스레터 저장
-    // POST /api/v1/admin/newsletters
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse<NewsletterSaveResponse> save(
+            @RequestBody(required = false) NewsletterSaveRequest request, @AuthenticationPrincipal Jwt principal
+    ) {
+        return ApiResponse.created("뉴스레터가 저장되었습니다.", saveService.save(request, UUID.fromString(principal.getSubject())));
+    }
 
     // 저장된 뉴스레터 목록 조회
     // GET /api/v1/admin/newsletters

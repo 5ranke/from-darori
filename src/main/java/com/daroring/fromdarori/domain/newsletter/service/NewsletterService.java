@@ -89,6 +89,9 @@ public class NewsletterService {
     private Quiz toPublicQuiz(JsonNode snapshot) {
         String question = snapshot.path("question").asString(null);
         JsonNode choices = snapshot.path("choices");
+        if (!choices.isArray()) {
+            choices = snapshot.path("options");
+        }
         if (question == null || !choices.isArray()) {
             return null;
         }

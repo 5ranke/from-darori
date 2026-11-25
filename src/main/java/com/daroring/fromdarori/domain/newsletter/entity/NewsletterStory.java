@@ -42,4 +42,15 @@ public class NewsletterStory {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "story_snapshot", nullable = false, columnDefinition = "jsonb")
     private String storySnapshot;
+
+    public static NewsletterStory include(Newsletter newsletter, Story story, Category category, int displayOrder,
+                                          String storySnapshot) {
+        NewsletterStory included = new NewsletterStory();
+        included.newsletter = newsletter;
+        included.story = story;
+        included.category = category;
+        included.displayOrder = displayOrder;
+        included.storySnapshot = storySnapshot;
+        return included;
+    }
 }

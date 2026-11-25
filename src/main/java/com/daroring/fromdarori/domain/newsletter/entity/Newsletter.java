@@ -61,4 +61,15 @@ public class Newsletter {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private NewsletterStatus status = NewsletterStatus.SAVED;
+
+    public static Newsletter saveDraft(AdminUser author, String title, String summary, String contentSnapshot,
+                                       String quizContent) {
+        Newsletter newsletter = new Newsletter();
+        newsletter.createdBy = author;
+        newsletter.title = title;
+        newsletter.summary = summary;
+        newsletter.contentSnapshot = contentSnapshot;
+        newsletter.quizContent = quizContent;
+        return newsletter;
+    }
 }
