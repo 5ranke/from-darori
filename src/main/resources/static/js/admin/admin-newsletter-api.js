@@ -6,7 +6,7 @@ window.NewsletterApi = (() => {
   const getStories = (page = 0, size = 30) => auth.request(`/api/v1/admin/stories?page=${page}&size=${size}`);
 
   // AI 초안·퀴즈 생성 (오래 걸릴 수 있어서 60초까지 기다림)
-  const generate = body => auth.request('/api/v1/admin/newsletters/generate', { method: 'POST', body, timeoutMs: 60000 });
+  const generate = body => auth.request('/api/v1/admin/newsletters/generate', { method: 'POST', body, timeoutMs: 135000 });
 
   // 발행 내역에 저장
   const save = body => auth.request('/api/v1/admin/newsletters', { method: 'POST', body });

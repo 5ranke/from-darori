@@ -4,6 +4,7 @@ import com.daroring.fromdarori.domain.story.entity.Story;
 import com.daroring.fromdarori.domain.story.entity.StorySourceType;
 import jakarta.persistence.LockModeType;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.UUID;
 
 public interface AdminStoryRepository extends JpaRepository<Story, UUID> {
+
+    @Query("select s from Story s join fetch s.category where s.id in :ids")
+    List<Story> findAllWithCategoryByIdIn(@Param("ids") Collection<UUID> ids);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select s from Story s where s.id = :id")
