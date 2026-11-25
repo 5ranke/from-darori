@@ -3,6 +3,7 @@ package com.daroring.fromdarori.domain.newsletter.entity;
 import com.daroring.fromdarori.domain.admin.entity.AdminUser;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,6 +18,8 @@ import org.hibernate.type.SqlTypes;
 @Entity
 @Table(name = "newsletter")
 public class Newsletter {
+
+    public static final ZoneId ISSUE_ZONE = ZoneId.of("Asia/Seoul");
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

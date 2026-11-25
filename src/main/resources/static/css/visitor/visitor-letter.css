@@ -57,8 +57,9 @@
 .visitor-letter-page .visitor-letter-section h3 { margin: 0 0 16px; font-size: 21px; font-weight: 700; line-height: 1.6; }
 .visitor-letter-page .visitor-letter-section p { margin: 0; font-size: 20px; line-height: 1.8; overflow-wrap: anywhere; }
 .visitor-letter-page .visitor-letter-section p + p { margin-top: 18px; }
-.visitor-letter-page .visitor-letter-section .visitor-letter-placeholder-link { margin-top: 20px; }
-.visitor-letter-page .visitor-letter-placeholder-link span { display: block; color: #909095; font-size: 18px; }
+.visitor-letter-page .visitor-letter-story + .visitor-letter-story { margin-top: 32px; }
+.visitor-letter-page .visitor-letter-body { white-space: pre-wrap; }
+.visitor-letter-page .visitor-letter-action { display: inline-block; margin-top: 20px; }
 .visitor-letter-page .visitor-letter-photos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(6px, 0.85vw, 16px); margin-top: 24px; }
 .visitor-letter-page .visitor-letter-photo { display: block; width: 100%; height: auto; border-radius: clamp(8px, 1.25vw, 24px); }
 .visitor-letter-page .visitor-letter-section h2, .visitor-letter-page .visitor-letter-quiz { scroll-margin-block-start: 24px; }

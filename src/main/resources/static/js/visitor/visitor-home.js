@@ -71,10 +71,7 @@
   }
 
   function letterUrl(letter) {
-    const params = new URLSearchParams({
-      newsletterId: letter.newsletterId,
-      issue: `${letter.issueYear}-${String(letter.issueMonth).padStart(2, '0')}`
-    });
+    const params = new URLSearchParams({ newsletterId: letter.newsletterId });
     return `visitor/letter.html?${params}`;
   }
 

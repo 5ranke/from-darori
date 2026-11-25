@@ -8,7 +8,6 @@ import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStatus;
 import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStory;
 import com.daroring.fromdarori.domain.newsletter.repository.NewsletterRepository;
 import com.daroring.fromdarori.domain.newsletter.repository.NewsletterStoryRepository;
-import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +25,6 @@ import tools.jackson.databind.ObjectMapper;
 @Transactional(readOnly = true)
 public class HomeService {
 
-    private static final ZoneId ISSUE_ZONE = ZoneId.of("Asia/Seoul");
     private static final List<String> FEATURED_CATEGORY_CODES =
             List.of("RECRUITMENT", "PROJECT_FOLLOW_UP", "SEASONAL");
 
@@ -67,7 +65,7 @@ public class HomeService {
                 .toList();
         List<RecentNewsletter> recentNewsletters = newsletters.stream()
                 .map(newsletter -> {
-                    var issue = newsletter.getPublishedAt().atZoneSameInstant(ISSUE_ZONE);
+                    var issue = newsletter.getPublishedAt().atZoneSameInstant(Newsletter.ISSUE_ZONE);
                     return new RecentNewsletter(newsletter.getId(), issue.getYear(), issue.getMonthValue(),
                             newsletter.getTitle(), newsletter.getSummary(), thumbnailByNewsletter.get(newsletter.getId()));
                 })

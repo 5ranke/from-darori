@@ -1,6 +1,6 @@
 (() => {
   // ── 설정 ──
-  const LETTER_PAGE = 'letter.html'; // 친구 담당 편지 상세 페이지 (정해지면 여기만 바꾸기)
+  const LETTER_PAGE = 'letter.html';
   const PAGE_SIZE = 6;
   const PREVIEW = new URLSearchParams(window.location.search).get('preview') === 'sample';
 
@@ -20,6 +20,7 @@
   let hasNext = false;
   let items = [];
   let loading = false;
+  let listRequestId = 0;
 
   const $ = id => document.getElementById(id);
   const tabBox = $('vl-tabs');
@@ -30,11 +31,8 @@
   const dialog = $('vl-dialog');
 
   // ── 작은 도우미 ──
-  // 친구 편지 상세 페이지가 지금은 issue(2026-11), API 연결 후엔 newsletterId를 쓸 예정이라 둘 다 보냄
-  const letterUrl = (id, y, m) => {
-    const params = new URLSearchParams({ newsletterId: id, issue: `${y}-${String(m).padStart(2, '0')}` });
-    return `${LETTER_PAGE}?${params}`;
-  };  const issueText = (y, m) => `${y} ${m}월호`;
+  const letterUrl = id => `${LETTER_PAGE}?${new URLSearchParams({ newsletterId: id })}`;
+  const issueText = (y, m) => `${y} ${m}월호`;
   const withEmoji = name => {
     const emoji = EMOJI[CODE_BY_NAME[name]];
     return emoji ? `${emoji} ${name}` : name;
@@ -93,7 +91,7 @@
   // ── ② 연도 ──
   async function loadYears() {
     try {
-      const { years } = await getJson('/api/v1/newsletters/years');
+      const { years } = await getJson('/api/v1/newletters/years');
       yearSelect.innerHTML = '';
       years.forEach(y => {
         const option = el('option', null, `${y} 편지`);
@@ -119,7 +117,8 @@
         el('p', 'vl-card-text', item.summary || '')
       );
       const link = el('a', 'vl-btn', '편지 읽기 ↗');
-      link.href = letterUrl(item.newsletterId, item.issueYear, item.issueMonth);      card.append(link);
+      link.href = letterUrl(item.newsletterId);
+      card.append(link);
     } else {
       // 소식별 탭: 수록 소식 카드 → 자세히 보기 팝업
       card.append(
@@ -154,8 +153,10 @@
 
   // reset = true면 처음부터, false면 다음 페이지 이어 붙이기
   async function loadList(reset = true) {
-    if (loading) return;
+    if (loading && !reset) return;
+    const requestId = ++listRequestId;
     loading = true;
+    moreBtn.disabled = true;
     if (reset) {
       page = 0;
       grid.innerHTML = '';
@@ -165,19 +166,24 @@
 
     const yearQuery = year ? `&year=${year}` : '';
     const path = currentTab === 'ALL'
-      ? `/api/v1/newsletters?page=${page}&size=${PAGE_SIZE}${yearQuery}`
+      ? `/api/v1/newletters?page=${page}&size=${PAGE_SIZE}${yearQuery}`
       : `/api/v1/published-stories?categoryId=${encodeURIComponent(currentTab)}&page=${page}&size=${PAGE_SIZE}${yearQuery}`;
 
     try {
       const result = await getJson(path);
+      if (requestId !== listRequestId) return;
       items = reset ? result.items : [...items, ...result.items];
       hasNext = result.hasNext;
       render();
     } catch (error) {
+      if (requestId !== listRequestId) return;
       statusEl.textContent = error.message;
       moreBtn.hidden = true;
     } finally {
-      loading = false;
+      if (requestId === listRequestId) {
+        loading = false;
+        moreBtn.disabled = false;
+      }
     }
   }
 
@@ -224,7 +230,7 @@
       // 해당 월호 보러가기 → 편지 상세 페이지
       const go = $('vl-d-go');
       go.textContent = `${issue} 보러가기 ↗`;
-      go.href = letterUrl(story.newsletterId, story.issueYear, story.issueMonth);
+      go.href = letterUrl(story.newsletterId);
       dialog.showModal();
     } catch (error) {
       statusEl.hidden = false;
@@ -282,8 +288,8 @@
         { categoryId: 'c4', code: 'SEASONAL', name: '제철 정보', displayOrder: 4 }
       ];
     }
-    if (path.startsWith('/api/v1/newsletters/years')) return { years: [2026, 2025] };
-    if (path.startsWith('/api/v1/newsletters')) {
+    if (path.startsWith('/api/v1/newletters/years')) return { years: [2026, 2025] };
+    if (path.startsWith('/api/v1/newletters')) {
       return {
         hasNext: false,
         items: [11, 10, 9, 8, 7, 6].map((m, i) => ({
