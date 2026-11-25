@@ -1,17 +1,17 @@
 /* 공통 헤더·탭·메뉴·푸터·반응형 너비는 admin-common.css를 그대로 사용합니다. */
-.admin-users-page .user-panel { min-width: 0; padding: 40px 30px 60px; border-radius: 15px; }
-.admin-users-page .user-panel h2 { font-size: 23px; font-weight: 750; letter-spacing: -.6px; }
-.admin-users-page .user-intro { margin-top: 6px; color: var(--admin-muted); font-size: 18px; }
+.admin-users-page .user-panel { min-width: 0; padding: var(--admin-panel-padding); border-radius: 15px; }
+.admin-users-page .user-panel h2 { font-size: var(--admin-section-title-size); font-weight: 750; letter-spacing: -.6px; }
+.admin-users-page .user-intro { margin-top: 6px; color: var(--admin-muted); font-size: var(--admin-body-size); }
 .admin-users-page .user-demo { margin-top: 12px; color: #777780; font-size: 12px; line-height: 1.6; }
 .admin-users-page #user-form { margin-top: 40px; }
 .admin-users-page .user-field + .user-field { margin-top: 24px; }
-.admin-users-page .user-field label { display: block; font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+.admin-users-page .user-field label { display: block; font-size: var(--admin-body-size); font-weight: 700; margin-bottom: 14px; }
 .admin-users-page .user-field .admin-input { min-height: 50px; padding: 13px 15px; font-size: 15px; border-radius: 12px; }
 .admin-users-page .user-field select.admin-input { padding-right: 34px; cursor: pointer; }
 .admin-users-page .user-field .admin-input[aria-invalid="true"] { border-color: #b43c25; }
-.admin-users-page .user-hint { font-size: 12px; margin-top: 7px; color: #777780; }
-.admin-users-page .user-error { margin-top: 7px; font-size: 13px; color: #b43c25; }
-.admin-users-page .user-add { margin-top: 26px; min-height: 48px; padding: 10px 22px; font-size: 18px; }
+.admin-users-page .user-hint { font-size: var(--admin-meta-size); margin-top: 7px; color: #777780; }
+.admin-users-page .user-error { margin-top: 7px; font-size: var(--admin-meta-size); color: #b43c25; }
+.admin-users-page .user-add { margin-top: 26px; min-height: var(--admin-control-height); padding: 9px 20px; font-size: var(--admin-body-size); }
 .admin-users-page .user-status-message:not(:empty) { margin-top: 18px; color: #7b4331; font-size: 14px; }
 .admin-users-page .user-list-section { margin-top: 80px; }
 .admin-users-page .user-summary { margin-top: 5px; color: #777780; font-size: 17px; }
@@ -38,7 +38,6 @@
 .admin-users-page [hidden] { display: none !important; }
 .admin-users-page button:disabled { opacity: .5; cursor: not-allowed; }
 @media (max-width: 600px) {
-  .admin-users-page .user-panel { padding: 28px 20px 40px; }
   .admin-users-page .user-intro { font-size: 16px; }
   .admin-users-page .user-email, .admin-users-page .user-summary { font-size: 15px; }
   .admin-users-page .user-list-section { margin-top: 52px; }
