@@ -6,10 +6,34 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface NewsletterRepository extends JpaRepository<Newsletter, UUID> {
+
+    @Query(value = """
+            select n.id as newsletterId, n.title as title, n.status as status, n.createdAt as createdAt,
+                   case when n.status = :published and n.publishedAt is not null then
+                       (select count(previous.id) from Newsletter previous
+                        where previous.status = :published
+                          and (previous.publishedAt < n.publishedAt
+                               or (previous.publishedAt = n.publishedAt and previous.id <= n.id)))
+                   else null end as issueNumber
+            from Newsletter n
+            where (:status is null or n.status = :status)
+            order by n.createdAt desc, n.id desc
+            """, countQuery = "select count(n) from Newsletter n where (:status is null or n.status = :status)")
+    Page<AdminNewsletterRow> findAdminNewsletterPage(NewsletterStatus status, NewsletterStatus published, Pageable pageable);
+
+    interface AdminNewsletterRow {
+        UUID getNewsletterId();
+        Long getIssueNumber();
+        String getTitle();
+        NewsletterStatus getStatus();
+        OffsetDateTime getCreatedAt();
+    }
 
     List<Newsletter> findTop3ByStatusAndPublishedAtIsNotNullOrderByPublishedAtDescIdDesc(NewsletterStatus status);
 

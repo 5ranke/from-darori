@@ -1,11 +1,15 @@
 package com.daroring.fromdarori.domain.newsletter.controller;
 
+import com.daroring.fromdarori.domain.newsletter.dto.AdminNewsletterDetailResponse;
+import com.daroring.fromdarori.domain.newsletter.dto.AdminNewsletterListResponse;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterGenerateRequest;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterGenerateResponse;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterSaveRequest;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterSaveResponse;
 import com.daroring.fromdarori.domain.newsletter.mail.NewsletterEmailRenderer;
 import com.daroring.fromdarori.domain.newsletter.mail.NewsletterMailDraft;
+import com.daroring.fromdarori.domain.newsletter.service.AdminNewsletterDetailService;
+import com.daroring.fromdarori.domain.newsletter.service.AdminNewsletterListService;
 import com.daroring.fromdarori.domain.newsletter.service.NewsletterGenerationService;
 import com.daroring.fromdarori.domain.newsletter.service.NewsletterSaveService;
 import com.daroring.fromdarori.global.response.ApiResponse;
@@ -15,9 +19,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,6 +36,8 @@ public class AdminNewsletterController {
     private final NewsletterGenerationService generationService;
     private final NewsletterEmailRenderer emailRenderer;
     private final NewsletterSaveService saveService;
+    private final AdminNewsletterListService listService;
+    private final AdminNewsletterDetailService detailService;
 
     @PostMapping("/generate")
     public ApiResponse<NewsletterGenerateResponse> generate(@RequestBody(required = false) NewsletterGenerateRequest request) {
@@ -54,11 +63,19 @@ public class AdminNewsletterController {
         return ApiResponse.created("뉴스레터가 저장되었습니다.", saveService.save(request, UUID.fromString(principal.getSubject())));
     }
 
-    // 저장된 뉴스레터 목록 조회
-    // GET /api/v1/admin/newsletters
+    @GetMapping
+    public ApiResponse<AdminNewsletterListResponse> list(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String page,
+            @RequestParam(required = false) String size
+    ) {
+        return ApiResponse.success("뉴스레터 목록을 조회했습니다.", listService.list(status, page, size));
+    }
 
-    // 저장된 뉴스레터 상세 조회
-    // GET /api/v1/admin/newsletters/{newsletterId}
+    @GetMapping("/{newsletterId}")
+    public ApiResponse<AdminNewsletterDetailResponse> getDetail(@PathVariable UUID newsletterId) {
+        return ApiResponse.success("뉴스레터 상세 정보를 조회했습니다.", detailService.getDetail(newsletterId));
+    }
 
     // 선택한 뉴스레터 예약
     // PATCH /api/v1/admin/newsletters/{newsletterId}/reservation

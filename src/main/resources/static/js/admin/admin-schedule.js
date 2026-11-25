@@ -13,6 +13,10 @@
   const listEl = $('sc-list');
   const listStatus = $('sc-list-status');
   const submitBtn = $('sc-submit');
+  const previewDialog = $('sc-preview-dialog');
+  const previewStatus = $('sc-preview-status');
+  const previewFrame = $('sc-preview-frame');
+  let previewRevision = 0;
 
   // ① 발행일 선택칸에 1~31일 넣기
   for (let day = 1; day <= 31; day++) {
@@ -90,6 +94,15 @@
       label.append(radio, text);
       li.append(label);
 
+      const preview = document.createElement('button');
+      preview.type = 'button';
+      preview.className = 'admin-button admin-button--outline sc-preview';
+      preview.dataset.id = letter.newsletterId;
+      preview.textContent = '미리보기';
+      preview.setAttribute('aria-haspopup', 'dialog');
+      preview.setAttribute('aria-label', `${letter.title} 미리보기`);
+      li.append(preview);
+
       // 예약된 뉴스레터에만 '예약 취소' 버튼
       if (isScheduled) {
         const cancel = document.createElement('button');
@@ -125,9 +138,10 @@
     listStatus.hidden = false;
     listStatus.textContent = '뉴스레터를 불러오는 중이에요…';
     try {
-      const result = await api.getNewsletters();
-      // 저장됨(SAVED) + 예약됨(SCHEDULED)만 보여주기
-      letters = result.newsletters.filter(n => n.status === 'SAVED' || n.status === 'SCHEDULED');
+      const [saved, scheduled] = await Promise.all([api.getNewsletters('SAVED'), api.getNewsletters('SCHEDULED')]);
+      letters = [...saved.newsletters, ...scheduled.newsletters].sort((a, b) =>
+        Date.parse(b.createdAt) - Date.parse(a.createdAt) || b.newsletterId.localeCompare(a.newsletterId)
+      );
       render();
     } catch (error) {
       listStatus.textContent = '뉴스레터를 불러오지 못했어요.';
@@ -201,7 +215,47 @@
     }
   }
 
+  async function openPreview(id) {
+    const revision = ++previewRevision;
+    previewStatus.textContent = '저장한 편지를 불러오는 중이에요…';
+    previewFrame.hidden = true;
+    previewFrame.removeAttribute('srcdoc');
+    previewDialog.showModal();
+    try {
+      const draft = await api.getNewsletter(id);
+      if (!previewDialog.open || revision !== previewRevision) return;
+      const date = draft.publishedAt || draft.scheduledAt;
+      const issue = date ? new Intl.DateTimeFormat('ko-KR', {
+        timeZone: 'Asia/Seoul', year: 'numeric', month: 'long'
+      }).format(new Date(date)) + '호' : null;
+      const stories = draft.stories.map(story => ({
+        ...story,
+        images: story.images.map(image => ({ ...image, imageUrl: image.imageUrl ?? image.url }))
+      }));
+      const quiz = draft.quiz && { ...draft.quiz, options: draft.quiz.options ?? draft.quiz.choices };
+      const { html } = await api.previewNewsletter({ ...draft, issue, stories, quiz });
+      if (!previewDialog.open || revision !== previewRevision) return;
+      previewFrame.srcdoc = html;
+      previewFrame.hidden = false;
+      previewStatus.textContent = '';
+    } catch (error) {
+      if (!previewDialog.open || revision !== previewRevision) return;
+      if (error.kind === 'session') handleError(error);
+      else previewStatus.textContent = error.message || '미리보기를 불러오지 못했어요.';
+    }
+  }
+
+  previewDialog.addEventListener('close', () => {
+    ++previewRevision;
+    previewFrame.removeAttribute('srcdoc');
+  });
+
   listEl.addEventListener('click', e => {
+    const preview = e.target.closest('.sc-preview');
+    if (preview) {
+      openPreview(preview.dataset.id);
+      return;
+    }
     const btn = e.target.closest('.sc-cancel');
     if (!btn || busy) return;
     const letter = letters.find(l => l.newsletterId === btn.dataset.id);

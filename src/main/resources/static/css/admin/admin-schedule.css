@@ -74,3 +74,19 @@
 .admin-page .sc-list-status[hidden] { display: none; }
 .admin-page .sc-option input:disabled { opacity: 0.4; cursor: not-allowed; } /* 이미 예약된 건 선택 불가 */
 .admin-page .sc-submit:disabled { opacity: 0.6; cursor: wait; }
+.admin-page .sc-item { flex-wrap: wrap; }
+.admin-page .sc-preview { flex-shrink: 0; padding-inline: 12px; }
+.admin-page .sc-preview-dialog {
+  width: min(760px, calc(100% - 24px)); max-width: none; max-height: calc(100dvh - 24px);
+  padding: 0; border: 1px solid var(--admin-border); border-radius: 16px; color: var(--admin-text);
+}
+.admin-page .sc-preview-dialog::backdrop { background: rgb(0 0 0 / 40%); }
+.admin-page .sc-preview-header {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 12px 16px; border-bottom: 1px solid var(--admin-border);
+}
+.admin-page .sc-preview-header h2 { font-size: var(--admin-subheading-size); }
+.admin-page #sc-preview-status { padding: 12px 16px; }
+.admin-page #sc-preview-status:empty { display: none; }
+.admin-page #sc-preview-frame { display: block; width: 100%; height: min(720px, 75vh); border: 0; }
+.admin-page #sc-preview-frame[hidden] { display: none; }

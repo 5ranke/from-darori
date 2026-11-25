@@ -63,6 +63,14 @@
     </div>
   </main>
   <div data-admin-footer></div>
+  <dialog class="sc-preview-dialog" id="sc-preview-dialog" aria-labelledby="sc-preview-title">
+    <div class="sc-preview-header">
+      <h2 id="sc-preview-title">저장된 뉴스레터 미리보기</h2>
+      <form method="dialog"><button class="admin-button admin-button--outline" type="submit" autofocus>닫기</button></form>
+    </div>
+    <p id="sc-preview-status" role="status"></p>
+    <iframe id="sc-preview-frame" title="뉴스레터 이메일" sandbox="allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" hidden></iframe>
+  </dialog>
   <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-dialog-title" aria-describedby="admin-dialog-description">
     <form method="dialog">
       <h2 id="admin-dialog-title"></h2>
