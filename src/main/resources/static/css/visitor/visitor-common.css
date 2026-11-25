@@ -4,6 +4,12 @@
   --visitor-accent: #ff633f;
   --visitor-line: #e4e4e7;
   --visitor-muted: #b8b8bf;
+  --visitor-page-title-size: clamp(28px, 2.5vw, 36px);
+  --visitor-card-title-size: clamp(18px, 1.45vw, 22px);
+  --visitor-body-size: 16px;
+  --visitor-reading-size: clamp(17px, 1.4vw, 20px);
+  --visitor-meta-size: 14px;
+  --visitor-control-height: 44px;
   margin: 0;
   min-height: 100vh;
   display: flex;
@@ -17,13 +23,6 @@
 .visitor-page .visitor-container { width: min(1520px, 79.1667%); margin-inline: auto; }
 .visitor-page [data-visitor-header], .visitor-page [data-visitor-footer] { flex-shrink: 0; }
 .visitor-page .visitor-header { border-bottom: 1px solid var(--visitor-line); }
-.visitor-page .visitor-header-inner {
-  min-height: clamp(94px, 6.25vw, 120px);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 32px;
-}
 .visitor-page .visitor-logo {
   display: inline-flex;
   align-items: center;
@@ -59,9 +58,8 @@
   line-height: 1.5;
   white-space: nowrap;
 }
-.visitor-page .visitor-menu[aria-current="page"] { color: var(--visitor-accent); font-weight: 700; }
-.visitor-page .visitor-header-actions { display: flex; align-items: center; gap: 12px; }
-.visitor-page .visitor-action { min-height: clamp(44px, 3.021vw, 58px); padding: 10px 26px; border: 1px solid var(--visitor-text); border-radius: 16px; }
+.visitor-page .visitor-menu[aria-current="page"] { color: var(--visitor-accent); }
+.visitor-page .visitor-action { border-color: var(--visitor-text); }
 .visitor-page .visitor-action--admin { background: var(--visitor-text); color: #fff; }
 .visitor-page .visitor-header :focus-visible, .visitor-page .visitor-footer :focus-visible { outline: 3px solid var(--visitor-accent); outline-offset: 5px; }
 .visitor-page .visitor-footer { border-top: 1px solid var(--visitor-line); }
@@ -79,14 +77,12 @@
 /* 모바일 시안 미제공: 메뉴를 숨기거나 새 메뉴를 추가하지 않고 줄바꿈합니다. */
 @media (max-width: 1100px) {
   .visitor-page .visitor-container { width: calc(100% - 48px); }
-  .visitor-page .visitor-header-inner { flex-wrap: wrap; padding-block: 20px; gap: 20px; }
   .visitor-page .visitor-navigation { flex-wrap: wrap; gap: 20px; }
 }
 @media (max-width: 600px) {
   .visitor-page .visitor-container { width: calc(100% - 32px); }
   .visitor-page .visitor-navigation { width: 100%; gap: 16px; }
   .visitor-page .visitor-menu { min-height: 44px; }
-  .visitor-page .visitor-header-actions { width: 100%; }
   .visitor-page .visitor-footer-inner { align-items: flex-start; flex-direction: column; padding-block: 28px; gap: 16px; }
   .visitor-page .visitor-footer-info { flex-wrap: wrap; gap: 12px; }
   .visitor-page .visitor-contact { overflow-wrap: anywhere; }

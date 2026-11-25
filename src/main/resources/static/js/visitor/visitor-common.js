@@ -13,7 +13,7 @@
     about: new URL('visitor/village.html', staticRoot).href,
     letters: new URL('visitor/letters.html', staticRoot).href,
     notices: null,
-    subscribe: null,
+    subscribe: new URL('#subscription', staticRoot).href,
     report: new URL('visitor/report.html', staticRoot).href,
     unsubscribe: new URL('visitor/unsubscribe.html', staticRoot).href,
     admin: new URL('admin/login.html', staticRoot).href
@@ -59,16 +59,18 @@
     const headerHost = document.querySelector('[data-visitor-header]');
     if (headerHost) {
       const header = element('header', 'visitor-header');
-      const inner = element('div', 'visitor-container visitor-header-inner');
-      inner.append(logo());
-      const nav = element('nav', 'visitor-navigation');
+      const inner = element('div', 'site-header-inner');
+      const headerLogo = logo();
+      headerLogo.classList.add('site-header-logo');
+      inner.append(headerLogo);
+      const nav = element('nav', 'visitor-navigation site-header-menu');
       nav.setAttribute('aria-label', '방문자 주 메뉴');
       for (const [key, label] of [['about', '마을 소개'], ['letters', '지난 편지'], ['notices', '공지사항'], ['subscribe', '구독하기']]) {
         nav.append(item(key, label, 'visitor-menu', currentPage === key));
       }
-      const actions = element('div', 'visitor-header-actions');
-      actions.append(item('report', '제보하기', 'visitor-action'), item('admin', '운영자', 'visitor-action visitor-action--admin'));
-      nav.append(actions); inner.append(nav);
+      const actions = element('div', 'site-header-actions');
+      actions.append(item('report', '제보하기', 'visitor-action site-header-button'), item('admin', '운영자', 'visitor-action visitor-action--admin site-header-button'));
+      inner.append(nav, actions);
       const status = element('p', 'visitor-container visitor-status');
       status.setAttribute('data-visitor-status', ''); status.setAttribute('role', 'status');
       header.append(inner, status); headerHost.replaceChildren(header);

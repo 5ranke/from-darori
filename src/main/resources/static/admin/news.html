@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>소식 작성 | From. 다로리 관리</title>
+  <link rel="stylesheet" href="../css/site-header.css">
   <link rel="stylesheet" href="../css/admin/admin-common.css">
   <link rel="stylesheet" href="../css/admin/admin-news.css">
   <link rel="stylesheet" href="../css/admin/admin-auth.css">
@@ -14,7 +15,15 @@
   <script defer src="../js/admin/admin-news.js"></script>
 </head>
 <body class="admin-page" data-admin-page="news">
-  <div data-admin-header></div>
+  <header class="admin-header">
+    <div class="site-header-inner">
+      <a class="admin-logo site-header-logo" href="../"><img class="admin-logo-icon" src="../images/visitor/darori-envelope-logo.svg" alt="" width="66" height="49">From. 다로리</a>
+      <div class="admin-header-actions site-header-actions">
+        <a class="admin-button admin-button--dark site-header-button" href="../">방문자 페이지로</a>
+        <button type="button" class="admin-button admin-button--outline site-header-button" id="admin-logout" hidden>로그아웃</button>
+      </div>
+    </div>
+  </header>
   <main class="admin-container admin-main">
     <h1 class="admin-greeting">안녕하세요, <span id="admin-name">OOO</span>님</h1>
 

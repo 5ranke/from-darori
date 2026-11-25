@@ -4,11 +4,11 @@
   --report-accent: #ff6b45;
   --report-line: #e3e3e3;
 }
-.admin-page .admin-report-page { padding: 32px; }
-.admin-page .report-title { margin: 0; font-size: 17px; font-weight: 700; }
-.admin-page .report-desc { margin: 6px 0 28px; font-size: 13px; color: #666; }
+.admin-page .admin-report-page { padding: var(--admin-panel-padding); }
+.admin-page .report-title { margin: 0; font-size: var(--admin-section-title-size); font-weight: 700; }
+.admin-page .report-desc { margin: 6px 0 28px; font-size: var(--admin-body-size); color: #666; }
 
-.admin-page .report-list-title { margin: 0 0 8px; font-size: 15px; font-weight: 700; }
+.admin-page .report-list-title { margin: 0 0 8px; font-size: var(--admin-subheading-size); font-weight: 700; }
 .admin-page .report-list { margin: 0; padding: 0; list-style: none; }
 .admin-page .report-item {
   display: flex; justify-content: space-between; align-items: center; gap: 16px;
@@ -18,10 +18,10 @@
 .admin-page .report-item-title {
   display: block; margin: 0 0 4px; padding: 0;
   border: none; background: none; color: inherit;
-  font: inherit; font-size: 13px; text-align: left; cursor: pointer;
+  font: inherit; font-size: var(--admin-body-size); text-align: left; cursor: pointer;
 }
 .admin-page .report-item-title:hover { text-decoration: underline; }
-.admin-page .report-item-meta { margin: 0; font-size: 12px; color: #888; }
+.admin-page .report-item-meta { margin: 0; font-size: var(--admin-meta-size); color: #888; }
 .admin-page .report-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
 .admin-page .report-btn {
@@ -54,9 +54,9 @@
   padding: 5px 12px; border-radius: 999px;
   background: #ffece6; color: #333; font-size: 12px;
 }
-.admin-page .report-detail-title { margin: 24px 0 16px; font-size: 18px; font-weight: 700; line-height: 1.4; }
+.admin-page .report-detail-title { margin: 24px 0 16px; font-size: var(--admin-subheading-size); font-weight: 700; line-height: 1.4; }
 .admin-page .report-detail-body {
-  margin: 0; font-size: 13px; line-height: 1.7; color: #333;
+  margin: 0; font-size: var(--admin-body-size); line-height: 1.7; color: #333;
   white-space: pre-line; /* 줄바꿈 그대로 보여주기 */
 }
 
@@ -74,5 +74,5 @@
 
 
 /* ── API 연결용 추가 ── */
-.admin-page .report-list-status { margin: 12px 0 0; font-size: 12px; color: #888; }
+.admin-page .report-list-status { margin: 12px 0 0; font-size: var(--admin-meta-size); color: #888; }
 .admin-page .report-list-status[hidden] { display: none; }

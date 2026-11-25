@@ -2,26 +2,25 @@
 .admin-page .admin-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .admin-page .admin-stat { padding: 22px 24px 28px; }
 .admin-page .admin-stat-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.admin-page .admin-stat h3 { font-size: 21px; font-weight: 600; }
+.admin-page .admin-stat h3 { font-size: var(--admin-subheading-size); font-weight: 600; }
 .admin-page .admin-stat-link { width: 50px; min-height: 50px; padding: 0; font-size: 27px; border-radius: 13px; }
 .admin-page .admin-stat-value { display: block; margin-top: 17px; font-size: 40px; font-weight: 800; letter-spacing: -1px; }
 .admin-page .admin-reports { margin-top: 62px; }
-.admin-page .admin-dashboard h2 { font-size: 25px; font-weight: 750; letter-spacing: -.7px; }
+.admin-page .admin-dashboard h2 { font-size: var(--admin-section-title-size); font-weight: 750; letter-spacing: -.7px; }
 .admin-page .admin-count { margin-left: 8px; color: var(--admin-muted); font-size: 23px; white-space: nowrap; }
 .admin-page .admin-reports > .admin-button { margin-top: 22px; }
 .admin-page .admin-recent { margin-top: 42px; }
 .admin-page .admin-news-list { list-style: none; margin: 8px 0 0; padding: 0; }
 .admin-page .admin-news-item { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--admin-border); }
 .admin-page .admin-news-copy { min-width: 0; }
-.admin-page .admin-news-title { padding: 0; border: 0; background: transparent; color: var(--admin-text); font-size: 18px; text-align: left; overflow-wrap: anywhere; }
+.admin-page .admin-news-title { padding: 0; border: 0; background: transparent; color: var(--admin-text); font-size: var(--admin-body-size); text-align: left; overflow-wrap: anywhere; }
 .admin-page .admin-news-title:hover { text-decoration: underline; text-underline-offset: 4px; }
-.admin-page .admin-news-meta { margin-top: 7px; color: var(--admin-muted); font-size: 17px; }
+.admin-page .admin-news-meta { margin-top: 7px; color: var(--admin-muted); font-size: var(--admin-meta-size); }
 .admin-page .admin-news-actions { display: flex; gap: 12px; flex-shrink: 0; }
 .admin-page .admin-news-actions .admin-button { min-height: 39px; padding: 7px 15px; }
 .admin-page .admin-demo-note { margin-top: 24px; font-size: 12px; color: #77777e; }
 @media (max-width: 1100px) and (min-width: 851px) {
   .admin-page .admin-stat { padding: 18px 14px; }
-  .admin-page .admin-stat h3 { font-size: 18px; }
   .admin-page .admin-stat-link { width: 38px; min-height: 38px; }
   .admin-page .admin-news-item { align-items: flex-start; flex-direction: column; }
 }
@@ -33,11 +32,9 @@
   .admin-page .admin-stat-link { position: absolute; right: 20px; top: 25px; }
   .admin-page .admin-stat-value { margin-top: 4px; font-size: 32px; }
   .admin-page .admin-reports { margin-top: 36px; }
-  .admin-page .admin-dashboard h2 { font-size: 21px; }
   .admin-page .admin-count { font-size: 20px; }
   .admin-page .admin-news-item { flex-direction: column; align-items: flex-start; gap: 14px; }
   .admin-page .admin-news-actions { align-self: flex-end; }
-  .admin-page .admin-news-meta { font-size: 14px; }
 }
 
 .admin-page .admin-dashboard-retry { margin-top: 12px; }

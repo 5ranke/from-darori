@@ -5,8 +5,8 @@
   --vr-line: #e5e5e5;
   padding: 72px 0 96px;
 }
-.visitor-page .vr-title { margin: 0; font-size: 26px; font-weight: 700; text-align: center; }
-.visitor-page .vr-desc { margin: 12px 0 32px; font-size: 14px; line-height: 1.6; color: #444; text-align: center; }
+.visitor-page .vr-title { margin: 0; font-size: var(--visitor-page-title-size); font-weight: 700; text-align: center; }
+.visitor-page .vr-desc { margin: 12px 0 32px; font-size: var(--visitor-body-size); line-height: 1.6; color: #444; text-align: center; }
 
 /* 입력 카드 */
 .visitor-page .vr-card {
@@ -14,24 +14,26 @@
   max-width: 520px; margin: 0 auto; padding: 28px; box-sizing: border-box;
   border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
-.visitor-page .vr-label { margin: 16px 0 8px; font-size: 13px; font-weight: 700; }
+.visitor-page .vr-label { margin: 16px 0 8px; font-size: var(--visitor-body-size); font-weight: 700; }
 .visitor-page .vr-card > .vr-label:first-child { margin-top: 0; }
-.visitor-page .vr-help { margin: -4px 0 8px; font-size: 11px; color: #999; }
+.visitor-page .vr-help { margin: -4px 0 8px; font-size: var(--visitor-meta-size); color: #999; }
 .visitor-page .vr-input {
+  min-height: var(--visitor-control-height);
   width: 100%; box-sizing: border-box; padding: 10px 12px;
   border: 1px solid var(--vr-line); border-radius: 8px;
-  font: inherit; font-size: 13px;
+  font: inherit; font-size: var(--visitor-body-size);
 }
 .visitor-page .vr-input:focus { outline: none; border-color: var(--vr-accent); }
 .visitor-page .vr-textarea { height: 90px; resize: vertical; }
 
-.visitor-page .vr-error { margin: 16px 0 0; font-size: 13px; color: #d9362b; }
+.visitor-page .vr-error { margin: 16px 0 0; font-size: var(--visitor-meta-size); color: #d9362b; }
 .visitor-page .vr-error[hidden] { display: none; }
 
 .visitor-page .vr-submit {
+  min-height: var(--visitor-control-height);
   margin-top: 24px; padding: 12px;
   border: none; border-radius: 8px; background: var(--vr-accent); color: #fff;
-  font-size: 14px; cursor: pointer;
+  font-size: var(--visitor-body-size); cursor: pointer;
 }
 .visitor-page .vr-submit:disabled { background: var(--vr-accent-light); cursor: not-allowed; }
 
@@ -43,11 +45,12 @@
   width: 96px; height: 96px; margin-bottom: 20px;
   border-radius: 50%; background: #ffece6;
 }
-.visitor-page .vr-done-title { margin: 0; font-size: 24px; font-weight: 700; }
+.visitor-page .vr-done-title { margin: 0; font-size: var(--visitor-page-title-size); font-weight: 700; }
 .visitor-page .vr-done-title:focus { outline: none; }
 .visitor-page .vr-done .vr-desc { margin: 12px 0 28px; }
 .visitor-page .vr-home {
+  min-height: var(--visitor-control-height);
   display: block; width: 100%; max-width: 280px; padding: 12px; box-sizing: border-box;
   border-radius: 8px; background: var(--vr-accent); color: #fff;
-  font-size: 14px; text-decoration: none;
+  font-size: var(--visitor-body-size); text-decoration: none;
 }

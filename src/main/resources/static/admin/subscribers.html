@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>구독자 관리 | From. 다로리</title>
+  <link rel="stylesheet" href="../css/site-header.css">
   <link rel="stylesheet" href="../css/admin/admin-common.css">
   <link rel="stylesheet" href="../css/admin/admin-subscribers.css">
   <link rel="stylesheet" href="../css/admin/admin-auth.css">
@@ -15,7 +16,15 @@
 </head>
 <body class="admin-page admin-subscribers-page" data-admin-page="subscribers">
   <a class="admin-skip" href="#subscriber-main">본문 바로가기</a>
-  <div data-admin-header></div>
+  <header class="admin-header">
+    <div class="site-header-inner">
+      <a class="admin-logo site-header-logo" href="../"><img class="admin-logo-icon" src="../images/visitor/darori-envelope-logo.svg" alt="" width="66" height="49">From. 다로리</a>
+      <div class="admin-header-actions site-header-actions">
+        <a class="admin-button admin-button--dark site-header-button" href="../">방문자 페이지로</a>
+        <button type="button" class="admin-button admin-button--outline site-header-button" id="admin-logout" hidden>로그아웃</button>
+      </div>
+    </div>
+  </header>
   <main class="admin-container admin-main">
     <h1 class="admin-greeting">안녕하세요, OOO님</h1>
     <nav class="admin-tabs" aria-label="운영자 영역">

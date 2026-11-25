@@ -50,12 +50,12 @@
 .visitor-letter-page .visitor-letter-top { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .visitor-letter-page .visitor-letter-issue { padding: 8px 22px; border-radius: 999px; background: #fff0ec; font-size: 18px; }
 .visitor-letter-page .visitor-letter-close { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 20px; border: 1px solid var(--visitor-text); border-radius: 12px; color: var(--visitor-text); text-decoration: none; white-space: nowrap; font-size: 18px; }
-.visitor-letter-page .visitor-letter-paper h1 { margin: 48px 0 20px; font-size: 36px; line-height: 1.5; letter-spacing: -1px; font-weight: 800; overflow-wrap: anywhere; }
-.visitor-letter-page .visitor-letter-intro { margin: 0; color: #737379; font-size: 20px; line-height: 1.7; }
+.visitor-letter-page .visitor-letter-paper h1 { margin: 48px 0 20px; font-size: var(--visitor-page-title-size); line-height: 1.5; letter-spacing: -1px; font-weight: 800; overflow-wrap: anywhere; }
+.visitor-letter-page .visitor-letter-intro { margin: 0; color: #737379; font-size: var(--visitor-reading-size); line-height: 1.7; }
 .visitor-letter-page .visitor-letter-section { margin-top: 56px; }
 .visitor-letter-page .visitor-letter-section h2 { margin: 0 0 20px; padding-bottom: 12px; border-bottom: 1px solid var(--visitor-line); font-size: 24px; font-weight: 750; line-height: 1.5; }
 .visitor-letter-page .visitor-letter-section h3 { margin: 0 0 16px; font-size: 21px; font-weight: 700; line-height: 1.6; }
-.visitor-letter-page .visitor-letter-section p { margin: 0; font-size: 20px; line-height: 1.8; overflow-wrap: anywhere; }
+.visitor-letter-page .visitor-letter-section p { margin: 0; font-size: var(--visitor-reading-size); line-height: 1.8; overflow-wrap: anywhere; }
 .visitor-letter-page .visitor-letter-section p + p { margin-top: 18px; }
 .visitor-letter-page .visitor-letter-story + .visitor-letter-story { margin-top: 32px; }
 .visitor-letter-page .visitor-letter-body { white-space: pre-wrap; }
@@ -87,8 +87,7 @@
   .visitor-letter-page .visitor-letter-top { gap: 12px; }
   .visitor-letter-page .visitor-letter-issue { padding: 8px 12px; font-size: 14px; }
   .visitor-letter-page .visitor-letter-close { padding-inline: 16px; font-size: 16px; }
-  .visitor-letter-page .visitor-letter-paper h1 { margin-top: 32px; font-size: 26px; }
-  .visitor-letter-page .visitor-letter-intro, .visitor-letter-page .visitor-letter-section p { font-size: 17px; }
+  .visitor-letter-page .visitor-letter-paper h1 { margin-top: 32px; }
   .visitor-letter-page .visitor-letter-section { margin-top: 36px; }
   .visitor-letter-page .visitor-letter-section h2, .visitor-letter-page .visitor-letter-quiz h2 { font-size: 21px; }
   .visitor-letter-page .visitor-letter-section h3 { font-size: 18px; }
