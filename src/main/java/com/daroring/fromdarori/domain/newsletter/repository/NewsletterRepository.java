@@ -15,6 +15,8 @@ public interface NewsletterRepository extends JpaRepository<Newsletter, UUID> {
 
     Optional<Newsletter> findFirstByStatusAndPublishedAtIsNotNullOrderByPublishedAtDescIdDesc(NewsletterStatus status);
 
+    Optional<Newsletter> findByIdAndStatusAndPublishedAtIsNotNull(UUID id, NewsletterStatus status);
+
     @Query(value = """
             select n.*
             from newsletter n

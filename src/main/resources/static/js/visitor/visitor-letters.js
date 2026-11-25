@@ -1,6 +1,6 @@
 (() => {
   // ── 설정 ──
-  const LETTER_PAGE = 'letter.html'; // 친구 담당 편지 상세 페이지 (정해지면 여기만 바꾸기)
+  const LETTER_PAGE = 'letter.html';
   const PAGE_SIZE = 6;
   const PREVIEW = new URLSearchParams(window.location.search).get('preview') === 'sample';
 
@@ -31,11 +31,8 @@
   const dialog = $('vl-dialog');
 
   // ── 작은 도우미 ──
-  // 친구 편지 상세 페이지가 지금은 issue(2026-11), API 연결 후엔 newsletterId를 쓸 예정이라 둘 다 보냄
-  const letterUrl = (id, y, m) => {
-    const params = new URLSearchParams({ newsletterId: id, issue: `${y}-${String(m).padStart(2, '0')}` });
-    return `${LETTER_PAGE}?${params}`;
-  };  const issueText = (y, m) => `${y} ${m}월호`;
+  const letterUrl = id => `${LETTER_PAGE}?${new URLSearchParams({ newsletterId: id })}`;
+  const issueText = (y, m) => `${y} ${m}월호`;
   const withEmoji = name => {
     const emoji = EMOJI[CODE_BY_NAME[name]];
     return emoji ? `${emoji} ${name}` : name;
@@ -120,7 +117,8 @@
         el('p', 'vl-card-text', item.summary || '')
       );
       const link = el('a', 'vl-btn', '편지 읽기 ↗');
-      link.href = letterUrl(item.newsletterId, item.issueYear, item.issueMonth);      card.append(link);
+      link.href = letterUrl(item.newsletterId);
+      card.append(link);
     } else {
       // 소식별 탭: 수록 소식 카드 → 자세히 보기 팝업
       card.append(
@@ -232,7 +230,7 @@
       // 해당 월호 보러가기 → 편지 상세 페이지
       const go = $('vl-d-go');
       go.textContent = `${issue} 보러가기 ↗`;
-      go.href = letterUrl(story.newsletterId, story.issueYear, story.issueMonth);
+      go.href = letterUrl(story.newsletterId);
       dialog.showModal();
     } catch (error) {
       statusEl.hidden = false;
