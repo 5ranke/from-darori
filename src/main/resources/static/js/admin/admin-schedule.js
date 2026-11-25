@@ -95,24 +95,23 @@
       label.append(radio, text);
       li.append(label);
 
+      const actions = document.createElement('div');
+      actions.className = 'admin-row-actions';
+      const cancel = document.createElement('button');
+      cancel.type = 'button';
+      cancel.className = 'admin-row-button sc-cancel';
+      cancel.dataset.id = letter.newsletterId;
+      cancel.textContent = isScheduled ? '예약 취소' : '저장 취소';
+
       const preview = document.createElement('button');
       preview.type = 'button';
-      preview.className = 'admin-button admin-button--outline sc-preview';
+      preview.className = 'admin-row-button admin-row-button--accent sc-preview';
       preview.dataset.id = letter.newsletterId;
       preview.textContent = '미리보기';
       preview.setAttribute('aria-haspopup', 'dialog');
       preview.setAttribute('aria-label', `${letter.title} 미리보기`);
-      li.append(preview);
-
-      // 예약된 뉴스레터에만 '예약 취소' 버튼
-      if (isScheduled) {
-        const cancel = document.createElement('button');
-        cancel.type = 'button';
-        cancel.className = 'sc-cancel';
-        cancel.dataset.id = letter.newsletterId;
-        cancel.textContent = '예약 취소';
-        li.append(cancel);
-      }
+      actions.append(preview, cancel);
+      li.append(actions);
 
       listEl.append(li);
     });
@@ -244,6 +243,19 @@
     }
   }
 
+  async function withdrawNewsletter(letter) {
+    busy = true;
+    try {
+      await api.withdrawNewsletter(letter.newsletterId);
+      await loadLetters();
+      DaroriAdmin.showDialog({ title: '저장 취소 완료', description: '담았던 소식을 뉴스레터 제작에서 다시 선택할 수 있어요.' });
+    } catch (error) {
+      handleError(error, '저장 취소 실패');
+    } finally {
+      busy = false;
+    }
+  }
+
   async function openPreview(id) {
     const revision = ++previewRevision;
     previewStatus.textContent = '저장한 편지를 불러오는 중이에요…';
@@ -288,6 +300,16 @@
     const btn = e.target.closest('.sc-cancel');
     if (!btn || busy) return;
     const letter = letters.find(l => l.newsletterId === btn.dataset.id);
+
+    if (letter.status === 'SAVED') {
+      DaroriAdmin.showDialog({
+        title: '뉴스레터 저장 취소',
+        description: `'${letter.title}' 초안을 발행 내역에서 삭제할까요? 담았던 소식은 다시 선택할 수 있어요.`,
+        confirmLabel: '저장 취소',
+        onConfirm: () => withdrawNewsletter(letter)
+      });
+      return;
+    }
 
     DaroriAdmin.showDialog({
       title: '예약 취소',

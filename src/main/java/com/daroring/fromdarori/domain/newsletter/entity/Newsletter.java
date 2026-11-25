@@ -72,4 +72,14 @@ public class Newsletter {
         newsletter.quizContent = quizContent;
         return newsletter;
     }
+
+    public void schedule(OffsetDateTime scheduledAt) {
+        this.scheduledAt = scheduledAt;
+        this.status = NewsletterStatus.SCHEDULED;
+    }
+
+    public void cancelSchedule() {
+        this.scheduledAt = null;
+        this.status = NewsletterStatus.SAVED;
+    }
 }

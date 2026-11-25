@@ -9,6 +9,7 @@ import com.daroring.fromdarori.domain.newsletter.dto.NewsletterSaveRequest.Inclu
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterSaveResponse;
 import com.daroring.fromdarori.domain.newsletter.entity.Newsletter;
 import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStory;
+import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStatus;
 import com.daroring.fromdarori.domain.newsletter.repository.NewsletterRepository;
 import com.daroring.fromdarori.domain.newsletter.repository.NewsletterStoryRepository;
 import com.daroring.fromdarori.domain.story.entity.Story;
@@ -47,10 +48,14 @@ public class NewsletterSaveService {
         validate(request);
         var items = request.stories().stream().sorted(Comparator.comparingInt(IncludedStory::displayOrder)).toList();
         var storyIds = items.stream().map(IncludedStory::storyId).toList();
-        var originals = storyRepository.findAllById(storyIds).stream()
+        var originals = storyRepository.findAllByIdForUpdate(storyIds).stream()
                 .collect(Collectors.toMap(Story::getId, Function.identity()));
         if (originals.size() != storyIds.size()) {
             throw new ApiException(HttpStatus.NOT_FOUND, "STORY4041", "포함된 원본 소식을 찾을 수 없습니다.");
+        }
+
+        if (newsletterStoryRepository.existsByStory_IdInAndNewsletter_StatusIn(storyIds, NewsletterStatus.HOLDING_STORIES)) {
+            throw new ApiException(HttpStatus.CONFLICT, "NEWSLETTER4095", "이미 다른 뉴스레터에 담긴 소식이 있습니다.");
         }
 
         var categoryIds = items.stream().map(IncludedStory::categoryId).filter(Objects::nonNull).distinct().toList();
@@ -79,6 +84,17 @@ public class NewsletterSaveService {
         newsletterStoryRepository.saveAllAndFlush(included);
         return new NewsletterSaveResponse(newsletter.getId(), newsletter.getTitle(), newsletter.getStatus(),
                 included.size(), adminId, newsletter.getCreatedAt());
+    }
+
+    @Transactional
+    public UUID withdraw(UUID id) {
+        Newsletter newsletter = newsletterRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "NEWSLETTER4041", "뉴스레터를 찾을 수 없습니다."));
+        if (newsletter.getStatus() != NewsletterStatus.SAVED) {
+            throw new ApiException(HttpStatus.CONFLICT, "NEWSLETTER4096", "저장 상태인 뉴스레터만 저장을 취소할 수 있습니다.");
+        }
+        newsletterRepository.delete(newsletter);
+        return id;
     }
 
     private void validate(NewsletterSaveRequest request) {

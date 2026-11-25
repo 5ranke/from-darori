@@ -62,20 +62,12 @@
 /* 예약 취소 버튼 */
 .admin-page .sc-item { display: flex; align-items: center; gap: 12px; }
 .admin-page .sc-option { flex: 1; }
-.admin-page .sc-cancel {
-  flex-shrink: 0; padding: 4px 12px;
-  border: 1px solid #333; border-radius: 8px;
-  background: #fff; font-size: var(--admin-body-size); cursor: pointer;
-}
-
-
 /* ── API 연결용 추가 ── */
 .admin-page .sc-list-status { margin: 8px 0 0; font-size: var(--admin-meta-size); color: #888; }
 .admin-page .sc-list-status[hidden] { display: none; }
 .admin-page .sc-option input:disabled { opacity: 0.4; cursor: not-allowed; } /* 이미 예약된 건 선택 불가 */
 .admin-page .sc-submit:disabled { opacity: 0.6; cursor: wait; }
 .admin-page .sc-item { flex-wrap: wrap; }
-.admin-page .sc-preview { flex-shrink: 0; padding-inline: 12px; }
 .admin-page .sc-preview-dialog {
   width: min(760px, calc(100% - 24px)); max-width: none; max-height: calc(100dvh - 24px);
   padding: 0; border: 1px solid var(--admin-border); border-radius: 16px; color: var(--admin-text);

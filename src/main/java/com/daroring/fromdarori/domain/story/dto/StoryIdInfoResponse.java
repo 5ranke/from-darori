@@ -34,7 +34,7 @@ public record StoryIdInfoResponse(
                 story.getBody(),
                 story.getActionUrl(),
                 story.getApplicationDeadline(),
-                story.getCreatedBy().getId(),
+                story.getCreatedBy() == null ? null : story.getCreatedBy().getId(),
                 story.getCreatedAt(),
                 story.getUpdatedAt(),
                 images

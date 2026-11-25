@@ -49,10 +49,9 @@ window.DaroriAdminDashboardData = (() => {
     },
     async deleteStory(id) {
       if (!uuid.test(id)) invalidResponse();
-      // 실제 DELETE 응답의 result는 객체가 아닌 UUID 문자열입니다.
-      const deletedId = await window.DaroriAdminAuth.request(`/api/v1/admin/stories/${encodeURIComponent(id)}`, { method: 'DELETE' });
-      if (deletedId !== id) throw new window.DaroriAdminAuth.AuthError('response', '삭제 결과를 확인할 수 없습니다. 목록을 다시 조회해 주세요.');
-      return deletedId;
+      const result = await window.DaroriAdminAuth.request(`/api/v1/admin/stories/${encodeURIComponent(id)}`, { method: 'DELETE' });
+      if (result?.storyId !== id) throw new window.DaroriAdminAuth.AuthError('response', '삭제 결과를 확인할 수 없습니다. 목록을 다시 조회해 주세요.');
+      return result.storyId;
     },
     async getDashboard() {
       const result = await window.DaroriAdminAuth.request('/api/v1/admin/dashboard');

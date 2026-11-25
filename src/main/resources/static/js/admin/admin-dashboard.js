@@ -1,9 +1,8 @@
-/* 대시보드 조회·소식 상세/삭제와 기존 화면 이동. 미구현 기능은 안내합니다. */
+/* 대시보드 조회, 소식 상세·삭제 및 관리 화면 연결. */
 (async () => {
   const authenticatedUser = await window.DaroriAdminAuthPage.ready;
   if (!authenticatedUser) return;
-  const { routes, showDialog, navigate } = window.DaroriAdmin;
-  Object.assign(routes, { notices: 'notices.html', subscribers: 'subscribers.html', operators: 'users.html' });
+  const { routes, showDialog } = window.DaroriAdmin;
   const $ = id => document.getElementById(id);
   const panel = $('admin-content');
   const stats = $('admin-stats');
@@ -64,9 +63,6 @@
     } finally { setBusy(false); }
   }
   $('admin-name').textContent = authenticatedUser.displayName;
-  function unlinked(label) {
-    showDialog({ title: `${label} 미연동`, description: '이 동작은 아직 연결되지 않았습니다. 서버 데이터는 변경하지 않습니다.', confirmLabel: '닫기' });
-  }
   // 기존 3개 카드 + 주민 제보 확인 영역에 API의 집계값 4개를 표시합니다.
   for (const stat of [
     { label: '소식', route: 'news' }, { label: '구독자', route: 'subscribers' }, { label: '편지 발행', route: 'letters' }
@@ -77,16 +73,9 @@
     const button = document.createElement('button'); button.type = 'button';
     button.className = 'admin-button admin-button--primary admin-stat-link'; button.textContent = '↗';
     button.setAttribute('aria-label', `${stat.label} 관리로 이동`); button.dataset.adminRoute = stat.route;
-    if (stat.route === 'letters') button.addEventListener('click', event => { event.stopPropagation(); unlinked(`${stat.label} 관리`); });
     const value = document.createElement('strong'); value.className = 'admin-stat-value'; value.textContent = '—';
     values.push(value); top.append(title, button); card.append(top, value); stats.append(card);
   }
-  document.querySelector('[data-admin-route="reports"]').addEventListener('click', event => {
-    event.stopPropagation();
-    showDialog({ title: '주민 제보 조회 미연동',
-      description: '주민 제보 화면은 준비되어 있지만 목록·상세·삭제 API는 아직 구현되지 않았습니다. 화면으로 이동해도 실제 제보를 조회할 수 없습니다.',
-      confirmLabel: '화면으로 이동', onConfirm: () => navigate('reports') });
-  });
   function listMessage(message) {
     list.replaceChildren();
     const item = document.createElement('li'); item.className = 'admin-news-item'; item.textContent = message; list.append(item);
@@ -110,9 +99,7 @@
       const edit = document.createElement('button'); edit.type = 'button'; edit.className = 'admin-button admin-button--primary'; edit.textContent = '수정';
       edit.setAttribute('aria-label', `${news.title} 수정`); edit.addEventListener('click', () => {
         if (busy) return;
-        showDialog({ title: '소식 관리에서 수정',
-          description: '소식 관리 화면의 목록에서 수정할 소식을 선택해 주세요. 해당 소식의 편집 화면으로 자동 진입하는 기능은 아직 연결되지 않았습니다.',
-          confirmLabel: '소식 관리로 이동', onConfirm: () => navigate('news') });
+        window.location.assign(`${routes.news}?${new URLSearchParams({ storyId: news.id })}`);
       });
       actions.append(remove, edit); item.append(copy, actions); list.append(item);
     });

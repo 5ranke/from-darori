@@ -80,9 +80,7 @@
     listStatus.textContent = '소식을 불러오는 중이에요…';
     try {
       const result = await api.getStories(page, PAGE_SIZE);
-      // 아직 뉴스레터에 안 들어간 소식만 후보로
-      const fresh = result.stories.filter(s => !s.publicationStatus || s.publicationStatus === 'UNPUBLISHED');
-      stories = reset ? fresh : [...stories, ...fresh];
+      stories = reset ? result.stories : [...stories, ...result.stories];
       hasNext = result.hasNext;
       renderNews();
     } catch (error) {

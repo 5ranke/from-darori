@@ -17,7 +17,8 @@ window.ScheduleApi = (() => {
 
   // 뉴스레터 예약 / 예약 취소 (보낼 데이터 없음)
   const reserve = id => auth.request(reservationPath(id), { method: 'PATCH' });
+  const withdrawNewsletter = id => auth.request(`/api/v1/admin/newsletters/${encodeURIComponent(id)}`, { method: 'DELETE' });
   const cancelReservation = id => auth.request(reservationPath(id), { method: 'DELETE' });
 
-  return { getNewsletters, getNewsletter, previewNewsletter, getSchedule, saveSchedule, reserve, cancelReservation };
+  return { getNewsletters, getNewsletter, previewNewsletter, getSchedule, saveSchedule, reserve, cancelReservation, withdrawNewsletter };
 })();

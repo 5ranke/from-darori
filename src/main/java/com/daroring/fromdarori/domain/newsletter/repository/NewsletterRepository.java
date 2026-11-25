@@ -2,6 +2,7 @@ package com.daroring.fromdarori.domain.newsletter.repository;
 
 import com.daroring.fromdarori.domain.newsletter.entity.Newsletter;
 import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStatus;
+import jakarta.persistence.LockModeType;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -9,9 +10,16 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
 public interface NewsletterRepository extends JpaRepository<Newsletter, UUID> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select n from Newsletter n where n.id = :id")
+    Optional<Newsletter> findByIdForUpdate(UUID id);
+
+    boolean existsByScheduledAt(OffsetDateTime scheduledAt);
 
     @Query(value = """
             select n.id as newsletterId, n.title as title, n.status as status, n.createdAt as createdAt,

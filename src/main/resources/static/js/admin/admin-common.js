@@ -12,8 +12,8 @@ window.DaroriAdmin = (() => {
     news: 'news.html',
     reports: 'reports.html',
     schedule: 'schedule.html',
-    letters: null,
-    unsubscribe: null
+    letters: 'schedule.html',
+    unsubscribe: new URL('visitor/unsubscribe.html', staticRoot).href
   };
   const labels = {
     newsletter: '뉴스레터 제작', notices: '공지사항 작성',
