@@ -6,6 +6,8 @@ import com.daroring.fromdarori.domain.newsletter.dto.PublishedListQuery;
 import com.daroring.fromdarori.domain.newsletter.entity.Newsletter;
 import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStatus;
 import com.daroring.fromdarori.domain.newsletter.repository.NewsletterRepository;
+import com.daroring.fromdarori.domain.story.dto.PublishedStoryContent;
+import com.daroring.fromdarori.domain.story.dto.PublishedStoryDetailResponse;
 import com.daroring.fromdarori.domain.story.dto.PublishedStoryListResponse;
 import com.daroring.fromdarori.domain.story.dto.PublishedStoryListResponse.Item;
 import com.daroring.fromdarori.domain.story.repository.PublishedStoryRepository;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class PublishedStoryService {
     private final CategoryRepository categoryRepository;
     private final NewsletterRepository newsletterRepository;
     private final PublishedStoryRepository publishedStoryRepository;
+    private final ObjectMapper objectMapper;
 
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public PublishedStoryListResponse getPublishedList(UUID categoryId, PublishedListQuery query) {
@@ -50,6 +54,21 @@ public class PublishedStoryService {
                         Objects.requireNonNullElse(story.getTitle(), ""), Objects.requireNonNullElse(story.getExcerpt(), "")))
                 .toList();
         return new PublishedStoryListResponse(selectedYear, page, size, stories.size() > size, items);
+    }
+
+    @Transactional(readOnly = true)
+    public PublishedStoryDetailResponse getPublishedDetail(UUID id) {
+        var story = publishedStoryRepository.findPublishedById(id, NewsletterStatus.PUBLISHED)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "수록 소식을 찾을 수 없습니다."));
+        var newsletter = story.getNewsletter();
+        var issue = newsletter.getPublishedAt().atZoneSameInstant(Newsletter.ISSUE_ZONE);
+        var snapshot = objectMapper.readTree(story.getStorySnapshot());
+        var content = PublishedStoryContent.fromSnapshot(snapshot);
+        String categoryName = story.getCategory() == null ? snapshot.path("categoryName").asString("")
+                : story.getCategory().getName();
+        return new PublishedStoryDetailResponse(story.getId(), newsletter.getId(), categoryName, issue.getYear(),
+                issue.getMonthValue(), content.title(), content.body(), content.actionUrl(),
+                content.applicationDeadline(), content.images());
     }
 
     private Integer latestIssueYear() {

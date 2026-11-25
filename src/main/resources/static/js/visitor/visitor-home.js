@@ -65,6 +65,7 @@
   const dialog = document.getElementById('home-story-dialog');
   const closeButton = document.getElementById('home-story-close');
   let opener;
+  let storyRequestId = 0;
 
   function issueText(letter) {
     return `${letter.issueYear} ${letter.issueMonth}월호`;
@@ -75,13 +76,55 @@
     return `visitor/letter.html?${params}`;
   }
 
-  function openStory(button, story, letter) {
+  async function openStory(button, publishedStoryId) {
+    const requestId = ++storyRequestId;
+    try {
+      const response = await fetch(`/api/v1/published-stories/${encodeURIComponent(publishedStoryId)}`, {
+        headers: { Accept: 'application/json' }
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const { isSuccess, result } = await response.json();
+      if (!isSuccess || !result) throw new Error('Invalid published story response');
+      if (requestId === storyRequestId) {
+        status.textContent = '';
+        renderStory(button, result);
+      }
+    } catch {
+      if (requestId === storyRequestId) {
+        status.textContent = '소식을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
+      }
+    }
+  }
+
+  function renderStory(button, story) {
+    const issue = issueText(story);
     document.getElementById('home-story-category').textContent = story.categoryName;
-    document.getElementById('home-story-date').textContent = issueText(letter);
+    document.getElementById('home-story-date').textContent = issue;
     document.getElementById('home-story-title').textContent = story.title;
-    document.getElementById('home-story-body').textContent = story.excerpt;
-    document.getElementById('home-story-letter').href = letterUrl(letter);
-    document.getElementById('home-story-letter-label').textContent = `${issueText(letter)} 보러가기`;
+    document.getElementById('home-story-body').textContent = story.body;
+    document.getElementById('home-story-letter').href = letterUrl(story);
+    document.getElementById('home-story-letter-label').textContent = `${issue} 보러가기`;
+
+    const images = document.getElementById('home-story-images');
+    images.replaceChildren(...story.images.map(image => {
+      const img = document.createElement('img');
+      img.src = image.url;
+      img.alt = image.altText ?? '';
+      img.loading = 'lazy';
+      return img;
+    }));
+    images.hidden = !images.childElementCount;
+    images.scrollLeft = 0;
+
+    const deadline = document.getElementById('home-story-deadline');
+    deadline.hidden = !story.applicationDeadline;
+    deadline.textContent = story.applicationDeadline ? `모집 마감일 · ${story.applicationDeadline}` : '';
+
+    const action = document.getElementById('home-story-action');
+    action.hidden = !/^https?:\/\//i.test(story.actionUrl ?? '');
+    if (action.hidden) action.removeAttribute('href');
+    else action.href = story.actionUrl;
+
     opener = button;
     dialog.showModal();
     dialog.scrollTop = 0;
@@ -111,7 +154,7 @@
       card.querySelector('.visitor-home-excerpt').textContent = story.excerpt;
       const button = card.querySelector('button');
       button.dataset.homeStory = story.publishedStoryId;
-      button.addEventListener('click', () => openStory(button, story, latest));
+      button.addEventListener('click', () => openStory(button, story.publishedStoryId));
       newsGrid.append(card);
     }
     newsGrid.closest('section').hidden = featuredStories.length === 0;
