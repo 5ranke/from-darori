@@ -93,7 +93,7 @@
   // ── ② 연도 ──
   async function loadYears() {
     try {
-      const { years } = await getJson('/api/v1/newsletters/years');
+      const { years } = await getJson('/api/v1/newletters/years');
       yearSelect.innerHTML = '';
       years.forEach(y => {
         const option = el('option', null, `${y} 편지`);
@@ -282,7 +282,7 @@
         { categoryId: 'c4', code: 'SEASONAL', name: '제철 정보', displayOrder: 4 }
       ];
     }
-    if (path.startsWith('/api/v1/newsletters/years')) return { years: [2026, 2025] };
+    if (path.startsWith('/api/v1/newletters/years')) return { years: [2026, 2025] };
     if (path.startsWith('/api/v1/newsletters')) {
       return {
         hasNext: false,
