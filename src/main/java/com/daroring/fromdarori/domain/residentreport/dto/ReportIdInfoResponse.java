@@ -1,11 +1,13 @@
 package com.daroring.fromdarori.domain.residentreport.dto;
 
 import com.daroring.fromdarori.domain.residentreport.entity.ResidentReport;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.daroring.fromdarori.domain.residentreport.entity.ResidentReportStatus;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public record ReportIdInfoResponse(
         UUID reportId,
         String title,
@@ -18,6 +20,7 @@ public record ReportIdInfoResponse(
         OffsetDateTime createdAt
 ) {
     public static ReportIdInfoResponse from(ResidentReport residentReport) {
+        var approver = residentReport.getApprovedBy();
         return new ReportIdInfoResponse(
                 residentReport.getId(),
                 residentReport.getTitle(),
@@ -25,7 +28,7 @@ public record ReportIdInfoResponse(
                 residentReport.getReporterName(),
                 residentReport.getReporterEmail(),
                 residentReport.getStatus(),
-                residentReport.getApprovedBy().getId(),
+                approver == null ? null : approver.getId(),
                 residentReport.getApprovedAt(),
                 residentReport.getCreatedAt()
         );

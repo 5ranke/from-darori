@@ -38,7 +38,7 @@ public class AdminResidentReportService {
     @Transactional(readOnly = true)
     public ReportInfoResponse getReports(int page, int size) {
         PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<ResidentReport> reportPage = adminResidentReportRepository.findAll(pageable);
+        Page<ResidentReport> reportPage = adminResidentReportRepository.findByStatus(ResidentReportStatus.PENDING, pageable);
         return new ReportInfoResponse(
                 reportPage.getContent().stream()
                         .map(ReportItemResponse::from)
@@ -51,7 +51,7 @@ public class AdminResidentReportService {
         );
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ReportIdInfoResponse getReport(UUID reportId) {
         ResidentReport report = adminResidentReportRepository.findById(reportId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "REPORT4041", "제보를 찾을 수 없습니다."));
@@ -64,9 +64,12 @@ public class AdminResidentReportService {
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND,"CATEGORY4041","카테고리를 찾을 수 없습니다."));
         var admin = adminUserRepository.findById(adminId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "ADMIN4041","운영자를 찾을 수 없습니다."));
-        var report = adminResidentReportRepository.findById(reportId)
+        var report = adminResidentReportRepository.findByIdForUpdate(reportId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "REPORT4041", "제보를 찾을 수 없습니다."));
 
+        if (report.getStatus() != ResidentReportStatus.PENDING) {
+            throw new ApiException(HttpStatus.CONFLICT, "REPORT4091", "이미 소식에 등록되었습니다.");
+        }
         report.update(admin);
 
         Story story = adminStoryRepository.save(Story.createFromReport(
@@ -76,12 +79,13 @@ public class AdminResidentReportService {
         List<StoryImage> savedImages = request.images() == null
                 ? List.of()
                 : saveNewImages(story, request.images());
+        adminStoryRepository.flush();
         return ReportToStoryResponse.from(story, report, imageResponses(savedImages));
     }
 
     @Transactional
     public ReportDeleteResponse delete(UUID reportId) {
-        ResidentReport report = adminResidentReportRepository.findById(reportId)
+        ResidentReport report = adminResidentReportRepository.findByIdForUpdate(reportId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "REPORT4041", "제보를 찾을 수 없습니다."));
         if (report.getStatus() == ResidentReportStatus.APPROVED) {
             throw new ApiException(HttpStatus.CONFLICT, "REPORT4091", "이미 소식에 등록되었습니다.");
