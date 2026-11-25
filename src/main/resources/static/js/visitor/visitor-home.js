@@ -54,63 +54,37 @@
   updateValidation();
 })();
 
-/* 홈 소식 상세 팝업 전용. Figma 예시 데이터이며 API를 호출하거나 저장하지 않습니다.
- * photo-map만 상세 시안의 전체 본문·사진을 제공합니다.
- * 나머지 카드는 확인 가능한 기존 카드 문구만 사용하며 상세 내용을 임의로 만들지 않습니다.
- */
 (() => {
+  const latestLink = document.getElementById('home-latest-letter');
+  const newsGrid = document.getElementById('home-news-grid');
+  const newsHeading = document.getElementById('home-news-heading');
+  const letterList = document.getElementById('home-letter-list');
+  const newsTemplate = document.getElementById('home-news-template');
+  const letterTemplate = document.getElementById('home-letter-template');
+  const status = document.getElementById('home-content-status');
   const dialog = document.getElementById('home-story-dialog');
-  if (!dialog || typeof dialog.showModal !== 'function') return;
-
-  const category = document.getElementById('home-story-category');
-  const date = document.getElementById('home-story-date');
-  const title = document.getElementById('home-story-title');
-  const body = document.getElementById('home-story-body');
-  const images = document.getElementById('home-story-images');
-  const letterLabel = document.getElementById('home-story-letter-label');
   const closeButton = document.getElementById('home-story-close');
-  let opener = null;
+  let opener;
 
-  const details = {
-    'photo-map': {
-      paragraphs: [
-        '지난 마을길 기록 프로젝트에서 방문자들이 남긴 사진과 메모를 주민들과 함께 정리했습니다. 돌담길과 느티나무, 잠시 쉬어 갔던 쉼터를 한 장의 사진 지도에 담았어요. 주민들은 장소마다 얽힌 기억을 덧붙여 주셨습니다.',
-        '다음 단계에서는 계절별 사진을 더 모아 마을회관에서 누구나 펼쳐볼 수 있는 기록으로 이어갈 예정입니다.'
-      ],
-      images: [
-        { src: 'images/visitor/letter-2026-11.png', alt: '감이 열린 감나무와 돌담 앞에 놓인 감 상자' },
-        { src: 'images/visitor/letter-2026-10.png', alt: '채소 사이 빨간 바구니에 앉아 있는 흰 강아지' },
-        { src: 'images/visitor/letter-2026-09.png', alt: '눈 덮인 마을길을 걸어가는 사람' }
-      ]
-    }
-  };
+  function issueText(letter) {
+    return `${letter.issueYear} ${letter.issueMonth}월호`;
+  }
 
-  function openStory(button) {
-    if (dialog.open) return;
-    const card = button.closest('.visitor-home-news-card');
-    const detail = details[button.dataset.homeStory];
-    // 카드의 태그·날짜·제목과 동일한 내용을 표시합니다. HTML 문자열은 삽입하지 않습니다.
-    category.textContent = card.querySelector('.visitor-home-tag').textContent;
-    date.textContent = card.querySelector('.visitor-home-date').textContent;
-    title.textContent = card.querySelector('h3').textContent;
-    const paragraphs = detail ? detail.paragraphs : [card.querySelector('.visitor-home-excerpt').textContent];
-    body.replaceChildren(...paragraphs.map(text => {
-      const paragraph = document.createElement('p');
-      paragraph.textContent = text;
-      return paragraph;
-    }));
-    const photos = detail ? detail.images : [];
-    images.replaceChildren(...photos.map(photo => {
-      const image = document.createElement('img');
-      image.src = photo.src;
-      image.alt = photo.alt;
-      image.width = 252;
-      image.height = 190;
-      return image;
-    }));
-    images.hidden = photos.length === 0;
-    images.scrollLeft = 0;
-    letterLabel.textContent = `${date.textContent} 보러가기`;
+  function letterUrl(letter) {
+    const params = new URLSearchParams({
+      newsletterId: letter.newsletterId,
+      issue: `${letter.issueYear}-${String(letter.issueMonth).padStart(2, '0')}`
+    });
+    return `visitor/letter.html?${params}`;
+  }
+
+  function openStory(button, story, letter) {
+    document.getElementById('home-story-category').textContent = story.categoryName;
+    document.getElementById('home-story-date').textContent = issueText(letter);
+    document.getElementById('home-story-title').textContent = story.title;
+    document.getElementById('home-story-body').textContent = story.excerpt;
+    document.getElementById('home-story-letter').href = letterUrl(letter);
+    document.getElementById('home-story-letter-label').textContent = `${issueText(letter)} 보러가기`;
     opener = button;
     dialog.showModal();
     dialog.scrollTop = 0;
@@ -119,15 +93,58 @@
   }
 
   closeButton.addEventListener('click', () => dialog.close());
-  // Escape로 닫힐 때도 동일하게 배경 스크롤과 원래 버튼의 포커스를 복구합니다.
   dialog.addEventListener('close', () => {
     document.body.classList.remove('visitor-home--modal-open');
-    if (opener && opener.isConnected) opener.focus();
-    opener = null;
+    opener?.focus();
   });
-  document.querySelectorAll('[data-home-story]').forEach(button => {
-    button.addEventListener('click', () => openStory(button));
-    button.disabled = false;
-    button.removeAttribute('title');
-  });
+
+  function renderHome({ latestNewsletterId, featuredStories, recentNewsletters }) {
+    if (!latestNewsletterId) return;
+    const latest = recentNewsletters[0];
+
+    latestLink.href = letterUrl(latest);
+    latestLink.hidden = false;
+
+    newsHeading.textContent = `${issueText(latest)} 다로리 소식`;
+    for (const story of featuredStories) {
+      const card = newsTemplate.content.firstElementChild.cloneNode(true);
+      card.querySelector('.visitor-home-tag').textContent = story.categoryName;
+      card.querySelector('.visitor-home-date').textContent = issueText(latest);
+      card.querySelector('h3').textContent = story.title;
+      card.querySelector('.visitor-home-excerpt').textContent = story.excerpt;
+      const button = card.querySelector('button');
+      button.dataset.homeStory = story.publishedStoryId;
+      button.addEventListener('click', () => openStory(button, story, latest));
+      newsGrid.append(card);
+    }
+    newsGrid.closest('section').hidden = featuredStories.length === 0;
+
+    for (const letter of recentNewsletters) {
+      const card = letterTemplate.content.firstElementChild.cloneNode(true);
+      const thumbnail = card.querySelector('img');
+      if (letter.thumbnailUrl) thumbnail.src = letter.thumbnailUrl;
+      else thumbnail.remove();
+      const badge = letter.newsletterId === latestNewsletterId ? ' | 최신' : '';
+      card.querySelector('.visitor-home-tag').textContent = issueText(letter) + badge;
+      card.querySelector('h3').textContent = letter.title;
+      card.querySelector('p').textContent = letter.summary ?? '';
+      card.querySelector('a').href = letterUrl(letter);
+      letterList.append(card);
+    }
+    letterList.closest('section').hidden = false;
+  }
+
+  async function loadHome() {
+    try {
+      const response = await fetch('/api/v1/home', { headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const { isSuccess, result } = await response.json();
+      if (!isSuccess || !result) throw new Error('Invalid home response');
+      renderHome(result);
+    } catch {
+      status.textContent = '다로리 소식을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
+    }
+  }
+
+  loadHome();
 })();
