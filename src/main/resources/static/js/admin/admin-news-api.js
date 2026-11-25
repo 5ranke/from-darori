@@ -19,7 +19,7 @@ window.NewsApi = (() => {
   }
 
   // 소식
-  const getStories = (page = 0, size = 10) => auth.request(`/api/v1/admin/stories?page=${page}&size=${size}`);
+  const getStories = (page = 0, size = 10) => auth.request(`/api/v1/admin/stories?page=${page}&size=${size}&publicationStatus=AVAILABLE`);
   const getStory = id => auth.request(storyPath(id));
   const getImage = path => auth.request(path, { responseType: 'image' });
   const createStory = body => auth.request('/api/v1/admin/stories', { method: 'POST', body });

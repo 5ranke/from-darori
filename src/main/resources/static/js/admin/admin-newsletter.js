@@ -5,7 +5,7 @@
   let stories = [];     // 소식 후보
   let page = 0;
   let hasNext = false;
-  let draft = null;     // AI가 만든 초안 (칸에서 고치면 여기에 바로 반영)
+  let draft = null;
   let generating = false;
   let saving = false;
 
@@ -17,8 +17,13 @@
   const moreBtn = $('nl-more');
   const generateBtn = $('nl-generate');
   const generateText = $('nl-generate-text');
-  const draftBox = $('nl-draft');
+  const draftEmpty = $('nl-draft-empty');
   const saveBtn = $('nl-save');
+  const previewSection = $('nl-email-preview');
+  const previewStatus = $('nl-preview-status');
+  const previewFrame = $('nl-preview-frame');
+  let previewTimer;
+  let previewRevision = 0;
 
   // 에러 처리: 로그인 만료면 로그인 화면으로, 아니면 팝업
   function handleError(error, title = '요청 실패') {
@@ -75,97 +80,12 @@
     listStatus.textContent = '소식을 불러오는 중이에요…';
     try {
       const result = await api.getStories(page, PAGE_SIZE);
-      // 아직 뉴스레터에 안 들어간 소식만 후보로
-      const fresh = result.stories.filter(s => !s.publicationStatus || s.publicationStatus === 'UNPUBLISHED');
-      stories = reset ? fresh : [...stories, ...fresh];
+      stories = reset ? result.stories : [...stories, ...result.stories];
       hasNext = result.hasNext;
       renderNews();
     } catch (error) {
       listStatus.textContent = '소식을 불러오지 못했어요.';
       handleError(error, '소식 불러오기 실패');
-    }
-  }
-
-  // ── ② 초안 편집 칸 ──
-  // 입력칸 하나 만들기 (고치면 onInput으로 draft에 바로 반영)
-  function makeField(labelText, value, onInput, multiline = false) {
-    const wrap = document.createElement('label');
-    wrap.className = 'nl-draft-field';
-    const label = document.createElement('span');
-    label.className = 'nl-draft-label';
-    label.textContent = labelText;
-    const input = document.createElement(multiline ? 'textarea' : 'input');
-    input.className = 'nl-input';
-    if (!multiline) input.type = 'text';
-    input.value = value || '';
-    input.addEventListener('input', () => onInput(input.value));
-    wrap.append(label, input);
-    return wrap;
-  }
-
-  function renderDraft() {
-    draftBox.innerHTML = '';
-    if (!draft) {
-      const empty = document.createElement('p');
-      empty.className = 'nl-draft-empty';
-      empty.textContent = '뉴스레터를 만들면 여기에 초안이 나타나요.';
-      draftBox.append(empty);
-      return;
-    }
-
-    draftBox.append(
-      makeField('소개 (지난 편지 목록에 보이는 한 줄)', draft.summary, v => { draft.summary = v; }),
-      makeField('인사말', draft.intro, v => { draft.intro = v; }, true)
-    );
-
-    // 소식별
-    draft.stories.forEach((story, i) => {
-      const section = document.createElement('div');
-      section.className = 'nl-draft-story';
-      const head = document.createElement('p');
-      head.className = 'nl-draft-story-head';
-      head.textContent = `소식 ${i + 1}`;
-      const badge = document.createElement('span');
-      badge.className = 'nl-draft-badge';
-      badge.textContent = story.categoryName;
-      head.append(badge);
-      section.append(
-        head,
-        makeField('제목', story.title, v => { story.title = v; }),
-        makeField('본문', story.body, v => { story.body = v; }, true)
-      );
-      draftBox.append(section);
-    });
-
-    draftBox.append(makeField('맺음말', draft.closing, v => { draft.closing = v; }, true));
-
-    // 퀴즈 (질문·해설만 수정 가능, 보기·정답은 보기만)
-    if (draft.quiz) {
-      const quiz = draft.quiz;
-      const section = document.createElement('div');
-      section.className = 'nl-draft-story';
-      const head = document.createElement('p');
-      head.className = 'nl-draft-story-head';
-      head.textContent = '📝 이번 호 퀴즈';
-      section.append(head, makeField('질문', quiz.question, v => { quiz.question = v; }));
-
-      const options = document.createElement('ol');
-      options.className = 'nl-quiz-options';
-      (quiz.options || []).forEach((option, i) => {
-        const li = document.createElement('li');
-        li.className = 'nl-quiz-option';
-        li.textContent = `${i + 1}. ${option}`;
-        if (i === quiz.answer) {
-          li.classList.add('nl-quiz-option--answer');
-          const tag = document.createElement('span');
-          tag.className = 'nl-quiz-answer-tag';
-          tag.textContent = '✔ 정답';
-          li.append(tag);
-        }
-        options.append(li);
-      });
-      section.append(options, makeField('해설', quiz.explanation, v => { quiz.explanation = v; }, true));
-      draftBox.append(section);
     }
   }
 
@@ -176,7 +96,7 @@
     generateText.textContent = '뉴스레터 만드는 중… (조금 걸릴 수 있어요)';
     try {
       draft = await api.generate({ title, storyIds });
-      renderDraft();
+      queuePreview();
     } catch (error) {
       handleError(error, '뉴스레터 생성 실패');
     } finally {
@@ -201,7 +121,7 @@
     if (draft) {
       DaroriAdmin.showDialog({
         title: '초안 다시 만들기',
-        description: '지금 초안을 새 초안으로 바꿀까요? 직접 고친 내용은 사라져요.',
+        description: '지금 미리보기를 새 초안으로 바꿀까요?',
         confirmLabel: '다시 만들기',
         onConfirm: () => generate(title, storyIds)
       });
@@ -209,6 +129,36 @@
       generate(title, storyIds);
     }
   });
+
+  function queuePreview() {
+    const revision = ++previewRevision;
+    window.clearTimeout(previewTimer);
+    previewSection.hidden = !draft;
+    draftEmpty.hidden = Boolean(draft);
+    const title = titleInput.value.trim();
+    if (!draft || !title) {
+      previewFrame.hidden = true;
+      previewFrame.removeAttribute('srcdoc');
+      previewStatus.textContent = draft ? '뉴스레터 제목을 입력해 주세요.' : '';
+      return;
+    }
+    previewStatus.textContent = '미리보기를 업데이트하는 중입니다.';
+    previewTimer = window.setTimeout(async () => {
+      try {
+        const { html } = await api.preview({ ...draft, title });
+        if (revision !== previewRevision) return;
+        previewFrame.srcdoc = html;
+        previewFrame.hidden = false;
+        previewStatus.textContent = '';
+      } catch (error) {
+        if (revision !== previewRevision) return;
+        previewFrame.hidden = true;
+        if (error.kind === 'session') handleError(error);
+        else previewStatus.textContent = error.message || '미리보기를 불러오지 못했습니다.';
+      }
+    }, 400);
+  }
+  titleInput.addEventListener('input', queuePreview);
 
   // ── ④ 발행 내역에 저장 ──
   form.addEventListener('submit', async e => {
@@ -256,7 +206,7 @@
       await api.save(body);
       form.reset();
       draft = null;
-      renderDraft();
+      queuePreview();
       await loadStories(); // 저장한 소식은 후보에서 빠질 수 있어서 새로 불러오기
       DaroriAdmin.showDialog({ title: '저장 완료', description: '발행 내역에 저장했어요. 발행 예약에서 예약할 수 있어요.' });
     } catch (error) {
@@ -273,7 +223,7 @@
   });
 
   // ── 시작: 로그인 확인이 끝난 뒤 ──
-  renderDraft();
+  queuePreview();
   window.DaroriAdminAuthPage.ready.then(account => {
     if (account) loadStories();
   });

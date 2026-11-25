@@ -1,9 +1,11 @@
 package com.daroring.fromdarori.domain.story.repository;
 
+import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStatus;
 import com.daroring.fromdarori.domain.story.entity.Story;
 import com.daroring.fromdarori.domain.story.entity.StorySourceType;
 import jakarta.persistence.LockModeType;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.domain.Page;
@@ -16,9 +18,16 @@ import java.util.UUID;
 
 public interface AdminStoryRepository extends JpaRepository<Story, UUID> {
 
+    @Query("select s from Story s join fetch s.category where s.id in :ids")
+    List<Story> findAllWithCategoryByIdIn(@Param("ids") Collection<UUID> ids);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select s from Story s where s.id = :id")
     Optional<Story> findByIdForUpdate(@Param("id") UUID id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select s from Story s where s.id in :ids order by s.id")
+    List<Story> findAllByIdForUpdate(@Param("ids") Collection<UUID> ids);
 
     @Query(value = """
             select s from Story s
@@ -82,7 +91,7 @@ public interface AdminStoryRepository extends JpaRepository<Story, UUID> {
                    or rr.status = com.daroring.fromdarori.domain.residentreport.entity.ResidentReportStatus.APPROVED)
               and not exists (select ns.id from NewsletterStory ns
                               where ns.story = s
-                                and ns.newsletter.status = com.daroring.fromdarori.domain.newsletter.entity.NewsletterStatus.PUBLISHED)
+                                and ns.newsletter.status in :excludedStatuses)
             """,
             countQuery = """
             select count(s) from Story s
@@ -93,11 +102,12 @@ public interface AdminStoryRepository extends JpaRepository<Story, UUID> {
                    or rr.status = com.daroring.fromdarori.domain.residentreport.entity.ResidentReportStatus.APPROVED)
               and not exists (select ns.id from NewsletterStory ns
                               where ns.story = s
-                                and ns.newsletter.status = com.daroring.fromdarori.domain.newsletter.entity.NewsletterStatus.PUBLISHED)
+                                and ns.newsletter.status in :excludedStatuses)
             """)
-    Page<Story> findUnpublishedAdminStories(
+    Page<Story> findAdminStoriesExcludingNewsletterStatuses(
             @Param("categoryId") UUID categoryId,
             @Param("sourceType") StorySourceType sourceType,
+            @Param("excludedStatuses") Set<NewsletterStatus> excludedStatuses,
             Pageable pageable
     );
 

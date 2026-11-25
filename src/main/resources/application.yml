@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
   servlet:
     multipart:
       max-file-size: 10MB
@@ -21,3 +23,9 @@ security:
     refresh-token-ttl: 7d
     remember-me-refresh-token-ttl: 30d
     cookie-secure: ${JWT_COOKIE_SECURE:true}
+
+darori:
+  openai:
+    api-key: ${OPENAI_API_KEY:}
+    model: ${OPENAI_MODEL:gpt-5.4}
+    base-url: ${OPENAI_BASE_URL:https://api.openai.com/v1}

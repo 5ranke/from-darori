@@ -39,7 +39,7 @@
       <!-- ===== 여기부터 윤서님이 만드는 부분 ===== -->
       <section class="admin-newsletter admin-card" id="admin-content">
         <h2 class="nl-title">뉴스레터 제작</h2>
-        <p class="nl-desc">편지에 담을 소식을 선택하고 초안을 검토하세요. 결과는 자유롭게 수정할 수 있어요.</p>
+        <p class="nl-desc">편지에 담을 소식을 선택하고 이메일 초안을 확인하세요.</p>
 
         <form id="nl-form" class="nl-form">
           <label class="nl-label" for="nl-title-input">제목</label>
@@ -60,9 +60,13 @@
           </button>
 
           <p class="nl-label">뉴스레터 초안</p>
-          <!-- 초안은 칸별로 나눠서 자동으로 그려요 -->
-          <div class="nl-draft-box" id="nl-draft"></div>
-
+          <div class="nl-draft-box" id="nl-draft">
+            <p class="nl-draft-empty" id="nl-draft-empty">뉴스레터를 만들면 여기에 초안이 나타나요.</p>
+            <section class="nl-email-preview" id="nl-email-preview" aria-label="이메일 미리보기" hidden>
+              <p id="nl-preview-status" role="status"></p>
+              <iframe id="nl-preview-frame" class="nl-preview-frame" title="뉴스레터 이메일" sandbox="allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" hidden></iframe>
+            </section>
+          </div>
           <button type="submit" class="nl-save" id="nl-save">발행 내역에 저장</button>
         </form>
       </section>

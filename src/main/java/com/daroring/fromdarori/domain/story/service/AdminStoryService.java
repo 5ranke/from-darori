@@ -3,6 +3,7 @@ package com.daroring.fromdarori.domain.story.service;
 import com.daroring.fromdarori.domain.admin.repository.AdminUserRepository;
 import com.daroring.fromdarori.domain.category.repository.CategoryRepository;
 import com.daroring.fromdarori.domain.story.dto.*;
+import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStatus;
 import com.daroring.fromdarori.domain.story.entity.Story;
 import com.daroring.fromdarori.domain.story.entity.StoryImage;
 import com.daroring.fromdarori.domain.story.entity.StoryPublicationStatus;
@@ -48,8 +49,12 @@ public class AdminStoryService {
         Page<Story> storyPage;
         if (publicationStatus == StoryPublicationStatus.PUBLISHED) {
             storyPage = adminStoryRepository.findPublishedAdminStories(categoryId, sourceType, pageable);
-        } else if (publicationStatus == StoryPublicationStatus.UNPUBLISHED) {
-            storyPage = adminStoryRepository.findUnpublishedAdminStories(categoryId, sourceType, pageable);
+        } else if (publicationStatus == StoryPublicationStatus.UNPUBLISHED
+                || publicationStatus == StoryPublicationStatus.AVAILABLE) {
+            var excludedStatuses = publicationStatus == StoryPublicationStatus.AVAILABLE
+                    ? NewsletterStatus.HOLDING_STORIES : Set.of(NewsletterStatus.PUBLISHED);
+            storyPage = adminStoryRepository.findAdminStoriesExcludingNewsletterStatuses(
+                    categoryId, sourceType, excludedStatuses, pageable);
         } else {
             storyPage = adminStoryRepository.findAdminStories(categoryId, sourceType, pageable);
         }
