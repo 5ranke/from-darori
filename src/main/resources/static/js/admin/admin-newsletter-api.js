@@ -9,7 +9,8 @@ window.NewsletterApi = (() => {
   const generate = body => auth.request('/api/v1/admin/newsletters/generate', { method: 'POST', body, timeoutMs: 135000 });
 
   // 발행 내역에 저장
+  const preview = body => auth.request('/api/v1/admin/newsletters/preview', { method: 'POST', body });
   const save = body => auth.request('/api/v1/admin/newsletters', { method: 'POST', body });
 
-  return { getStories, generate, save };
+  return { getStories, generate, preview, save };
 })();
