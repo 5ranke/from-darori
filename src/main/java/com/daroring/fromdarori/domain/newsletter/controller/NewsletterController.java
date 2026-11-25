@@ -3,6 +3,7 @@ package com.daroring.fromdarori.domain.newsletter.controller;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterDetailResponse;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterListResponse;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterYearsResponse;
+import com.daroring.fromdarori.domain.newsletter.dto.PublishedListQuery;
 import com.daroring.fromdarori.domain.newsletter.service.NewsletterService;
 import com.daroring.fromdarori.global.response.ApiResponse;
 import java.util.UUID;
@@ -33,29 +34,9 @@ public class NewsletterController {
             @RequestParam(required = false) String page,
             @RequestParam(required = false) String size
     ) {
-        if (year != null && !year.matches("[1-9][0-9]{3}")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "year는 네 자리 양의 정수여야 합니다.");
-        }
-        Integer selectedYear = year == null ? null : Integer.valueOf(year);
-        int pageNumber = parsePageParameter(page, 0, 0, Integer.MAX_VALUE, "page는 0 이상의 정수여야 합니다.");
-        int pageSize = parsePageParameter(size, 6, 1, 30, "size는 1~30 사이의 정수여야 합니다.");
+        PublishedListQuery query = PublishedListQuery.parse(year, page, size);
         return ApiResponse.success("발행호 목록 조회에 성공했습니다.",
-                newsletterService.getPublishedList(selectedYear, pageNumber, pageSize));
-    }
-
-    private int parsePageParameter(String value, int defaultValue, int min, int max, String errorMessage) {
-        if (value == null) {
-            return defaultValue;
-        }
-        try {
-            int number = Integer.parseInt(value);
-            if (number >= min && number <= max) {
-                return number;
-            }
-        } catch (NumberFormatException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage, exception);
-        }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
+                newsletterService.getPublishedList(query.year(), query.page(), query.size()));
     }
 
     @GetMapping("/{newsletterId}")
