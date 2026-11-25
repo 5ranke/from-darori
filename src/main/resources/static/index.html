@@ -8,8 +8,7 @@
   <link rel="stylesheet" href="css/visitor/visitor-common.css">
   <link rel="stylesheet" href="css/visitor/visitor-home.css">
   <script>
-    // 이번 단계에서 존재하는 홈과 홈 내부 구독 영역만 연결합니다.
-    window.DaroriVisitorConfig = { page: 'home', routes: { home: 'index.html', subscribe: '#subscription' } };
+    window.DaroriVisitorConfig = { page: 'home', routes: { home: '/', subscribe: '#subscription' } };
   </script>
   <script defer src="js/visitor/visitor-common.js"></script>
   <script defer src="js/visitor/visitor-home.js"></script>
@@ -17,77 +16,48 @@
 <body class="visitor-page visitor-home" data-visitor-page="home">
   <div data-visitor-header></div>
   <main class="visitor-container visitor-home-main">
-    <!-- 1차 레이아웃: 아래 콘텐츠는 Figma의 화면 표시용 예시이며 API 조회 결과가 아닙니다.
-         소식 상세·편지 상세는 예시 데이터입니다. 구독 신청은 미연결 상태입니다. -->
     <section class="visitor-home-hero" aria-labelledby="home-heading">
       <h1 id="home-heading">다녀가신 뒤에도<br>다로리 소식을 전해드려요</h1>
       <p>참여하셨던 프로젝트가 지금 어떻게 진행되고 있는지, 마을에서 새로<br class="visitor-home-desktop-break"> 찾는 사람은 누구인지 한 달에 한 번 소식을 보내드립니다.</p>
-      <a class="visitor-home-button" href="visitor/letter.html?issue=2026-11">최신 편지 읽기 <span aria-hidden="true">↗</span></a>
+      <a class="visitor-home-button" id="home-latest-letter" hidden>최신 편지 읽기 <span aria-hidden="true">↗</span></a>
     </section>
 
-    <section class="visitor-home-section visitor-home-news" aria-labelledby="home-news-heading" data-content-source="figma-example">
-      <h2 id="home-news-heading">2026 11월호 다로리 소식</h2>
-      <!-- 제공된 홈 시안에는 영역 제목 아래 별도 안내 문구가 없어 추가하지 않았습니다. -->
-      <div class="visitor-home-news-grid">
-        <article class="visitor-home-news-card">
-          <span class="visitor-home-tag">🙋🏻‍♀️ 구인 참여</span>
-          <p class="visitor-home-date">2026 11월호</p>
-          <h3>마을 사진 교실을 함께할 강사를 찾습니다</h3>
-          <p class="visitor-home-excerpt">주민들이 스마트폰으로 일상을 찍고 사진을 정리 하는 방법을 배울 수 있도록 사진 교실 강사를 모집합니다! 수업은 마을회관에서 소규모로 진행하며 풍경 촬영과…</p>
-          <button class="visitor-home-button" type="button" data-home-story="photo-class" aria-haspopup="dialog" aria-controls="home-story-dialog" disabled title="소식 상세를 보려면 JavaScript를 활성화해 주세요">자세히 보기 <span aria-hidden="true">↗</span></button>
-        </article>
-        <article class="visitor-home-news-card">
-          <span class="visitor-home-tag">🌱 프로젝트 후속</span>
-          <p class="visitor-home-date">2026 11월호</p>
-          <h3>여러분이 남긴 산책 기록, 마을 사진 지도로 이어졌어요</h3>
-          <p class="visitor-home-excerpt">지난 마을길 기록 프로젝트에서 방문자들이 남긴 사진과 메모를 주민들과 함께 정리했습니다. 돌담길과 느티나무, 잠시 쉬어 갔던 쉼터를 한 장의 사진 지도에 담았어요</p>
-          <button class="visitor-home-button" type="button" data-home-story="photo-map" aria-haspopup="dialog" aria-controls="home-story-dialog" disabled title="소식 상세를 보려면 JavaScript를 활성화해 주세요">자세히 보기 <span aria-hidden="true">↗</span></button>
-        </article>
-        <article class="visitor-home-news-card">
-          <span class="visitor-home-tag">🍊 제철 정보</span>
-          <p class="visitor-home-date">2026 11월호</p>
-          <h3>가을 반시로 전하는 다로리의 제철</h3>
-          <p class="visitor-home-excerpt">이번 제철 코너에서는 가을 감을 소개합니다. 잘 익은 감을 이웃과 나누는 일도 마을의 계절 풍경 중 하나예요. 실제 판매를 시작할 때는 생산자, 품종, 중량과 가격, 보…</p>
-          <button class="visitor-home-button" type="button" data-home-story="seasonal" aria-haspopup="dialog" aria-controls="home-story-dialog" disabled title="소식 상세를 보려면 JavaScript를 활성화해 주세요">자세히 보기 <span aria-hidden="true">↗</span></button>
-        </article>
-      </div>
+    <p id="home-content-status" role="status"></p>
+
+    <section class="visitor-home-section visitor-home-news" aria-labelledby="home-news-heading" hidden>
+      <h2 id="home-news-heading">다로리 소식</h2>
+      <div class="visitor-home-news-grid" id="home-news-grid"></div>
     </section>
 
-    <section class="visitor-home-section visitor-home-letters" aria-labelledby="home-letters-heading" data-content-source="figma-example">
+    <section class="visitor-home-section visitor-home-letters" aria-labelledby="home-letters-heading" hidden>
       <div class="visitor-home-section-heading">
         <h2 id="home-letters-heading">지난 편지</h2>
         <a class="visitor-home-all" href="visitor/letters.html" style="text-decoration: none;">전체 보기 &gt;</a>
       </div>
-      <div class="visitor-home-letter-list">
-        <article class="visitor-home-letter">
-          <img class="visitor-home-thumbnail" src="images/visitor/letter-2026-11.png" alt="감이 열린 감나무와 돌담 앞에 놓인 감 상자" width="162" height="162" loading="lazy">
-          <div class="visitor-home-letter-copy">
-            <span class="visitor-home-tag">2026 11월호 | 최신</span>
-            <h3>다로리의 다음 장, 다시 만날 기회를 전해요</h3>
-            <p>마을의 늦가을 안부와 참여 프로젝트의 변화, 새롭게 열린 참여 기회와 제철 먹거리를 한 통에 담았습니다.</p>
-          </div>
-          <a class="visitor-home-button" href="visitor/letter.html?issue=2026-11">편지 읽기 <span aria-hidden="true">↗</span></a>
-        </article>
-        <article class="visitor-home-letter">
-          <img class="visitor-home-thumbnail" src="images/visitor/letter-2026-10.png" alt="채소가 놓인 시장에서 빨간 바구니에 앉아 있는 흰 강아지" width="162" height="162" loading="lazy">
-          <div class="visitor-home-letter-copy">
-            <span class="visitor-home-tag">2026 10월호</span>
-            <h3>마을길의 다음 계절을 함께 걸어요</h3>
-            <p>함께 만든 사진 지도의 변화와 새 수업의 준비, 가을 감 소식을 담았습니다.</p>
-          </div>
-          <a class="visitor-home-button" href="visitor/letter.html?issue=2026-10">편지 읽기 <span aria-hidden="true">↗</span></a>
-        </article>
-        <article class="visitor-home-letter">
-          <img class="visitor-home-thumbnail" src="images/visitor/letter-2026-09.png" alt="눈 덮인 마을길을 걸어가는 사람" width="162" height="162" loading="lazy">
-          <div class="visitor-home-letter-copy">
-            <span class="visitor-home-tag">2026 9월호</span>
-            <h3>지난 만남의 기록을 모아, 다로리의 겨울을 준비해요</h3>
-            <p>주민들의 사진과 방문자의 기록이 만나는 시간. 마을 기록과 참여 기회, 제철 들깨를 전합니다.</p>
-          </div>
-          <a class="visitor-home-button" href="visitor/letter.html?issue=2026-09">편지 읽기 <span aria-hidden="true">↗</span></a>
-        </article>
-      </div>
+      <div class="visitor-home-letter-list" id="home-letter-list"></div>
     </section>
+
+    <template id="home-news-template">
+      <article class="visitor-home-news-card">
+        <span class="visitor-home-tag"></span>
+        <p class="visitor-home-date"></p>
+        <h3></h3>
+        <p class="visitor-home-excerpt"></p>
+        <button class="visitor-home-button" type="button" aria-haspopup="dialog" aria-controls="home-story-dialog">자세히 보기 <span aria-hidden="true">↗</span></button>
+      </article>
+    </template>
+
+    <template id="home-letter-template">
+      <article class="visitor-home-letter">
+        <img class="visitor-home-thumbnail" alt="" width="162" height="162" loading="lazy">
+        <div class="visitor-home-letter-copy">
+          <span class="visitor-home-tag"></span>
+          <h3></h3>
+          <p></p>
+        </div>
+        <a class="visitor-home-button">편지 읽기 <span aria-hidden="true">↗</span></a>
+      </article>
+    </template>
 
     <section class="visitor-home-subscription" id="subscription" aria-labelledby="home-subscription-heading">
       <div class="visitor-home-subscription-copy">
@@ -110,8 +80,7 @@
     </section>
   </main>
   <div data-visitor-footer></div>
-  <!-- Figma 예시 소식 팝업. 실제 API·편지 상세 페이지와 연결하지 않습니다. -->
-  <dialog class="visitor-home-story-dialog" id="home-story-dialog" aria-labelledby="home-story-title" data-content-source="figma-example">
+  <dialog class="visitor-home-story-dialog" id="home-story-dialog" aria-labelledby="home-story-title">
     <div class="visitor-home-story-top">
       <div class="visitor-home-story-meta">
         <span class="visitor-home-tag" id="home-story-category"></span>
@@ -121,8 +90,7 @@
     </div>
     <h2 class="visitor-home-story-title" id="home-story-title"></h2>
     <div class="visitor-home-story-body" id="home-story-body"></div>
-    <div class="visitor-home-story-images" id="home-story-images" tabindex="0" role="region" aria-label="소식 사진 — 가로로 스크롤할 수 있습니다" hidden></div>
-    <a class="visitor-home-button visitor-home-story-letter" id="home-story-letter" href="visitor/letter.html?issue=2026-11"><span id="home-story-letter-label"></span> <span aria-hidden="true">↗</span></a>
+    <a class="visitor-home-button visitor-home-story-letter" id="home-story-letter"><span id="home-story-letter-label"></span> <span aria-hidden="true">↗</span></a>
   </dialog>
 </body>
 </html>
