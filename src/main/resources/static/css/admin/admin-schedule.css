@@ -14,7 +14,7 @@
 
 /* 발행 주기: 매월 [10]일 [10:00] */
 .admin-page .sc-cycle {
-  display: flex; align-items: center; gap: 8px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
   padding: 8px 12px; border: 1px solid var(--sc-line); border-radius: 8px;
   font-size: 13px;
 }

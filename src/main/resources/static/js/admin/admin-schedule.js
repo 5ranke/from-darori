@@ -2,7 +2,7 @@
   const api = window.ScheduleApi;
 
   let letters = [];        // 화면에 보이는 뉴스레터 (저장됨 + 예약됨)
-  let savedCycle = null;   // 서버에 저장된 발행 주기 { day, time: 'HH:MM' }
+  let savedCycle = null;   // 서버에 저장된 발행 주기 { day, time: 'HH:mm:ss' }
   const reservedAt = {};   // 이번에 예약한 뉴스레터의 발행 시각 (목록엔 시각이 안 와서 기억해 둠)
   let busy = false;
 
@@ -13,6 +13,7 @@
   const listEl = $('sc-list');
   const listStatus = $('sc-list-status');
   const submitBtn = $('sc-submit');
+  const saveCycleBtn = $('sc-save-cycle');
   const previewDialog = $('sc-preview-dialog');
   const previewStatus = $('sc-preview-status');
   const previewFrame = $('sc-preview-frame');
@@ -38,15 +39,15 @@
 
   // '14:30' → '오후 2:30'
   function formatTime(value) {
-    const [h, m] = value.split(':').map(Number);
+    const [h, m, seconds] = value.split(':').map(Number);
     const ampm = h < 12 ? '오전' : '오후';
     const hour = h % 12 || 12;
-    return `${ampm} ${hour}:${String(m).padStart(2, '0')}`;
+    return `${ampm} ${hour}:${String(m).padStart(2, '0')}${seconds ? ':' + String(seconds).padStart(2, '0') : ''}`;
   }
   // '2026-11-14T14:00:00+09:00' → '2026.11.14'
   const formatDate = iso => (iso ? iso.slice(0, 10).replaceAll('-', '.') : '');
   // '2026-12-10T10:00:00+09:00' → '2026.12.10 오전 10:00'
-  const formatDateTime = iso => `${formatDate(iso)} ${formatTime(iso.slice(11, 16))}`;
+  const formatDateTime = iso => `${formatDate(iso)} ${formatTime(iso.slice(11, 19))}`;
 
   // ② 뉴스레터 목록 그리기
   function render() {
@@ -124,7 +125,7 @@
   async function loadSchedule() {
     try {
       const schedule = await api.getSchedule();
-      const time = schedule.localTime.slice(0, 5); // '10:00:00' → '10:00'
+      const time = schedule.localTime;
       daySelect.value = schedule.dayOfMonth;
       timeInput.value = time;
       savedCycle = { day: schedule.dayOfMonth, time };
@@ -149,14 +150,42 @@
     }
   }
 
+  function selectedTime() {
+    return timeInput.value.length === 5 ? `${timeInput.value}:00` : timeInput.value;
+  }
+
+  async function saveCycle(day, time) {
+    const schedule = await api.saveSchedule({ dayOfMonth: day, localTime: time });
+    savedCycle = { day: schedule.dayOfMonth, time: schedule.localTime };
+  }
+
+  saveCycleBtn.addEventListener('click', async () => {
+    if (busy) return;
+    const time = selectedTime();
+    if (!time) {
+      DaroriAdmin.showDialog({ title: '입력 확인', description: '발행 시간을 선택해 주세요.' });
+      return;
+    }
+    busy = true;
+    saveCycleBtn.disabled = true;
+    try {
+      await saveCycle(Number(daySelect.value), time);
+      DaroriAdmin.showDialog({ title: '저장 완료', description: '새 발행 주기는 이후 예약부터 적용돼요.' });
+    } catch (error) {
+      handleError(error, '발행 주기 저장 실패');
+    } finally {
+      busy = false;
+      saveCycleBtn.disabled = false;
+    }
+  });
+
   // ④ 예약 (주기를 바꿨으면 주기 먼저 저장 → 성공하면 예약)
   async function reserve(letter, day, time, cycleChanged) {
     busy = true;
     submitBtn.disabled = true;
     try {
       if (cycleChanged) {
-        await api.saveSchedule({ dayOfMonth: day, localTime: `${time}:00` });
-        savedCycle = { day, time };
+        await saveCycle(day, time);
       }
       const result = await api.reserve(letter.newsletterId);
       reservedAt[letter.newsletterId] = result.scheduledAt;
@@ -186,7 +215,7 @@
 
     const letter = letters.find(l => l.newsletterId === checked.value);
     const day = Number(daySelect.value);
-    const time = timeInput.value;
+    const time = selectedTime();
     const cycleText = `매월 ${day}일 ${formatTime(time)}`;
     const cycleChanged = !savedCycle || savedCycle.day !== day || savedCycle.time !== time;
 
