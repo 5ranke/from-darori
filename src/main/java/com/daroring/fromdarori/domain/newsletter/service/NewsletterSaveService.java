@@ -54,19 +54,21 @@ public class NewsletterSaveService {
         }
 
         var categoryIds = items.stream().map(IncludedStory::categoryId).filter(Objects::nonNull).distinct().toList();
-        var categories = categoryRepository.findAllById(categoryIds).stream()
+        var orderedCategories = categoryRepository.findAllByOrderByDisplayOrderAsc();
+        var categories = orderedCategories.stream()
                 .collect(Collectors.toMap(Category::getId, Function.identity()));
-        if (categories.size() != categoryIds.size()) {
+        if (!categories.keySet().containsAll(categoryIds)) {
             throw invalid("포함된 소식의 카테고리를 확인해 주세요.");
         }
         var author = adminRepository.findById(adminId)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "AUTH4012", "운영자 인증이 필요합니다."));
 
         var snapshots = items.stream().map(NewsletterSaveService::snapshot).toList();
+        var categoryOrder = NewsletterCategoryOrder.byCategory(orderedCategories, StorySnapshot::categoryId,
+                StorySnapshot::categoryName);
         var grouped = new LinkedHashMap<String, List<StorySnapshot>>();
-        for (StorySnapshot snapshot : snapshots) {
-            grouped.computeIfAbsent(snapshot.categoryName(), key -> new ArrayList<>()).add(snapshot);
-        }
+        snapshots.stream().sorted(categoryOrder.thenComparingInt(StorySnapshot::displayOrder))
+                .forEach(snapshot -> grouped.computeIfAbsent(snapshot.categoryName(), key -> new ArrayList<>()).add(snapshot));
         var sections = grouped.entrySet().stream().map(entry -> new Section(entry.getKey(), entry.getValue())).toList();
         var content = new ContentSnapshot(request.intro(), request.closing(), sections);
         Newsletter newsletter = newsletterRepository.save(Newsletter.saveDraft(author, request.title(), request.summary(),

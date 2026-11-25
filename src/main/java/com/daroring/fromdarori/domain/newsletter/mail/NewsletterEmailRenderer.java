@@ -1,7 +1,9 @@
 package com.daroring.fromdarori.domain.newsletter.mail;
 
+import com.daroring.fromdarori.domain.category.repository.CategoryRepository;
 import com.daroring.fromdarori.domain.newsletter.mail.NewsletterMailContent.InlineImage;
 import com.daroring.fromdarori.domain.newsletter.mail.NewsletterMailDraft.Story;
+import com.daroring.fromdarori.domain.newsletter.service.NewsletterCategoryOrder;
 import com.daroring.fromdarori.domain.story.service.LocalStoryImageStorage;
 import java.io.IOException;
 import java.net.URI;
@@ -27,14 +29,16 @@ public class NewsletterEmailRenderer {
     private static final String LINK_STYLE = "color:#90402d;text-decoration:underline;";
     private static final String TABLE = "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"";
     private final LocalStoryImageStorage storage;
+    private final CategoryRepository categoryRepository;
     private final URI site;
     private final String template;
     private final byte[] logo;
 
-    public NewsletterEmailRenderer(LocalStoryImageStorage storage,
+    public NewsletterEmailRenderer(LocalStoryImageStorage storage, CategoryRepository categoryRepository,
                                    @Value("${darori.newsletter.site-url:https://from-darori.com/}") String siteUrl)
             throws IOException {
         this.storage = storage;
+        this.categoryRepository = categoryRepository;
         this.site = Objects.requireNonNull(webUri(siteUrl), "Invalid newsletter site URL");
         template = new ClassPathResource("templates/email/newsletter.html").getContentAsString(StandardCharsets.UTF_8);
         logo = new ClassPathResource("templates/email/darori-envelope.png").getContentAsByteArray();
@@ -55,8 +59,11 @@ public class NewsletterEmailRenderer {
         appendText(text, "From. 다로리", draft.issue(), draft.title(), draft.intro(), draft.summary());
 
         Map<String, List<Story>> sections = new LinkedHashMap<>();
-        if (draft.stories() != null) {
-            draft.stories().stream().filter(Objects::nonNull).sorted(Comparator.comparingInt(Story::displayOrder))
+        if (draft.stories() != null && !draft.stories().isEmpty()) {
+            var categoryOrder = NewsletterCategoryOrder.byCategory(categoryRepository.findAllByOrderByDisplayOrderAsc(),
+                    Story::categoryId, Story::categoryName);
+            draft.stories().stream().filter(Objects::nonNull)
+                    .sorted(categoryOrder.thenComparingInt(Story::displayOrder))
                     .forEach(story -> sections.computeIfAbsent(value(story.categoryName()), key -> new ArrayList<>()).add(story));
         }
         var stories = new StringBuilder();
