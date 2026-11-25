@@ -1,0 +1,58 @@
+html { scrollbar-gutter: stable; }
+
+.site-header-inner {
+  --header-height: clamp(94px, 6.25vw, 120px);
+  --header-gap: clamp(12px, 1.5vw, 28px);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "logo menu actions";
+  align-items: center;
+  column-gap: var(--header-gap);
+  min-height: var(--header-height);
+  width: min(1520px, 79.1667%);
+  margin-inline: auto;
+}
+
+.site-header-inner > a.site-header-logo { grid-area: logo; }
+.site-header-menu { grid-area: menu; justify-self: end; }
+.site-header-actions {
+  grid-area: actions;
+  display: grid;
+  grid-template-columns: repeat(2, clamp(118px, 9.5vw, 182px));
+  gap: 12px;
+}
+
+.site-header-inner .site-header-actions > .site-header-button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(44px, 3.021vw, 58px);
+  padding: 6px 8px;
+  border: 1px solid #242424;
+  border-radius: 16px;
+  font-size: clamp(16px, 1.146vw, 22px);
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.site-header-inner .site-header-actions > .site-header-button[hidden] { visibility: hidden; }
+
+@media (max-width: 1100px) {
+  .site-header-inner {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "logo actions";
+    grid-template-rows: minmax(var(--header-height), auto);
+    width: calc(100% - 48px);
+  }
+  .site-header-inner:has(.site-header-menu) { grid-template-areas: "logo actions" "menu menu"; }
+  .site-header-menu { justify-self: start; padding-bottom: 12px; }
+  .site-header-actions { justify-self: end; }
+}
+
+@media (max-width: 600px) {
+  .site-header-inner { --header-height: 72px; --header-gap: 8px; width: calc(100% - 32px); }
+  .site-header-actions { grid-template-columns: repeat(2, clamp(66px, 21vw, 112px)); gap: 6px; }
+  .site-header-inner .site-header-actions > .site-header-button { padding-inline: 2px; border-radius: 12px; font-size: 12px; }
+  .site-header-inner > a.site-header-logo { font-size: clamp(19px, 5.6vw, 24px); }
+}

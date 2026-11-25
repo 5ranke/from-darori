@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>뉴스레터 제작 | From. 다로리 관리</title>
+  <link rel="stylesheet" href="../css/site-header.css">
   <link rel="stylesheet" href="../css/admin/admin-common.css">
   <link rel="stylesheet" href="../css/admin/admin-newsletter.css">
   <link rel="stylesheet" href="../css/admin/admin-auth.css">
@@ -14,7 +15,15 @@
   <script defer src="../js/admin/admin-newsletter.js"></script>
 </head>
 <body class="admin-page" data-admin-page="newsletter">
-  <div data-admin-header></div>
+  <header class="admin-header">
+    <div class="site-header-inner">
+      <a class="admin-logo site-header-logo" href="../"><img class="admin-logo-icon" src="../images/visitor/darori-envelope-logo.svg" alt="" width="66" height="49">From. 다로리</a>
+      <div class="admin-header-actions site-header-actions">
+        <a class="admin-button admin-button--dark site-header-button" href="../">방문자 페이지로</a>
+        <button type="button" class="admin-button admin-button--outline site-header-button" id="admin-logout" hidden>로그아웃</button>
+      </div>
+    </div>
+  </header>
   <main class="admin-container admin-main">
     <h1 class="admin-greeting">안녕하세요, <span id="admin-name">OOO</span>님</h1>
 
@@ -30,7 +39,7 @@
       <!-- ===== 여기부터 윤서님이 만드는 부분 ===== -->
       <section class="admin-newsletter admin-card" id="admin-content">
         <h2 class="nl-title">뉴스레터 제작</h2>
-        <p class="nl-desc">편지에 담을 소식을 선택하고 초안을 검토하세요. 결과는 자유롭게 수정할 수 있어요.</p>
+        <p class="nl-desc">편지에 담을 소식을 선택하고 이메일 초안을 확인하세요.</p>
 
         <form id="nl-form" class="nl-form">
           <label class="nl-label" for="nl-title-input">제목</label>
@@ -51,9 +60,13 @@
           </button>
 
           <p class="nl-label">뉴스레터 초안</p>
-          <!-- 초안은 칸별로 나눠서 자동으로 그려요 -->
-          <div class="nl-draft-box" id="nl-draft"></div>
-
+          <div class="nl-draft-box" id="nl-draft">
+            <p class="nl-draft-empty" id="nl-draft-empty">뉴스레터를 만들면 여기에 초안이 나타나요.</p>
+            <section class="nl-email-preview" id="nl-email-preview" aria-label="이메일 미리보기" hidden>
+              <p id="nl-preview-status" role="status"></p>
+              <iframe id="nl-preview-frame" class="nl-preview-frame" title="뉴스레터 이메일" sandbox="allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" hidden></iframe>
+            </section>
+          </div>
           <button type="submit" class="nl-save" id="nl-save">발행 내역에 저장</button>
         </form>
       </section>

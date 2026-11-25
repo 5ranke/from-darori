@@ -34,6 +34,25 @@ window.DaroriAdminDashboardData = (() => {
     };
   }
   return {
+    async getStory(id) {
+      if (!uuid.test(id)) invalidResponse();
+      const story = await window.DaroriAdminAuth.request(`/api/v1/admin/stories/${encodeURIComponent(id)}`);
+      if (!story || story.storyId !== id || typeof story.title !== 'string'
+          || typeof story.categoryName !== 'string' || typeof story.body !== 'string'
+          || typeof story.createdAt !== 'string' || !Number.isFinite(Date.parse(story.createdAt))) {
+        throw new window.DaroriAdminAuth.AuthError('response', '소식 상세 응답 형식을 확인할 수 없습니다.');
+      }
+      const parts = dateFormat.formatToParts(new Date(story.createdAt));
+      const part = type => parts.find(p => p.type === type).value;
+      return { id: story.storyId, title: story.title, category: story.categoryName, body: story.body,
+        date: `${part('year')}.${part('month')}.${part('day')}` };
+    },
+    async deleteStory(id) {
+      if (!uuid.test(id)) invalidResponse();
+      const result = await window.DaroriAdminAuth.request(`/api/v1/admin/stories/${encodeURIComponent(id)}`, { method: 'DELETE' });
+      if (result?.storyId !== id) throw new window.DaroriAdminAuth.AuthError('response', '삭제 결과를 확인할 수 없습니다. 목록을 다시 조회해 주세요.');
+      return result.storyId;
+    },
     async getDashboard() {
       const result = await window.DaroriAdminAuth.request('/api/v1/admin/dashboard');
       return toViewModel(result);

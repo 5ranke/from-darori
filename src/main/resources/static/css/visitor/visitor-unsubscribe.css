@@ -1,0 +1,64 @@
+/* 구독 해지 화면 전용 */
+.visitor-page .vu-main {
+  --vu-accent: #ff6b45;
+  --vu-accent-light: #ffd3c7;
+  --vu-line: #e5e5e5;
+  padding: 72px 0 96px;
+}
+.visitor-page .vu-title { margin: 0; font-size: var(--visitor-page-title-size); font-weight: 700; text-align: center; }
+.visitor-page .vu-desc { margin: 12px 0 32px; font-size: var(--visitor-body-size); line-height: 1.6; color: #444; text-align: center; }
+
+/* 입력 카드 */
+.visitor-page .vu-card {
+  display: flex; flex-direction: column;
+  max-width: 520px; margin: 0 auto; padding: 28px; box-sizing: border-box;
+  border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+.visitor-page .vu-label { margin: 16px 0 8px; font-size: var(--visitor-body-size); font-weight: 700; }
+.visitor-page .vu-card > .vu-label:first-child { margin-top: 0; }
+.visitor-page .vu-input {
+  min-height: var(--visitor-control-height);
+  width: 100%; box-sizing: border-box; padding: 10px 12px;
+  border: 1px solid var(--vu-line); border-radius: 8px;
+  background: #fff; font: inherit; font-size: var(--visitor-body-size);
+}
+.visitor-page .vu-input:focus { outline: none; border-color: var(--vu-accent); }
+.visitor-page .vu-textarea { height: 90px; resize: vertical; }
+
+/* 드롭다운: 기본 화살표 대신 시안 같은 ∨ 아이콘 */
+.visitor-page .vu-select {
+  -webkit-appearance: none; appearance: none; cursor: pointer;
+  padding-right: 36px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23333' stroke-width='1.5'/%3E%3C/svg%3E") right 12px center / 14px no-repeat;
+}
+.visitor-page .vu-select:invalid,
+.visitor-page .vu-select.vu-select--empty { color: #999; } /* '선택해 주세요' 상태는 회색 */
+
+.visitor-page .vu-error { margin: 16px 0 0; font-size: var(--visitor-meta-size); color: #d9362b; }
+.visitor-page .vu-error[hidden] { display: none; }
+
+.visitor-page .vu-submit {
+  min-height: var(--visitor-control-height);
+  margin-top: 24px; padding: 12px;
+  border: none; border-radius: 8px; background: var(--vu-accent); color: #fff;
+  font-size: var(--visitor-body-size); cursor: pointer;
+}
+.visitor-page .vu-submit:disabled { background: var(--vu-accent-light); cursor: not-allowed; }
+
+/* 해지 완료 화면 */
+.visitor-page .vu-done { display: flex; flex-direction: column; align-items: center; padding: 40px 0; text-align: center; }
+.visitor-page .vu-done[hidden] { display: none; }
+.visitor-page .vu-done-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 96px; height: 96px; margin-bottom: 20px;
+  border-radius: 50%; background: #ffece6;
+}
+.visitor-page .vu-done-title { margin: 0; font-size: var(--visitor-page-title-size); font-weight: 700; }
+.visitor-page .vu-done-title:focus { outline: none; }
+.visitor-page .vu-done .vu-desc { margin: 12px 0 28px; }
+.visitor-page .vu-home {
+  min-height: var(--visitor-control-height);
+  display: block; width: 100%; max-width: 280px; padding: 12px; box-sizing: border-box;
+  border-radius: 8px; background: var(--vu-accent); color: #fff;
+  font-size: var(--visitor-body-size); text-decoration: none;
+}

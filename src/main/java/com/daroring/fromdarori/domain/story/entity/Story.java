@@ -82,4 +82,18 @@ public class Story {
         if (applicationDeadlinePresent) this.applicationDeadline = applicationDeadline;
         this.updatedAt = OffsetDateTime.now();
     }
+
+    public static Story createFromReport(Category category, AdminUser createdBy, String title, String body,
+                               String actionUrl, LocalDate applicationDeadline, ResidentReport report) {
+        Story story = new Story();
+        story.category = category;
+        story.createdBy = createdBy;
+        story.title = title;
+        story.body = body;
+        story.actionUrl = actionUrl;
+        story.applicationDeadline = applicationDeadline;
+        story.sourceType = StorySourceType.RESIDENT_REPORT;
+        story.residentReport = report;
+        return story;
+    }
 }

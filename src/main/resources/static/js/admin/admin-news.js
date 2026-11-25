@@ -114,9 +114,9 @@
           <p class="news-item-title"></p>
           <p class="news-item-meta"></p>
         </div>
-        <div class="news-item-actions">
-          <button type="button" class="news-small-btn" data-action="delete">삭제</button>
-          <button type="button" class="news-small-btn news-small-btn--accent" data-action="edit">수정</button>
+        <div class="admin-row-actions">
+          <button type="button" class="admin-row-button" data-action="delete">삭제</button>
+          <button type="button" class="admin-row-button admin-row-button--accent" data-action="edit">수정</button>
         </div>`;
       li.querySelector('.news-item-title').textContent = story.title;
       li.querySelector('.news-item-meta').textContent = `${story.categoryName} | ${formatDate(story.createdAt)}`;
@@ -405,8 +405,16 @@
     await Promise.all([loadCategories(), loadStories()]);
 
     // 주민 제보에서 넘어왔으면 (news.html?reportId=...) 제보 내용 불러오기
-    const fromReport = new URLSearchParams(window.location.search).get('reportId');
-    if (fromReport) await startReportMode(fromReport);
+    const url = new URL(window.location.href);
+    const fromReport = url.searchParams.get('reportId');
+    const storyId = url.searchParams.get('storyId');
+    if (fromReport) {
+      await startReportMode(fromReport);
+    } else if (storyId) {
+      await startEdit(storyId);
+      url.searchParams.delete('storyId');
+      window.history.replaceState(null, '', url);
+    }
   }
 
   window.DaroriAdminAuthPage.ready.then(account => {

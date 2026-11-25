@@ -2,17 +2,17 @@
 .admin-page .admin-news {
   --news-accent: #ff6b45;  /* 주황 (친구 공통 CSS 색과 다르면 이 값만 바꾸기) */
   --news-line: #e3e3e3;    /* 연한 테두리 */
-  padding: 32px;
+  padding: var(--admin-panel-padding);
 }
-.admin-page .news-title { margin: 0; font-size: 17px; font-weight: 700; }
-.admin-page .news-desc { margin: 6px 0 28px; font-size: 13px; color: #666; }
+.admin-page .news-title { margin: 0; font-size: var(--admin-section-title-size); font-weight: 700; }
+.admin-page .news-desc { margin: 6px 0 28px; font-size: var(--admin-body-size); color: #666; }
 
 .admin-page .news-form { display: flex; flex-direction: column; }
-.admin-page .news-label { margin: 18px 0 8px; font-size: 13px; font-weight: 700; }
+.admin-page .news-label { margin: 18px 0 8px; font-size: var(--admin-body-size); font-weight: 700; }
 .admin-page .news-input {
   width: 100%; box-sizing: border-box; padding: 10px 12px;
   border: 1px solid var(--news-line); border-radius: 8px;
-  font-size: 13px; font-family: inherit;
+  font-size: var(--admin-body-size); font-family: inherit;
 }
 .admin-page .news-input:focus { outline: none; border-color: var(--news-accent); }
 .admin-page .news-textarea { height: 84px; resize: vertical; }
@@ -46,37 +46,31 @@
 /* 저장·취소 버튼 */
 .admin-page .news-actions { display: flex; gap: 8px; margin-top: 18px; }
 .admin-page .news-save {
-  padding: 9px 16px; border: none; border-radius: 8px;
-  background: var(--news-accent); color: #fff; font-size: 13px; cursor: pointer;
+  min-height: var(--admin-control-height);
+  padding: 9px 20px; border: none; border-radius: var(--admin-control-radius);
+  background: var(--news-accent); color: #fff; font-size: var(--admin-body-size); cursor: pointer;
 }
 .admin-page .news-cancel {
-  padding: 9px 16px; border: 1px solid #333; border-radius: 8px;
-  background: #fff; font-size: 13px; cursor: pointer;
+  min-height: var(--admin-control-height);
+  padding: 9px 20px; border: 1px solid #333; border-radius: var(--admin-control-radius);
+  background: #fff; font-size: var(--admin-body-size); cursor: pointer;
 }
 .admin-page .news-cancel[hidden],
 .admin-page .news-status[hidden] { display: none; }
-.admin-page .news-status { margin: 10px 0 0; font-size: 13px; color: var(--news-accent); }
+.admin-page .news-status { margin: 10px 0 0; font-size: var(--admin-meta-size); color: var(--news-accent); }
 
 /* 저장된 소식 목록 */
-.admin-page .news-list-title { margin: 40px 0 8px; font-size: 15px; font-weight: 700; }
+.admin-page .news-list-title { margin: 40px 0 8px; font-size: var(--admin-subheading-size); font-weight: 700; }
 .admin-page .news-list { margin: 0; padding: 0; list-style: none; }
 .admin-page .news-item {
   display: flex; justify-content: space-between; align-items: center; gap: 16px;
   padding: 14px 0; border-bottom: 1px solid var(--news-line);
 }
-.admin-page .news-item-title { margin: 0 0 4px; font-size: 13px; }
-.admin-page .news-item-meta { margin: 0; font-size: 12px; color: #888; }
-.admin-page .news-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
-.admin-page .news-small-btn {
-  padding: 4px 12px; border: 1px solid #333; border-radius: 8px;
-  background: #fff; font-size: 12px; cursor: pointer;
-}
-.admin-page .news-small-btn--accent { border-color: var(--news-accent); background: var(--news-accent); color: #fff; }
-
-
+.admin-page .news-item-title { margin: 0 0 4px; font-size: var(--admin-body-size); }
+.admin-page .news-item-meta { margin: 0; font-size: var(--admin-meta-size); color: #888; }
 /* ── API 연결용 추가 ── */
 .admin-page .news-empty,
-.admin-page .news-list-status { margin: 8px 0 0; font-size: 12px; color: #888; }
+.admin-page .news-list-status { margin: 8px 0 0; font-size: var(--admin-meta-size); color: #888; }
 .admin-page .news-list-status[hidden] { display: none; }
 .admin-page .news-more {
   display: block; margin: 16px auto 0; padding: 6px 16px;

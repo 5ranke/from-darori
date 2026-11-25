@@ -1,17 +1,17 @@
 /* 운영자 공통 레이아웃은 admin-common.css를 사용합니다. 이 파일은 구독자 화면 전용입니다. */
-.admin-subscribers-page .subscriber-panel { min-width: 0; padding: 40px 30px 56px; border-radius: 15px; }
-.admin-subscribers-page .subscriber-panel h2 { font-size: 23px; font-weight: 750; letter-spacing: -.6px; }
-.admin-subscribers-page .subscriber-intro { margin-top: 6px; color: var(--admin-muted); font-size: 18px; }
+.admin-subscribers-page .subscriber-panel { min-width: 0; padding: var(--admin-panel-padding); border-radius: 15px; }
+.admin-subscribers-page .subscriber-panel h2 { font-size: var(--admin-section-title-size); font-weight: 750; letter-spacing: -.6px; }
+.admin-subscribers-page .subscriber-intro { margin-top: 6px; color: var(--admin-muted); font-size: var(--admin-body-size); }
 .admin-subscribers-page .subscriber-demo { margin-top: 12px; color: #777780; font-size: 12px; line-height: 1.6; }
 .admin-subscribers-page #subscriber-form { margin-top: 40px; }
 .admin-subscribers-page .subscriber-field + .subscriber-field { margin-top: 24px; }
-.admin-subscribers-page .subscriber-field label { display: block; font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+.admin-subscribers-page .subscriber-field label { display: block; font-size: var(--admin-body-size); font-weight: 700; margin-bottom: 14px; }
 .admin-subscribers-page .subscriber-optional { font-size: 13px; font-weight: 400; color: #777780; margin-left: 4px; }
 .admin-subscribers-page .subscriber-field .admin-input { min-height: 50px; padding: 13px 15px; font-size: 15px; border-radius: 12px; }
 .admin-subscribers-page .subscriber-field .admin-input[aria-invalid="true"] { border-color: #b43c25; }
-.admin-subscribers-page .subscriber-hint { font-size: 12px; margin-top: 7px; color: #777780; }
-.admin-subscribers-page .subscriber-error { margin-top: 7px; font-size: 13px; color: #b43c25; }
-.admin-subscribers-page .subscriber-add { margin-top: 26px; min-height: 48px; padding: 10px 22px; font-size: 18px; }
+.admin-subscribers-page .subscriber-hint { font-size: var(--admin-meta-size); margin-top: 7px; color: #777780; }
+.admin-subscribers-page .subscriber-error { margin-top: 7px; font-size: var(--admin-meta-size); color: #b43c25; }
+.admin-subscribers-page .subscriber-add { margin-top: 26px; min-height: var(--admin-control-height); padding: 9px 20px; font-size: var(--admin-body-size); }
 .admin-subscribers-page .subscriber-status-message:not(:empty) { margin-top: 18px; color: #7b4331; font-size: 14px; }
 .admin-subscribers-page .subscriber-list-section { margin-top: 52px; }
 .admin-subscribers-page .subscriber-summary { margin-top: 5px; color: #777780; font-size: 17px; }
@@ -39,7 +39,6 @@
 .admin-subscribers-page [hidden] { display: none !important; }
 .admin-subscribers-page button:disabled { opacity: .5; cursor: not-allowed; }
 @media (max-width: 600px) {
-  .admin-subscribers-page .subscriber-panel { padding: 28px 20px 40px; }
   .admin-subscribers-page .subscriber-intro { font-size: 16px; }
   .admin-subscribers-page .subscriber-email { font-size: 15px; }
   .admin-subscribers-page .subscriber-summary { font-size: 15px; }

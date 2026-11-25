@@ -1,25 +1,26 @@
 /* 경로가 확정되면 null을 실제 HTML 경로로 교체하세요. API 주소가 아닙니다. */
 window.DaroriAdmin = (() => {
+  const staticRoot = new URL('../../', document.currentScript.src);
+  const logoUrl = new URL('images/visitor/darori-envelope-logo.svg', staticRoot).href;
   const routes = {
     dashboard: 'dashboard.html',
-    visitor: null,
+    visitor: staticRoot.href,
     newsletter: 'newsletter.html',
-    notices: null,
+    notices: 'notices.html',
     subscribers: 'subscribers.html',
     operators: 'users.html',
     news: 'news.html',
     reports: 'reports.html',
     schedule: 'schedule.html',
-    letters: null,
-    unsubscribe: null
+    letters: 'schedule.html',
+    unsubscribe: new URL('visitor/unsubscribe.html', staticRoot).href
   };
   const labels = {
-    visitor: '방문자 페이지', newsletter: '뉴스레터 제작', notices: '공지사항 작성',
+    newsletter: '뉴스레터 제작', notices: '공지사항 작성',
     subscribers: '구독자 관리', operators: '운영자 관리', news: '소식 작성',
     reports: '주민 제보', schedule: '발행 예약', letters: '편지 발행', unsubscribe: '구독 해지'
   };
-  const header = document.querySelector('[data-admin-header]');
-  if (header) header.innerHTML = `<header class="admin-header"><div class="admin-container admin-header-inner"><a class="admin-logo" href="dashboard.html">From. 다로리</a><div class="admin-header-actions"><button type="button" class="admin-button admin-button--dark" data-admin-route="visitor">방문자 페이지로</button>${document.body.dataset.adminPage === 'login' ? '' : '<button type="button" class="admin-button admin-button--outline" id="admin-logout" hidden>로그아웃</button>'}</div></div></header>`;
+  const logo = `<a class="admin-logo" href="${routes.visitor}"><img class="admin-logo-icon" src="${logoUrl}" alt="" width="66" height="49">From. 다로리</a>`;
   const sidebar = document.querySelector('[data-admin-sidebar]');
   if (sidebar) {
     // 탭별 메뉴 묶음
@@ -41,7 +42,7 @@ window.DaroriAdmin = (() => {
     });
   }
   const footer = document.querySelector('[data-admin-footer]');
-  if (footer) footer.innerHTML = `<footer class="admin-footer"><div class="admin-container admin-footer-inner"><a class="admin-logo" href="dashboard.html">From. 다로리</a><div class="admin-footer-info"><span>문의 | example@gmail.com</span><button type="button" class="admin-footer-action" data-admin-route="unsubscribe">구독해지</button></div></div></footer>`;
+  if (footer) footer.innerHTML = `<footer class="admin-footer"><div class="admin-container admin-footer-inner">${logo}<div class="admin-footer-info"><span>문의 | example@gmail.com</span><button type="button" class="admin-footer-action" data-admin-route="unsubscribe">구독해지</button></div></div></footer>`;
 
   // dialog는 브라우저의 기본 초점 관리, Esc 닫기, 배경 접근 차단을 사용합니다.
   const dialog = document.getElementById('admin-dialog');

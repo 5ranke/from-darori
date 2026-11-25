@@ -46,4 +46,20 @@ public class ResidentReport {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private ResidentReportStatus status = ResidentReportStatus.PENDING;
+
+    public static ResidentReport create(String title, String body,
+                                        String reporterName, String reporterEmail) {
+        ResidentReport residentReport = new ResidentReport();
+        residentReport.title = title;
+        residentReport.body = body;
+        residentReport.reporterName = reporterName;
+        residentReport.reporterEmail = reporterEmail;
+        return residentReport;
+    }
+
+    public void update(AdminUser approvedBy) {
+        this.status = ResidentReportStatus.APPROVED;
+        this.approvedBy = approvedBy;
+        this.approvedAt = OffsetDateTime.now();
+    }
 }

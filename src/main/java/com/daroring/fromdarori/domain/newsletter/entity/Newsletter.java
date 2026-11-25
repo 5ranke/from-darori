@@ -3,6 +3,7 @@ package com.daroring.fromdarori.domain.newsletter.entity;
 import com.daroring.fromdarori.domain.admin.entity.AdminUser;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,6 +18,8 @@ import org.hibernate.type.SqlTypes;
 @Entity
 @Table(name = "newsletter")
 public class Newsletter {
+
+    public static final ZoneId ISSUE_ZONE = ZoneId.of("Asia/Seoul");
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -58,4 +61,25 @@ public class Newsletter {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private NewsletterStatus status = NewsletterStatus.SAVED;
+
+    public static Newsletter saveDraft(AdminUser author, String title, String summary, String contentSnapshot,
+                                       String quizContent) {
+        Newsletter newsletter = new Newsletter();
+        newsletter.createdBy = author;
+        newsletter.title = title;
+        newsletter.summary = summary;
+        newsletter.contentSnapshot = contentSnapshot;
+        newsletter.quizContent = quizContent;
+        return newsletter;
+    }
+
+    public void schedule(OffsetDateTime scheduledAt) {
+        this.scheduledAt = scheduledAt;
+        this.status = NewsletterStatus.SCHEDULED;
+    }
+
+    public void cancelSchedule() {
+        this.scheduledAt = null;
+        this.status = NewsletterStatus.SAVED;
+    }
 }

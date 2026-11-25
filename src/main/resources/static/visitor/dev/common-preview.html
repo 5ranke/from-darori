@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>[개발용] From. 다로리 공통 헤더·푸터</title>
+  <link rel="stylesheet" href="../../css/site-header.css">
+  <link rel="stylesheet" href="../../css/visitor/visitor-common.css">
+  <script defer src="../../js/visitor/visitor-common.js"></script>
+</head>
+<!-- 다른 방문자 HTML도 visitor-page, data-visitor-page와 두 삽입 영역을 사용합니다.
+     page 값: home / about / letters / notices / subscribe
+     경로 확정 후 공통 JS 실행 전에 window.DaroriVisitorConfig = { routes: {...} }를
+     설정하거나 실행 후 DaroriVisitor.render({ routes: {...}, page: 'about' })를 호출합니다.
+     현재 빈 common.css/common.js 및 운영자 공통 모듈은 불러오지 않습니다. -->
+<body class="visitor-page" data-visitor-page="home">
+  <div data-visitor-header></div>
+  <main class="visitor-container visitor-preview">
+    <h1>공통 헤더·푸터 개발용 확인 화면</h1>
+    <p>홈 본문이 아닙니다. 운영자 버튼 외 방문자 메뉴는 페이지 경로 확정 전까지 이동하지 않습니다.</p>
+    <p>문의 이메일은 Figma의 임시 값이며 운영용 여부 확인이 필요합니다.</p>
+    <label for="visitor-preview-page">활성 메뉴 확인</label>
+    <select id="visitor-preview-page">
+      <option value="home">홈 (활성 메뉴 없음)</option>
+      <option value="about">마을 소개</option>
+      <option value="letters">지난 편지</option>
+      <option value="notices">공지사항</option>
+      <option value="subscribe">구독하기</option>
+    </select>
+    <noscript><p>공통 헤더·푸터를 표시하려면 JavaScript를 활성화해 주세요.</p></noscript>
+  </main>
+  <div data-visitor-footer></div>
+  <script>
+    document.getElementById('visitor-preview-page').addEventListener('change', event => {
+      window.DaroriVisitor.render({ page: event.target.value });
+    });
+  </script>
+</body>
+</html>
