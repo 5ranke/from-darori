@@ -1,22 +1,19 @@
 package com.daroring.fromdarori.domain.newsletter.service;
 
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterDetailResponse;
-import com.daroring.fromdarori.domain.newsletter.dto.NewsletterDetailResponse.Image;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterDetailResponse.Quiz;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterDetailResponse.Section;
-import com.daroring.fromdarori.domain.newsletter.dto.NewsletterDetailResponse.Story;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterListResponse;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterListResponse.Item;
 import com.daroring.fromdarori.domain.newsletter.dto.NewsletterYearsResponse;
 import com.daroring.fromdarori.domain.newsletter.entity.Newsletter;
 import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStatus;
 import com.daroring.fromdarori.domain.newsletter.repository.NewsletterRepository;
+import com.daroring.fromdarori.domain.story.dto.PublishedStoryContent;
 import java.time.Year;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -74,9 +71,9 @@ public class NewsletterService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "발행호를 찾을 수 없습니다."));
         var issue = newsletter.getPublishedAt().atZoneSameInstant(Newsletter.ISSUE_ZONE);
         boolean isLatest = findLatestPublished().map(Newsletter::getId).filter(newsletterId::equals).isPresent();
-        List<Section> sections = inDisplayOrder(objectMapper.readTree(newsletter.getContentSnapshot()).path("sections"))
+        List<Section> sections = PublishedStoryContent.inDisplayOrder(objectMapper.readTree(newsletter.getContentSnapshot()).path("sections"))
                 .map(section -> new Section(section.path("title").asString(""),
-                        inDisplayOrder(section.path("stories")).map(this::toStory).toList()))
+                        PublishedStoryContent.inDisplayOrder(section.path("stories")).map(PublishedStoryContent::fromSnapshot).toList()))
                 .filter(section -> !section.stories().isEmpty())
                 .toList();
         return new NewsletterDetailResponse(newsletterId, issue.getYear(), issue.getMonthValue(),
@@ -87,22 +84,6 @@ public class NewsletterService {
     private Optional<Newsletter> findLatestPublished() {
         return newsletterRepository
                 .findFirstByStatusAndPublishedAtIsNotNullOrderByPublishedAtDescIdDesc(NewsletterStatus.PUBLISHED);
-    }
-
-    private Stream<JsonNode> inDisplayOrder(JsonNode array) {
-        return array.isArray() ? array.valueStream()
-                .sorted(Comparator.comparingInt(node -> node.path("displayOrder").asInt(Integer.MAX_VALUE)))
-                : Stream.empty();
-    }
-
-    private Story toStory(JsonNode story) {
-        List<Image> images = inDisplayOrder(story.path("images"))
-                .map(image -> new Image(image.path("url").asString(image.path("imageUrl").asString(null)),
-                        image.path("altText").asString(null)))
-                .filter(image -> image.url() != null)
-                .toList();
-        return new Story(story.path("title").asString(""), story.path("body").asString(""),
-                story.path("actionUrl").asString(null), story.path("applicationDeadline").asString(null), images);
     }
 
     private Quiz toPublicQuiz(JsonNode snapshot) {

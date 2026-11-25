@@ -1,8 +1,10 @@
 package com.daroring.fromdarori.domain.story.repository;
 
 import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStory;
+import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStatus;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
@@ -24,6 +26,14 @@ public interface PublishedStoryRepository extends Repository<NewsletterStory, UU
             """, nativeQuery = true)
     List<PublishedStoryCard> findPublishedInRange(
             UUID categoryId, String issueZone, OffsetDateTime start, OffsetDateTime end, int limit, long offset);
+
+    @Query("""
+            select ns from NewsletterStory ns
+            join fetch ns.newsletter n
+            left join fetch ns.category
+            where ns.id = :id and n.status = :status and n.publishedAt is not null
+            """)
+    Optional<NewsletterStory> findPublishedById(UUID id, NewsletterStatus status);
 
     interface PublishedStoryCard {
         UUID getId();

@@ -125,3 +125,9 @@
   .visitor-home .visitor-home-letter-copy:first-child { flex-basis: 100%; }
   .visitor-home .visitor-home-letter-copy:first-child + .visitor-home-button { margin-left: 0; }
 }
+
+.visitor-home .visitor-home-story-images { display: flex; gap: 16px; margin-top: 32px; overflow-x: auto; }
+.visitor-home .visitor-home-story-images[hidden] { display: none; }
+.visitor-home .visitor-home-story-images img { flex: 0 0 auto; width: min(252px, 80%); aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; }
+.visitor-home .visitor-home-story-extra { margin-block: 16px 0; font-size: 18px; }
+.visitor-home a.visitor-home-story-extra:not([hidden]) { display: block; width: fit-content; }
