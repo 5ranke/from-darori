@@ -20,6 +20,7 @@
   let hasNext = false;
   let items = [];
   let loading = false;
+  let listRequestId = 0;
 
   const $ = id => document.getElementById(id);
   const tabBox = $('vl-tabs');
@@ -154,8 +155,10 @@
 
   // reset = true면 처음부터, false면 다음 페이지 이어 붙이기
   async function loadList(reset = true) {
-    if (loading) return;
+    if (loading && !reset) return;
+    const requestId = ++listRequestId;
     loading = true;
+    moreBtn.disabled = true;
     if (reset) {
       page = 0;
       grid.innerHTML = '';
@@ -165,19 +168,24 @@
 
     const yearQuery = year ? `&year=${year}` : '';
     const path = currentTab === 'ALL'
-      ? `/api/v1/newsletters?page=${page}&size=${PAGE_SIZE}${yearQuery}`
+      ? `/api/v1/newletters?page=${page}&size=${PAGE_SIZE}${yearQuery}`
       : `/api/v1/published-stories?categoryId=${encodeURIComponent(currentTab)}&page=${page}&size=${PAGE_SIZE}${yearQuery}`;
 
     try {
       const result = await getJson(path);
+      if (requestId !== listRequestId) return;
       items = reset ? result.items : [...items, ...result.items];
       hasNext = result.hasNext;
       render();
     } catch (error) {
+      if (requestId !== listRequestId) return;
       statusEl.textContent = error.message;
       moreBtn.hidden = true;
     } finally {
-      loading = false;
+      if (requestId === listRequestId) {
+        loading = false;
+        moreBtn.disabled = false;
+      }
     }
   }
 
@@ -283,7 +291,7 @@
       ];
     }
     if (path.startsWith('/api/v1/newletters/years')) return { years: [2026, 2025] };
-    if (path.startsWith('/api/v1/newsletters')) {
+    if (path.startsWith('/api/v1/newletters')) {
       return {
         hasNext: false,
         items: [11, 10, 9, 8, 7, 6].map((m, i) => ({
