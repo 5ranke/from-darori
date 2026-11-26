@@ -56,4 +56,19 @@ public class Subscriber {
         subscriber.updatedAt = OffsetDateTime.now();
         return subscriber;
     }
+
+    public static Subscriber subscribeByAdmin(String name, String email) {
+        Subscriber subscriber = new Subscriber();
+        subscriber.name = name;
+        subscriber.email = email;
+        subscriber.status = SubscriberStatus.ACTIVE;
+        return subscriber;
+    }
+
+    public static Subscriber subscribeAgainByAdmin(String name, Subscriber subscriber) {
+        subscriber.name = name;
+        subscriber.status = SubscriberStatus.ACTIVE;
+        subscriber.updatedAt = OffsetDateTime.now();
+        return subscriber;
+    }
 }
