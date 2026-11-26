@@ -36,8 +36,12 @@ public interface NewsletterRepository extends JpaRepository<Newsletter, UUID> {
                 select d.id from NewsletterDelivery d
                 where d.newsletter = n and (d.attemptCount = 0 and d.status = PENDING or d.status = SENDING)
             )
+            and (:recipient is null or exists (
+                select d.id from NewsletterDelivery d
+                where d.newsletter = n and d.subscriber.email = :recipient
+            ))
             """)
-    int publishAfterFirstAttempts(OffsetDateTime now);
+    int publishAfterFirstAttempts(OffsetDateTime now, String recipient);
 
     @Query(value = """
             select n.id as newsletterId, n.title as title, n.status as status, n.createdAt as createdAt,

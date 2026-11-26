@@ -6,6 +6,10 @@ public interface NewsletterMailSender {
 
     String send(UUID deliveryId, String recipient, NewsletterMailContent content) throws SendFailure;
 
+    default String recipientFilter() {
+        return null;
+    }
+
     enum FailureKind {
         RETRYABLE, PERMANENT, UNKNOWN
     }

@@ -16,7 +16,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("newsletter-mailpit")
+@Profile("newsletter-mailpit & !newsletter-ses")
 public class SmtpNewsletterMailSender implements NewsletterMailSender {
 
     private final JavaMailSender sender;

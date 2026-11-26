@@ -39,21 +39,29 @@ public class NewsletterDeliveryWorker {
 
         var now = now();
         transactions.executeWithoutResult(tx -> deliveries.markInterruptedAttempts(now.minusMinutes(15), now));
-        for (UUID id : deliveries.findReadyIds(now, PageRequest.of(0, 20))) {
+        var page = PageRequest.of(0, 20);
+        var recipientFilter = sender.recipientFilter();
+        var readyIds = recipientFilter == null
+                ? deliveries.findReadyIds(now, page)
+                : deliveries.findReadyIdsForRecipient(now, recipientFilter, page);
+        for (UUID id : readyIds) {
             try {
                 send(id, sender);
             } catch (RuntimeException exception) {
                 log.error("Could not process newsletter delivery {}", id, exception);
             }
         }
-        transactions.executeWithoutResult(tx -> newsletters.publishAfterFirstAttempts(now()));
+        transactions.executeWithoutResult(tx -> newsletters.publishAfterFirstAttempts(now(), recipientFilter));
     }
 
     private void send(UUID id, NewsletterMailSender sender) {
         var attempt = transactions.execute(tx -> deliveries.findForUpdate(id).map(delivery -> {
+            var recipient = delivery.getSubscriber().getEmail();
+            var recipientFilter = sender.recipientFilter();
+            if (recipientFilter != null && !recipientFilter.equals(recipient)) return null;
             if (!delivery.startAttempt(now())) return null;
             try {
-                return new Attempt(delivery.getAttemptCount(), delivery.getSubscriber().getEmail(),
+                return new Attempt(delivery.getAttemptCount(), recipient,
                         renderer.render(draftFactory.fromSnapshot(delivery.getNewsletter()), DeliveryLinks.none()));
             } catch (RuntimeException exception) {
                 delivery.fail(delivery.getAttemptCount(), NewsletterDeliveryStatus.FAILED, "Email rendering failed", null);

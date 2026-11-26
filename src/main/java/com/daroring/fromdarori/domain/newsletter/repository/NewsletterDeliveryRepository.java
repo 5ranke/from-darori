@@ -29,6 +29,14 @@ public interface NewsletterDeliveryRepository extends JpaRepository<NewsletterDe
             """)
     List<UUID> findReadyIds(OffsetDateTime now, Pageable page);
 
+    @Query("""
+            select d.id from NewsletterDelivery d
+            where d.subscriber.email = :recipient
+              and (d.status = PENDING or (d.status = RETRY_PENDING and d.nextRetryAt <= :now))
+            order by d.createdAt, d.id
+            """)
+    List<UUID> findReadyIdsForRecipient(OffsetDateTime now, String recipient, Pageable page);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select d from NewsletterDelivery d where d.id = :id")
     Optional<NewsletterDelivery> findForUpdate(UUID id);
