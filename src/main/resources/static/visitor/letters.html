@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="../css/site-header.css">
   <link rel="stylesheet" href="../css/visitor/visitor-common.css">
   <link rel="stylesheet" href="../css/visitor/visitor-letters.css">
+  <link rel="stylesheet" href="../css/visitor/visitor-story-dialog.css">
   <script defer src="../js/visitor/visitor-common.js"></script>
   <script defer src="../js/visitor/visitor-letters.js"></script>
 </head>
@@ -36,19 +37,20 @@
   </main>
 
   <!-- 자세히 보기 팝업 -->
-  <dialog class="vl-dialog" id="vl-dialog" aria-labelledby="vl-d-title">
-    <div class="vl-dialog-inner">
-      <div class="vl-d-head">
-        <span class="vl-badge" id="vl-d-badge"></span>
-        <span class="vl-issue" id="vl-d-issue"></span>
-        <button type="button" class="vl-close" id="vl-d-close">닫기</button>
+  <dialog class="visitor-story-dialog" id="vl-dialog" aria-labelledby="vl-d-title">
+    <div class="visitor-story-top">
+      <div class="visitor-story-meta">
+        <span class="visitor-story-tag" id="vl-d-badge"></span>
+        <span class="visitor-story-date" id="vl-d-issue"></span>
       </div>
-      <h2 class="vl-d-title" id="vl-d-title"></h2>
-      <p class="vl-d-body" id="vl-d-body"></p>
-      <div class="vl-d-images" id="vl-d-images"></div>
-      <div class="vl-d-extra" id="vl-d-extra"></div>
-      <a class="vl-btn" id="vl-d-go" href="#">보러가기</a>
+      <button class="visitor-story-close" type="button" id="vl-d-close" autofocus>닫기</button>
     </div>
+    <h2 class="visitor-story-title" id="vl-d-title"></h2>
+    <div class="visitor-story-body" id="vl-d-body"></div>
+    <div class="visitor-story-images" id="vl-d-images" role="region" aria-label="소식 사진" tabindex="0" hidden></div>
+    <p class="visitor-story-extra" id="vl-d-deadline" hidden></p>
+    <a class="visitor-story-extra" id="vl-d-action" target="_blank" rel="noopener noreferrer" hidden>관련 링크 보기</a>
+    <a class="visitor-story-letter" id="vl-d-go"><span id="vl-d-go-label"></span> <span aria-hidden="true">↗</span></a>
   </dialog>
 
   <div data-visitor-footer></div>

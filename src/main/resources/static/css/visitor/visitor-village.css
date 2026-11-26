@@ -4,10 +4,10 @@
 .visitor-village .visitor-village-main h1,
 .visitor-village .visitor-village-main h2,
 .visitor-village .visitor-village-main h3 { word-break: keep-all; overflow-wrap: anywhere; }
-.visitor-village .visitor-village-main h2 { margin: 0; font-size: 36px; line-height: 1.5; font-weight: 800; letter-spacing: -1px; }
-.visitor-village .visitor-village-main p { font-size: 22px; line-height: 1.6; overflow-wrap: anywhere; }
+.visitor-village .visitor-village-main h2 { margin: 0; font-size: 33px; line-height: 1.5; font-weight: 800; letter-spacing: -1px; }
+.visitor-village .visitor-village-main p { font-size: 20px; line-height: 1.6; overflow-wrap: anywhere; }
 .visitor-village .visitor-village-hero { display: flex; align-items: center; min-height: 690px; padding-block: 120px; text-align: center; background: #f5f5f5; }
-.visitor-village .visitor-village-hero h1 { margin: 0 0 40px; font-size: 48px; line-height: 1.5; letter-spacing: -1.5px; font-weight: 800; }
+.visitor-village .visitor-village-hero h1 { margin: 0 0 40px; font-size: 44px; line-height: 1.5; letter-spacing: -1.5px; font-weight: 800; }
 .visitor-village .visitor-village-hero p { margin: 0; }
 .visitor-village .visitor-village-origin { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 120px; padding-block: 160px; }
 .visitor-village .visitor-village-origin > * { min-width: 0; }
@@ -18,19 +18,19 @@
 .visitor-village .visitor-village-services { padding-block: 120px; background: #f6f6f7; }
 .visitor-village .visitor-village-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 36px; }
 .visitor-village .visitor-village-card { min-width: 0; padding: 48px; background: #fff; border-radius: 24px; box-shadow: 0 5px 16px rgb(0 0 0 / 12%); }
-.visitor-village .visitor-village-number { display: block; margin-bottom: 24px; color: #ff8b70; font-size: 64px; line-height: 1.2; font-weight: 800; }
-.visitor-village .visitor-village-card h3 { margin: 0 0 16px; font-size: 28px; line-height: 1.5; font-weight: 750; }
+.visitor-village .visitor-village-number { display: block; margin-bottom: 24px; color: #ff8b70; font-size: 60px; line-height: 1.2; font-weight: 800; }
+.visitor-village .visitor-village-card h3 { margin: 0 0 16px; font-size: 26px; line-height: 1.5; font-weight: 750; }
 .visitor-village .visitor-village-card p { margin: 0; }
 .visitor-village .visitor-village-cafe { padding-block: 160px 0; }
 .visitor-village .visitor-village-cafe > p { margin: 28px 0 32px; }
 .visitor-village .visitor-village-cafe-photos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .visitor-village .visitor-village-cafe-photos > * { width: 100%; min-width: 0; aspect-ratio: 4 / 3; border-radius: 24px; }
 .visitor-village .visitor-village-cafe-photos img { display: block; height: auto; object-fit: cover; }
-.visitor-village .visitor-village-cafe > .visitor-village-cafe-info { margin: 28px 0 0; color: #a6a6ad; font-size: 20px; }
+.visitor-village .visitor-village-cafe > .visitor-village-cafe-info { margin: 28px 0 0; color: #a6a6ad; font-size: 18px; }
 .visitor-village .visitor-village-contact { margin-block: 160px 128px; padding: 80px 48px 96px; border-radius: 24px; background: #706f77; color: #fff; text-align: center; }
 .visitor-village .visitor-village-contact p { margin: 20px 0 64px; }
 .visitor-village .visitor-village-contact-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; }
-.visitor-village .visitor-village-contact-links a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; max-width: 100%; padding: 16px 28px; border-radius: 16px; color: var(--visitor-text); background: #fff; font-size: 24px; line-height: 1.5; text-decoration: none; overflow-wrap: anywhere; }
+.visitor-village .visitor-village-contact-links a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; max-width: 100%; padding: 16px 28px; border-radius: 16px; color: var(--visitor-text); background: #fff; font-size: 22px; line-height: 1.5; text-decoration: none; overflow-wrap: anywhere; }
 .visitor-village .visitor-village-contact-links .visitor-village-email { color: #fff; background: #242424; }
 .visitor-village .visitor-village-instagram-icon { display: block; width: 1.3333em; height: 1.3333em; flex-shrink: 0; }
 .visitor-village .visitor-village-contact-links a:focus-visible { outline: 3px solid var(--visitor-accent); outline-offset: 5px; }
@@ -40,7 +40,7 @@
 }
 @media (max-width: 800px) {
   .visitor-village .visitor-village-hero { min-height: 480px; padding-block: 80px; }
-  .visitor-village .visitor-village-hero h1 { font-size: 36px; }
+  .visitor-village .visitor-village-hero h1 { font-size: 33px; }
   .visitor-village .visitor-village-desktop-break { display: none; }
   .visitor-village .visitor-village-origin { grid-template-columns: 1fr; padding-block: 80px; gap: 40px; }
   .visitor-village .visitor-village-cards { grid-template-columns: 1fr; }
@@ -52,11 +52,11 @@
   .visitor-village .visitor-village-contact-links { gap: 16px; }
 }
 @media (max-width: 600px) {
-  .visitor-village .visitor-village-main h2 { font-size: 28px; }
-  .visitor-village .visitor-village-hero h1 { font-size: 32px; }
-  .visitor-village .visitor-village-main p { font-size: 18px; }
-  .visitor-village .visitor-village-card h3 { font-size: 24px; }
-  .visitor-village .visitor-village-number { font-size: 56px; }
-  .visitor-village .visitor-village-contact-links a { font-size: 18px; padding: 16px; }
+  .visitor-village .visitor-village-main h2 { font-size: 26px; }
+  .visitor-village .visitor-village-hero h1 { font-size: 30px; }
+  .visitor-village .visitor-village-main p { font-size: 17px; }
+  .visitor-village .visitor-village-card h3 { font-size: 22px; }
+  .visitor-village .visitor-village-number { font-size: 52px; }
+  .visitor-village .visitor-village-contact-links a { font-size: 17px; padding: 16px; }
   .visitor-village .visitor-village-cafe > .visitor-village-cafe-info { font-size: 16px; }
 }
