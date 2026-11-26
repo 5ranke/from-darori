@@ -11,7 +11,7 @@
     '구인/참여': 'RECRUITMENT',
     '제철 정보': 'SEASONAL'
   };
-  const EMOJI = { PROJECT_FOLLOW_UP: '🌱', RECRUITMENT: '🙋', SEASONAL: '🍑' };
+  const EMOJI = { PROJECT_FOLLOW_UP: '🌱', RECRUITMENT: '🙋', SEASONAL: '🍊' };
 
   let tabs = [];            // [{ id: 'ALL' 또는 categoryId, label }]
   let currentTab = 'ALL';

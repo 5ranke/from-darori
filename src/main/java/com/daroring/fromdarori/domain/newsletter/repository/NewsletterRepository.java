@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface NewsletterRepository extends JpaRepository<Newsletter, UUID> {
@@ -20,6 +21,27 @@ public interface NewsletterRepository extends JpaRepository<Newsletter, UUID> {
     Optional<Newsletter> findByIdForUpdate(UUID id);
 
     boolean existsByScheduledAt(OffsetDateTime scheduledAt);
+
+    @Query("""
+            select n.id from Newsletter n
+            where n.status = :status and n.scheduledAt <= :now
+            order by n.scheduledAt, n.id
+            """)
+    List<UUID> findDueNewsletterIds(NewsletterStatus status, OffsetDateTime now);
+
+    @Modifying
+    @Query("""
+            update Newsletter n set n.status = PUBLISHED, n.publishedAt = :now, n.updatedAt = :now
+            where n.status = SENDING and not exists (
+                select d.id from NewsletterDelivery d
+                where d.newsletter = n and (d.attemptCount = 0 and d.status = PENDING or d.status = SENDING)
+            )
+            and (:recipient is null or exists (
+                select d.id from NewsletterDelivery d
+                where d.newsletter = n and d.subscriber.email = :recipient
+            ))
+            """)
+    int publishAfterFirstAttempts(OffsetDateTime now, String recipient);
 
     @Query(value = """
             select n.id as newsletterId, n.title as title, n.status as status, n.createdAt as createdAt,

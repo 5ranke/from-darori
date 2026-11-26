@@ -3,6 +3,17 @@
   const sidebar = document.getElementById('letter-sidebar');
   const status = document.getElementById('letter-unavailable');
   const quiz = document.getElementById('letter-quiz');
+  const categoryEmoji = new Map([
+    ['프로젝트 후속', '🌱'],
+    ['그 프로젝트, 지금은?', '🌱'],
+    ['그 프로젝트 지금은?', '🌱'],
+    ['구인/참여', '🙋'],
+    ['모집', '🙋'],
+    ['다로리에서 찾습니다', '🙋'],
+    ['제철 정보', '🍊'],
+    ['특산물', '🍊'],
+    ['다로리의 제철', '🍊']
+  ]);
 
   function element(tag, className, text) {
     const node = document.createElement(tag);
@@ -114,7 +125,9 @@
 
     const destinations = letter.sections.map((data, index) => {
       const section = element('section', 'visitor-letter-section');
-      const heading = element('h2', '', data.title);
+      const emoji = categoryEmoji.get(data.title);
+      const label = emoji ? `${emoji} ${data.title}` : data.title;
+      const heading = element('h2', '', label);
       heading.id = `letter-section-${index + 1}`;
       heading.tabIndex = -1;
       section.setAttribute('aria-labelledby', heading.id);
