@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.util.Assert;
 import software.amazon.awssdk.auth.credentials.InstanceProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sesv2.SesV2Client;
@@ -31,7 +32,11 @@ class SesNewsletterConfiguration {
     @Bean
     NewsletterMailSender sesNewsletterMailSender(SesV2Client client,
                                                   @Value("${darori.newsletter.from}") String from,
-                                                  @Value("${darori.newsletter.ses.test-recipient}") String recipient) {
-        return new SesNewsletterMailSender(client, from, recipient);
+                                                  @Value("${darori.newsletter.ses.test-recipient:}") String recipient,
+                                                  @Value("${darori.newsletter.ses.production:false}") boolean production) {
+        if (!production) {
+            Assert.hasText(recipient, "SES sandbox requires a verified test recipient");
+        }
+        return new SesNewsletterMailSender(client, from, production ? null : recipient.strip());
     }
 }
