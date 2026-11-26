@@ -37,4 +37,23 @@ public class Subscriber {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private SubscriberStatus status;
+
+    public static Subscriber subscribeNew(String email) {
+        Subscriber subscriber = new Subscriber();
+        subscriber.email = email;
+        subscriber.status = SubscriberStatus.ACTIVE;
+        return subscriber;
+    }
+
+    public static Subscriber subscribeAgain(Subscriber subscriber) {
+        subscriber.status = SubscriberStatus.ACTIVE;
+        subscriber.updatedAt = OffsetDateTime.now();
+        return subscriber;
+    }
+
+    public static Subscriber unsubscribe(Subscriber subscriber) {
+        subscriber.status = SubscriberStatus.UNSUBSCRIBED;
+        subscriber.updatedAt = OffsetDateTime.now();
+        return subscriber;
+    }
 }

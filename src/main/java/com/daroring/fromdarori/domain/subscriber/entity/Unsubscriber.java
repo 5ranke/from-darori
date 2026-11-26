@@ -33,4 +33,13 @@ public class Unsubscriber {
     @Enumerated(EnumType.STRING)
     @Column(name = "reason_code", nullable = false, length = 30)
     private UnsubscribeReason reasonCode;
+
+    public static Unsubscriber create(Subscriber subscriber, UnsubscribeReason reason_code,
+                                      String detail) {
+        Unsubscriber unsubscriber = new Unsubscriber();
+        unsubscriber.subscriber = subscriber;
+        unsubscriber.detail = detail;
+        unsubscriber.reasonCode = reason_code;
+        return unsubscriber;
+    }
 }
