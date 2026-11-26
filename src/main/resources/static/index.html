@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/site-header.css">
   <link rel="stylesheet" href="css/visitor/visitor-common.css">
   <link rel="stylesheet" href="css/visitor/visitor-home.css">
+  <link rel="stylesheet" href="css/visitor/visitor-story-dialog.css">
   <script>
     window.DaroriVisitorConfig = { page: 'home', routes: { home: '/', subscribe: '#subscription' } };
   </script>
@@ -82,20 +83,20 @@
     </section>
   </main>
   <div data-visitor-footer></div>
-  <dialog class="visitor-home-story-dialog" id="home-story-dialog" aria-labelledby="home-story-title">
-    <div class="visitor-home-story-top">
-      <div class="visitor-home-story-meta">
-        <span class="visitor-home-tag" id="home-story-category"></span>
-        <span class="visitor-home-story-date" id="home-story-date"></span>
+  <dialog class="visitor-story-dialog" id="home-story-dialog" aria-labelledby="home-story-title">
+    <div class="visitor-story-top">
+      <div class="visitor-story-meta">
+        <span class="visitor-story-tag" id="home-story-category"></span>
+        <span class="visitor-story-date" id="home-story-date"></span>
       </div>
-      <button class="visitor-home-story-close" type="button" id="home-story-close" autofocus>닫기</button>
+      <button class="visitor-story-close" type="button" id="home-story-close" autofocus>닫기</button>
     </div>
-    <h2 class="visitor-home-story-title" id="home-story-title"></h2>
-    <div class="visitor-home-story-body" id="home-story-body"></div>
-    <div class="visitor-home-story-images" id="home-story-images" role="region" aria-label="소식 사진" tabindex="0" hidden></div>
-    <p class="visitor-home-story-extra" id="home-story-deadline" hidden></p>
-    <a class="visitor-home-story-extra" id="home-story-action" hidden>관련 링크 보기</a>
-    <a class="visitor-home-button visitor-home-story-letter" id="home-story-letter"><span id="home-story-letter-label"></span> <span aria-hidden="true">↗</span></a>
+    <h2 class="visitor-story-title" id="home-story-title"></h2>
+    <div class="visitor-story-body" id="home-story-body"></div>
+    <div class="visitor-story-images" id="home-story-images" role="region" aria-label="소식 사진" tabindex="0" hidden></div>
+    <p class="visitor-story-extra" id="home-story-deadline" hidden></p>
+    <a class="visitor-story-extra" id="home-story-action" hidden>관련 링크 보기</a>
+    <a class="visitor-story-letter" id="home-story-letter"><span id="home-story-letter-label"></span> <span aria-hidden="true">↗</span></a>
   </dialog>
 </body>
 </html>
