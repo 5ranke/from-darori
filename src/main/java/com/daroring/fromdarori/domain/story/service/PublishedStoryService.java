@@ -63,7 +63,7 @@ public class PublishedStoryService {
         var newsletter = story.getNewsletter();
         var issue = newsletter.getPublishedAt().atZoneSameInstant(Newsletter.ISSUE_ZONE);
         var snapshot = objectMapper.readTree(story.getStorySnapshot());
-        var content = PublishedStoryContent.fromSnapshot(snapshot);
+        var content = PublishedStoryContent.fromSnapshot(newsletter.getId(), snapshot);
         String categoryName = story.getCategory() == null ? snapshot.path("categoryName").asString("")
                 : story.getCategory().getName();
         return new PublishedStoryDetailResponse(story.getId(), newsletter.getId(), categoryName, issue.getYear(),

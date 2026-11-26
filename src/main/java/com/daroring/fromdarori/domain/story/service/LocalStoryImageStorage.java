@@ -8,14 +8,16 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
-public class LocalStoryImageStorage {
+public class LocalStoryImageStorage implements StoryImageReader {
     private static final String IMAGE_PATH = "/api/v1/admin/story-images/";
     private static final Path UPLOAD_DIR = Path.of("upload").toAbsolutePath();
     private static final Pattern FILE_KEY = Pattern.compile(
@@ -56,6 +58,12 @@ public class LocalStoryImageStorage {
 
     public String contentType(String key) {
         return CONTENT_TYPES.get(key.substring(key.lastIndexOf('.') + 1).toLowerCase(Locale.ROOT));
+    }
+
+    @Override
+    public Optional<Image> readImage(String objectKey) {
+        return Optional.ofNullable(find(objectKey))
+                .map(path -> new Image(new FileSystemResource(path), contentType(objectKey)));
     }
 
     public void requireUploaded(String key) {
