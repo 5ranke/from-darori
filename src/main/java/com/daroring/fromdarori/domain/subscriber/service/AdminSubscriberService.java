@@ -3,10 +3,15 @@ package com.daroring.fromdarori.domain.subscriber.service;
 import com.daroring.fromdarori.domain.story.exception.ApiException;
 import com.daroring.fromdarori.domain.subscriber.dto.AdminSubscriberCreateRequest;
 import com.daroring.fromdarori.domain.subscriber.dto.AdminSubscriberCreateResponse;
+import com.daroring.fromdarori.domain.subscriber.dto.SubscriberInfoResponse;
+import com.daroring.fromdarori.domain.subscriber.dto.SubscriberItemResponse;
 import com.daroring.fromdarori.domain.subscriber.entity.Subscriber;
 import com.daroring.fromdarori.domain.subscriber.entity.SubscriberStatus;
 import com.daroring.fromdarori.domain.subscriber.repository.SubscriberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +20,23 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AdminSubscriberService {
     private final SubscriberRepository subscriberRepository;
+
+    @Transactional(readOnly = true)
+    public SubscriberInfoResponse getSubscribers(int page, int size) {
+        Sort sort = Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id"));
+        PageRequest pageable = PageRequest.of(page, size, sort);
+        Page<Subscriber> subscriberPage = subscriberRepository.findByStatus(SubscriberStatus.ACTIVE, pageable);
+        return new SubscriberInfoResponse(
+                subscriberPage.getContent().stream()
+                        .map(SubscriberItemResponse::from)
+                        .toList(),
+                subscriberPage.getNumber(),
+                subscriberPage.getSize(),
+                Math.toIntExact(subscriberPage.getTotalElements()),
+                subscriberPage.getTotalPages(),
+                subscriberPage.hasNext()
+        );
+    }
 
     @Transactional
     public AdminSubscriberCreateResponse create(AdminSubscriberCreateRequest request) {
