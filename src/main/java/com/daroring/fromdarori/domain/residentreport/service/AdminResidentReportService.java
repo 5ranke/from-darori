@@ -14,7 +14,7 @@ import com.daroring.fromdarori.domain.story.entity.StoryImage;
 import com.daroring.fromdarori.domain.story.exception.ApiException;
 import com.daroring.fromdarori.domain.story.repository.AdminStoryImageRepository;
 import com.daroring.fromdarori.domain.story.repository.AdminStoryRepository;
-import com.daroring.fromdarori.domain.story.service.LocalStoryImageStorage;
+import com.daroring.fromdarori.domain.story.service.StoryImageStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +33,7 @@ public class AdminResidentReportService {
     private final AdminUserRepository adminUserRepository;
     private final AdminStoryRepository adminStoryRepository;
     private final AdminStoryImageRepository adminStoryImageRepository;
-    private final LocalStoryImageStorage imageStorage;
+    private final StoryImageStorage imageStorage;
 
     @Transactional(readOnly = true)
     public ReportInfoResponse getReports(int page, int size) {

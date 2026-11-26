@@ -1,5 +1,9 @@
 package com.daroring.fromdarori.domain.newsletter.mail;
 
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
@@ -23,10 +27,9 @@ final class SesNewsletterMailSender implements NewsletterMailSender {
 
     SesNewsletterMailSender(SesV2Client client, String from, String testRecipient) {
         Assert.hasText(from, "SES requires a newsletter sender address");
-        Assert.hasText(testRecipient, "SES requires a verified sandbox recipient");
         this.client = client;
-        this.from = from.strip();
-        this.testRecipient = testRecipient.strip();
+        this.from = formatFrom(from.strip());
+        this.testRecipient = testRecipient;
     }
 
     @Override
@@ -36,7 +39,7 @@ final class SesNewsletterMailSender implements NewsletterMailSender {
 
     @Override
     public String send(UUID deliveryId, String recipient, NewsletterMailContent content) throws SendFailure {
-        if (!testRecipient.equals(recipient)) {
+        if (testRecipient != null && !testRecipient.equals(recipient)) {
             throw new SendFailure(FailureKind.PERMANENT, "Recipient is outside the SES sandbox test scope");
         }
 
@@ -76,5 +79,16 @@ final class SesNewsletterMailSender implements NewsletterMailSender {
 
     private static Content utf8(String value) {
         return Content.builder().charset("UTF-8").data(value).build();
+    }
+
+    private static String formatFrom(String address) {
+        try {
+            var sender = new InternetAddress(address, true);
+            sender.validate();
+            sender.setPersonal("From. 다로리", StandardCharsets.UTF_8.name());
+            return sender.toString();
+        } catch (AddressException | UnsupportedEncodingException exception) {
+            throw new IllegalArgumentException("Invalid SES newsletter sender address", exception);
+        }
     }
 }
