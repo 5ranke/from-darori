@@ -67,6 +67,18 @@
   let opener;
   let storyRequestId = 0;
 
+  const categoryEmoji = new Map([
+    ['구인/참여', '🙋'],
+    ['구인 참여', '🙋'],
+    ['프로젝트 후속', '🌱'],
+    ['제철 정보', '🍊']
+  ]);
+
+  function categoryLabel(name) {
+    const emoji = categoryEmoji.get(name);
+    return emoji ? `${emoji} ${name}` : name;
+  }
+
   function issueText(letter) {
     return `${letter.issueYear} ${letter.issueMonth}월호`;
   }
@@ -98,7 +110,7 @@
 
   function renderStory(button, story) {
     const issue = issueText(story);
-    document.getElementById('home-story-category').textContent = story.categoryName;
+    document.getElementById('home-story-category').textContent = categoryLabel(story.categoryName);
     document.getElementById('home-story-date').textContent = issue;
     document.getElementById('home-story-title').textContent = story.title;
     document.getElementById('home-story-body').textContent = story.body;
@@ -148,7 +160,7 @@
     newsHeading.textContent = `${issueText(latest)} 다로리 소식`;
     for (const story of featuredStories) {
       const card = newsTemplate.content.firstElementChild.cloneNode(true);
-      card.querySelector('.visitor-home-tag').textContent = story.categoryName;
+      card.querySelector('.visitor-home-tag').textContent = categoryLabel(story.categoryName);
       card.querySelector('.visitor-home-date').textContent = issueText(latest);
       card.querySelector('h3').textContent = story.title;
       card.querySelector('.visitor-home-excerpt').textContent = story.excerpt;

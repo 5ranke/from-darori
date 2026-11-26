@@ -1,0 +1,16 @@
+spring:
+  task:
+    scheduling:
+      pool:
+        size: 2
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 10000
+      mail.smtp.writetimeout: 10000
+
+darori:
+  newsletter:
+    from: newsletter@example.test

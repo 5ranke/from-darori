@@ -7,7 +7,7 @@
     VILLAGE_NEWS: { emoji: '', placeholder: '다로리의 요즘 소식을 입력하세요.' },
     PROJECT_FOLLOW_UP: { emoji: '🌱 ', placeholder: '어떤 프로젝트였는지, 참여 이후 어떤 변화가 있었는지 적어 주세요.' },
     RECRUITMENT: { emoji: '🙋 ', placeholder: '모집 대상, 역할, 활동 일정, 신청 방법을 적어 주세요.' },
-    SEASONAL: { emoji: '🍑 ', placeholder: '무엇이 제철인지, 판매 시기와 구매 방법을 적어 주세요.' }
+    SEASONAL: { emoji: '🍊 ', placeholder: '무엇이 제철인지, 판매 시기와 구매 방법을 적어 주세요.' }
   };
 
   let categories = [];   // 서버에서 받은 카테고리

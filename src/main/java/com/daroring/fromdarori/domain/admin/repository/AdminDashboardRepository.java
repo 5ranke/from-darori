@@ -31,11 +31,11 @@ public class AdminDashboardRepository {
                 SELECT
                     (SELECT COUNT(*) FROM story s WHERE %s) AS story_count,
                     (SELECT COUNT(*) FROM subscriber WHERE status = 'ACTIVE') AS subscriber_count,
-                    (SELECT COUNT(*) FROM newsletter WHERE status = 'PUBLISHED') AS published_newsletter_count,
+                    (SELECT COUNT(*) FROM newsletter WHERE status = 'SCHEDULED') AS scheduled_newsletter_count,
                     (SELECT COUNT(*) FROM resident_report WHERE status = 'PENDING') AS pending_report_count
                 """.formatted(AVAILABLE_STORY)).param("holdingStatuses", HOLDING_STATUSES)
                 .query((rs, rowNum) -> new Statistics(rs.getLong("story_count"),
-                        rs.getLong("subscriber_count"), rs.getLong("published_newsletter_count"),
+                        rs.getLong("subscriber_count"), rs.getLong("scheduled_newsletter_count"),
                         rs.getLong("pending_report_count"))).single();
     }
 

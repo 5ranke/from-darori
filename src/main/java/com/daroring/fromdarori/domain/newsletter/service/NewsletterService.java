@@ -73,7 +73,8 @@ public class NewsletterService {
         boolean isLatest = findLatestPublished().map(Newsletter::getId).filter(newsletterId::equals).isPresent();
         List<Section> sections = PublishedStoryContent.inDisplayOrder(objectMapper.readTree(newsletter.getContentSnapshot()).path("sections"))
                 .map(section -> new Section(section.path("title").asString(""),
-                        PublishedStoryContent.inDisplayOrder(section.path("stories")).map(PublishedStoryContent::fromSnapshot).toList()))
+                        PublishedStoryContent.inDisplayOrder(section.path("stories"))
+                                .map(story -> PublishedStoryContent.fromSnapshot(newsletterId, story)).toList()))
                 .filter(section -> !section.stories().isEmpty())
                 .toList();
         return new NewsletterDetailResponse(newsletterId, issue.getYear(), issue.getMonthValue(),

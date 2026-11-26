@@ -8,7 +8,7 @@ import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStatus;
 import com.daroring.fromdarori.domain.newsletter.entity.NewsletterStory;
 import com.daroring.fromdarori.domain.newsletter.repository.NewsletterRepository;
 import com.daroring.fromdarori.domain.newsletter.repository.NewsletterStoryRepository;
-import java.util.Comparator;
+import com.daroring.fromdarori.domain.story.dto.PublishedStoryContent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +17,6 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 @Service
@@ -46,8 +45,10 @@ public class HomeService {
 
         for (NewsletterStory story : newsletterStoryRepository.findIncludedStories(newsletterIds)) {
             UUID newsletterId = story.getNewsletter().getId();
-            JsonNode snapshot = objectMapper.readTree(story.getStorySnapshot());
-            thumbnailByNewsletter.computeIfAbsent(newsletterId, id -> firstImageUrl(snapshot));
+            var snapshot = objectMapper.readTree(story.getStorySnapshot());
+            thumbnailByNewsletter.computeIfAbsent(newsletterId, id ->
+                    PublishedStoryContent.imagesFromSnapshot(id, snapshot)
+                            .map(PublishedStoryContent.Image::url).findFirst().orElse(null));
 
             if (latestNewsletterId.equals(newsletterId) && story.getCategory() != null) {
                 String categoryCode = story.getCategory().getCode();
@@ -73,11 +74,4 @@ public class HomeService {
         return new HomeResponse(latestNewsletterId, featuredStories, recentNewsletters);
     }
 
-    private String firstImageUrl(JsonNode snapshot) {
-        return snapshot.path("images").valueStream()
-                .filter(image -> image.path("imageUrl").isTextual())
-                .min(Comparator.comparingInt(image -> image.path("displayOrder").asInt(Integer.MAX_VALUE)))
-                .map(image -> image.path("imageUrl").asString())
-                .orElse(null);
-    }
 }

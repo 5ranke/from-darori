@@ -1,6 +1,7 @@
 package com.daroring.fromdarori.domain.newsletter.entity;
 
 import com.daroring.fromdarori.domain.subscriber.entity.Subscriber;
+import com.daroring.fromdarori.domain.subscriber.entity.SubscriberStatus;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -63,4 +64,41 @@ public class NewsletterDelivery {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 24)
     private NewsletterDeliveryStatus status = NewsletterDeliveryStatus.PENDING;
+
+    public boolean startAttempt(OffsetDateTime now) {
+        if (status != NewsletterDeliveryStatus.PENDING
+                && (status != NewsletterDeliveryStatus.RETRY_PENDING || nextRetryAt.isAfter(now))) {
+            return false;
+        }
+        if (subscriber.getStatus() != SubscriberStatus.ACTIVE) {
+            status = NewsletterDeliveryStatus.SKIPPED;
+            nextRetryAt = null;
+            return false;
+        }
+        status = NewsletterDeliveryStatus.SENDING;
+        attemptCount++;
+        lastAttemptAt = now;
+        nextRetryAt = null;
+        return true;
+    }
+
+    public void accept(int attempt, OffsetDateTime now, String messageId) {
+        if (!isCurrentAttempt(attempt)) return;
+        status = NewsletterDeliveryStatus.ACCEPTED;
+        acceptedAt = now;
+        providerMessageId = messageId;
+        failureReason = null;
+    }
+
+    public void fail(int attempt, NewsletterDeliveryStatus outcome, String reason, OffsetDateTime retryAt) {
+        if (!isCurrentAttempt(attempt)) return;
+        status = outcome;
+        failureReason = reason;
+        nextRetryAt = retryAt;
+    }
+
+    private boolean isCurrentAttempt(int attempt) {
+        return attemptCount == attempt
+                && (status == NewsletterDeliveryStatus.SENDING || status == NewsletterDeliveryStatus.UNKNOWN);
+    }
 }
