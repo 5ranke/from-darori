@@ -210,28 +210,21 @@
       });
       images.hidden = !images.children.length;
 
-      // 마감일·링크 (있을 때만)
-      const extra = $('vl-d-extra');
-      extra.innerHTML = '';
-      if (story.applicationDeadline) {
-        extra.append(el('p', 'vl-extra', `모집 마감일 · ${story.applicationDeadline.replaceAll('-', '.')}`));
-      }
-      if (story.actionUrl && /^https?:\/\//.test(story.actionUrl)) {
-        const line = el('p', 'vl-extra', '관련 링크 · ');
-        const link = el('a', null, story.actionUrl);
-        link.href = story.actionUrl;
-        link.target = '_blank';
-        link.rel = 'noopener';
-        line.append(link);
-        extra.append(line);
-      }
-      extra.hidden = !extra.children.length;
+      const deadline = $('vl-d-deadline');
+      deadline.hidden = !story.applicationDeadline;
+      deadline.textContent = deadline.hidden ? '' : `모집 마감일 · ${story.applicationDeadline.replaceAll('-', '.')}`;
+
+      const action = $('vl-d-action');
+      action.hidden = !/^https?:\/\//i.test(story.actionUrl ?? '');
+      if (action.hidden) action.removeAttribute('href');
+      else action.href = story.actionUrl;
 
       // 해당 월호 보러가기 → 편지 상세 페이지
       const go = $('vl-d-go');
-      go.textContent = `${issue} 보러가기 ↗`;
+      $('vl-d-go-label').textContent = `${issue} 보러가기`;
       go.href = letterUrl(story.newsletterId);
       dialog.showModal();
+      dialog.scrollTop = 0;
     } catch (error) {
       statusEl.hidden = false;
       statusEl.textContent = error.message;
@@ -269,7 +262,11 @@
 
   $('vl-d-close').addEventListener('click', () => dialog.close());
   dialog.addEventListener('click', e => {
-    if (e.target === dialog) dialog.close(); // 바깥(어두운 부분) 누르면 닫기
+    if (e.target !== dialog) return;
+    const bounds = dialog.getBoundingClientRect();
+    if (e.clientX < bounds.left || e.clientX > bounds.right || e.clientY < bounds.top || e.clientY > bounds.bottom) {
+      dialog.close();
+    }
   });
 
   // ── 시작 ──
