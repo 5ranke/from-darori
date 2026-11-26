@@ -53,7 +53,7 @@ public class SubscriptionService {
             return UnsubscribeResponse.from(subscriber, unsubscriber);
         } else {
             // 이미 해지했을 때
-            Unsubscriber unsubscriber = unsubscriberRepository.findBySubscriber(subscriber);
+            Unsubscriber unsubscriber = unsubscriberRepository.findTopBySubscriberOrderByUnsubscribedAtDesc(subscriber);
             return UnsubscribeResponse.from(subscriber, unsubscriber);
         }
     }

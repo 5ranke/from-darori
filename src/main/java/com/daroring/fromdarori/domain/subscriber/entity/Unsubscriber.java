@@ -42,4 +42,11 @@ public class Unsubscriber {
         unsubscriber.reasonCode = reason_code;
         return unsubscriber;
     }
+
+    public static Unsubscriber byAdmin(Subscriber subscriber) {
+        Unsubscriber unsubscriber = new Unsubscriber();
+        unsubscriber.subscriber = subscriber;
+        unsubscriber.reasonCode = UnsubscribeReason.OTHER;
+        return unsubscriber;
+    }
 }

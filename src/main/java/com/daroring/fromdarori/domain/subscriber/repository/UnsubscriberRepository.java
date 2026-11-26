@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface UnsubscriberRepository extends JpaRepository<Unsubscriber, UUID> {
-    Unsubscriber findBySubscriber(Subscriber subscriber);
+    Unsubscriber findTopBySubscriberOrderByUnsubscribedAtDesc(Subscriber subscriber);
 }

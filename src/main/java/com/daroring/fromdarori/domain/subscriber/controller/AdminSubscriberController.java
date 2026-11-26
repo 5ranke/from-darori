@@ -3,6 +3,7 @@ package com.daroring.fromdarori.domain.subscriber.controller;
 import com.daroring.fromdarori.domain.story.exception.ApiException;
 import com.daroring.fromdarori.domain.subscriber.dto.AdminSubscriberCreateRequest;
 import com.daroring.fromdarori.domain.subscriber.dto.AdminSubscriberCreateResponse;
+import com.daroring.fromdarori.domain.subscriber.dto.AdminSubscriberDeleteResponse;
 import com.daroring.fromdarori.domain.subscriber.dto.SubscriberInfoResponse;
 import com.daroring.fromdarori.domain.subscriber.service.AdminSubscriberService;
 import com.daroring.fromdarori.global.response.ApiResponse;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +29,15 @@ public class AdminSubscriberController {
             return Integer.parseInt(value.trim());
         } catch (NumberFormatException exception) {
             throw new ApiException(HttpStatus.BAD_REQUEST,
-                    "STORY_QUERY4002",parameterName + "은(는) 정수여야 합니다.");
+                    "SUBSCRIBER_QUERY4002",parameterName + "은(는) 정수여야 합니다.");
+        }
+    }
+
+    private static UUID parseSubscriberId(String value) {
+        try {
+            return UUID.fromString(value);
+        } catch (IllegalArgumentException exception) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "SUBSCRIBER4001", "subscriberId는 올바른 UUID 형식이어야 합니다.");
         }
     }
 
@@ -60,4 +71,11 @@ public class AdminSubscriberController {
 
     // 구독자 삭제
     // DELETE /api/v1/admin/subscribers/{subscriberId}
+    @DeleteMapping("/{subscriberId}")
+    public ResponseEntity<ApiResponse<AdminSubscriberDeleteResponse>> delete(
+            @PathVariable String subscriberId
+    ) {
+        AdminSubscriberDeleteResponse response = adminSubscriberService.delete(parseSubscriberId(subscriberId));
+        return ResponseEntity.ok(ApiResponse.success("구독자 삭제에 성공했습니다.", response));
+    }
 }
