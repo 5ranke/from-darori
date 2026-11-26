@@ -1,6 +1,7 @@
 package com.daroring.fromdarori.domain.newsletter.mail;
 
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -13,6 +14,7 @@ import software.amazon.awssdk.services.sesv2.model.MessageTag;
 import software.amazon.awssdk.services.sesv2.model.SendEmailRequest;
 import software.amazon.awssdk.services.sesv2.model.SesV2Exception;
 
+@Slf4j
 final class SesNewsletterMailSender implements NewsletterMailSender {
 
     private final SesV2Client client;
@@ -58,9 +60,14 @@ final class SesNewsletterMailSender implements NewsletterMailSender {
             return client.sendEmail(request).messageId();
         } catch (SesV2Exception exception) {
             int status = exception.statusCode();
+            var details = exception.awsErrorDetails();
+            if (status == 403) {
+                log.warn("SES denied newsletter delivery {} (requestId={}): {}", deliveryId, exception.requestId(),
+                        details == null ? "No AWS error details" : details.errorMessage());
+            }
             var kind = status == 429 ? FailureKind.RETRYABLE
                     : status >= 400 && status < 500 && status != 408 ? FailureKind.PERMANENT : FailureKind.UNKNOWN;
-            String code = exception.awsErrorDetails() == null ? "" : " (" + exception.awsErrorDetails().errorCode() + ")";
+            String code = details == null ? "" : " (" + details.errorCode() + ")";
             throw new SendFailure(kind, "SES returned HTTP " + status + code);
         } catch (SdkClientException exception) {
             throw new SendFailure(FailureKind.UNKNOWN, "SES request acceptance could not be confirmed");
