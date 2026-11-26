@@ -4,11 +4,10 @@ import com.daroring.fromdarori.domain.category.repository.CategoryRepository;
 import com.daroring.fromdarori.domain.newsletter.mail.NewsletterMailContent.InlineImage;
 import com.daroring.fromdarori.domain.newsletter.mail.NewsletterMailDraft.Story;
 import com.daroring.fromdarori.domain.newsletter.service.NewsletterCategoryOrder;
-import com.daroring.fromdarori.domain.story.service.LocalStoryImageStorage;
+import com.daroring.fromdarori.domain.story.service.StoryImageStorage;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Comparator;
@@ -28,13 +27,13 @@ public class NewsletterEmailRenderer {
     private static final Pattern TOKEN = Pattern.compile("\\{\\{([A-Z_]+)}}");
     private static final String LINK_STYLE = "color:#90402d;text-decoration:underline;";
     private static final String TABLE = "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"";
-    private final LocalStoryImageStorage storage;
+    private final StoryImageStorage storage;
     private final CategoryRepository categoryRepository;
     private final URI site;
     private final String template;
     private final byte[] logo;
 
-    public NewsletterEmailRenderer(LocalStoryImageStorage storage, CategoryRepository categoryRepository,
+    public NewsletterEmailRenderer(StoryImageStorage storage, CategoryRepository categoryRepository,
                                    @Value("${darori.newsletter.site-url:https://from-darori.com/}") String siteUrl)
             throws IOException {
         this.storage = storage;
@@ -198,16 +197,22 @@ public class NewsletterEmailRenderer {
     }
 
     private String imageSource(NewsletterMailDraft.Image image, boolean preview, Map<String, InlineImage> inlineImages) {
-        var path = storage.find(image.objectKey());
-        if (path != null) {
-            try {
-                String cid = "darori-photo-" + image.objectKey();
-                InlineImage asset = inlineImages.get(cid);
-                if (asset == null) asset = new InlineImage(cid, storage.contentType(image.objectKey()), Files.readAllBytes(path));
+        String cid = "darori-photo-" + image.objectKey();
+        InlineImage asset = inlineImages.get(cid);
+        if (asset != null) {
+            return inlineSource(asset, preview, inlineImages);
+        }
+        try {
+            var stored = storage.readImage(image.objectKey());
+            if (stored.isPresent()) {
+                var file = stored.get();
+                try (var input = file.resource().getInputStream()) {
+                    asset = new InlineImage(cid, file.contentType(), input.readAllBytes());
+                }
                 return inlineSource(asset, preview, inlineImages);
-            } catch (IOException ignored) {
-                return webUrl(image.imageUrl());
             }
+        } catch (IOException ignored) {
+            return webUrl(image.imageUrl());
         }
         return webUrl(image.imageUrl());
     }

@@ -10,7 +10,7 @@ import com.daroring.fromdarori.domain.story.entity.StoryImage;
 import com.daroring.fromdarori.domain.story.exception.ApiException;
 import com.daroring.fromdarori.domain.story.repository.AdminStoryImageRepository;
 import com.daroring.fromdarori.domain.story.repository.AdminStoryRepository;
-import com.daroring.fromdarori.domain.story.service.LocalStoryImageStorage;
+import com.daroring.fromdarori.domain.story.service.StoryImageStorage;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +27,7 @@ public class NewsletterGenerationService {
 
     private final AdminStoryRepository storyRepository;
     private final AdminStoryImageRepository imageRepository;
-    private final LocalStoryImageStorage imageStorage;
+    private final StoryImageStorage imageStorage;
     private final OpenAiNewsletterClient openAi;
 
     public NewsletterGenerateResponse generate(NewsletterGenerateRequest request) {

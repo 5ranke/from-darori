@@ -35,7 +35,7 @@ public class AdminStoryService {
     private final AdminStoryImageRepository adminStoryImageRepository;
     private final CategoryRepository categoryRepository;
     private final AdminUserRepository adminUserRepository;
-    private final LocalStoryImageStorage imageStorage;
+    private final StoryImageStorage imageStorage;
 
     @Transactional(readOnly = true)
     public StoryInfoResponse getStories(
