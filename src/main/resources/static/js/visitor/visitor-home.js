@@ -118,8 +118,12 @@
     document.getElementById('home-story-letter-label').textContent = `${issue} 보러가기`;
 
     const images = document.getElementById('home-story-images');
-    images.replaceChildren(...story.images.map(image => {
+    images.replaceChildren(...story.images.filter(image => image.url).map(image => {
       const img = document.createElement('img');
+      img.addEventListener('error', () => {
+        img.remove();
+        images.hidden = !images.childElementCount;
+      }, { once: true });
       img.src = image.url;
       img.alt = image.altText ?? '';
       img.loading = 'lazy';
@@ -151,7 +155,12 @@
   });
 
   function renderHome({ latestNewsletterId, featuredStories, recentNewsletters }) {
-    if (!latestNewsletterId) return;
+    if (!latestNewsletterId) {
+      status.textContent = '아직 발행된 다로리 편지가 없어요. 새 편지가 발행되면 이곳에서 만나보실 수 있어요.';
+      letterList.hidden = true;
+      letterList.closest('section').hidden = false;
+      return;
+    }
     const latest = recentNewsletters[0];
 
     latestLink.href = letterUrl(latest);
@@ -174,8 +183,10 @@
     for (const letter of recentNewsletters) {
       const card = letterTemplate.content.firstElementChild.cloneNode(true);
       const thumbnail = card.querySelector('img');
-      if (letter.thumbnailUrl) thumbnail.src = letter.thumbnailUrl;
-      else thumbnail.remove();
+      if (letter.thumbnailUrl) {
+        thumbnail.addEventListener('error', () => thumbnail.remove(), { once: true });
+        thumbnail.src = letter.thumbnailUrl;
+      } else thumbnail.remove();
       const badge = letter.newsletterId === latestNewsletterId ? ' | 최신' : '';
       card.querySelector('.visitor-home-tag').textContent = issueText(letter) + badge;
       card.querySelector('h3').textContent = letter.title;

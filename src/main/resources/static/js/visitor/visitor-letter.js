@@ -49,6 +49,10 @@
       const src = webUrl(image.url);
       if (!src) continue;
       const photo = element('img', 'visitor-letter-photo');
+      photo.addEventListener('error', () => {
+        photo.remove();
+        if (!photos.childElementCount) photos.remove();
+      }, { once: true });
       photo.src = src;
       photo.alt = image.altText ?? '';
       photo.loading = 'lazy';
@@ -158,7 +162,8 @@
       const { isSuccess, result } = await response.json();
       if (!isSuccess || !result) throw new Error('Invalid newsletter response');
       renderLetter(result);
-      status.hidden = true;
+      status.hidden = result.sections.length > 0;
+      if (!status.hidden) status.textContent = '이 편지에는 표시할 본문이 없어요.';
     } catch {
       status.textContent = '편지를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
     }
