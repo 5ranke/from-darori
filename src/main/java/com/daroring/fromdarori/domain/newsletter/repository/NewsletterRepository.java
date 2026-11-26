@@ -21,6 +21,13 @@ public interface NewsletterRepository extends JpaRepository<Newsletter, UUID> {
 
     boolean existsByScheduledAt(OffsetDateTime scheduledAt);
 
+    @Query("""
+            select n.id from Newsletter n
+            where n.status = :status and n.scheduledAt <= :now
+            order by n.scheduledAt, n.id
+            """)
+    List<UUID> findDueNewsletterIds(NewsletterStatus status, OffsetDateTime now);
+
     @Query(value = """
             select n.id as newsletterId, n.title as title, n.status as status, n.createdAt as createdAt,
                    case when n.status = :published and n.publishedAt is not null then

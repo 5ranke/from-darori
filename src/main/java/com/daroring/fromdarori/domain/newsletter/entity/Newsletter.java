@@ -82,4 +82,12 @@ public class Newsletter {
         this.scheduledAt = null;
         this.status = NewsletterStatus.SAVED;
     }
+
+    public boolean startSendingIfDue(OffsetDateTime now) {
+        if (status != NewsletterStatus.SCHEDULED || scheduledAt == null || scheduledAt.isAfter(now)) {
+            return false;
+        }
+        status = NewsletterStatus.SENDING;
+        return true;
+    }
 }
