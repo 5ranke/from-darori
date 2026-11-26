@@ -12,7 +12,7 @@
     home: new URL('index.html', staticRoot).href,
     about: new URL('visitor/village.html', staticRoot).href,
     letters: new URL('visitor/letters.html', staticRoot).href,
-    notices: null,
+    notices: new URL('visitor/notices.html', staticRoot).href,
     subscribe: new URL('#subscription', staticRoot).href,
     report: new URL('visitor/report.html', staticRoot).href,
     unsubscribe: new URL('visitor/unsubscribe.html', staticRoot).href,
