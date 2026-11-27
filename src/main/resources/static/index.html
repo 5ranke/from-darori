@@ -67,19 +67,19 @@
         <p>다로리 소식이 더 궁금하다면,</p>
         <h2 id="home-subscription-heading"><span>다로리 편지</span>를 받아보세요</h2>
       </div>
-      <!-- API 미연결: 전송 가능한 form으로 만들지 않으며 이메일을 저장·전송하지 않습니다. -->
-      <div class="visitor-home-subscription-fields">
+      <!-- 구독 API 검증 후 폼에 data-subscription-enabled="true"를 설정합니다. -->
+      <form class="visitor-home-subscription-fields" id="home-subscription-form" method="post" novalidate>
         <div class="visitor-home-subscription-row">
           <label class="visitor-home-sr-only" for="home-subscription-email">이메일 주소</label>
           <input id="home-subscription-email" name="email" type="email" maxlength="254" required aria-describedby="home-subscription-feedback" autocomplete="email" placeholder="이메일 주소를 입력하세요.">
-          <button class="visitor-home-button" id="home-subscription-button" type="button" disabled title="구독 신청 API 연결 준비 중">편지 받기</button>
+          <button class="visitor-home-button" id="home-subscription-button" type="submit" disabled title="구독 신청 API 연결 준비 중">편지 받기</button>
         </div>
         <label class="visitor-home-consent" for="home-subscription-consent">
           <input id="home-subscription-consent" type="checkbox" name="agreedToPrivacy" required aria-describedby="home-subscription-feedback">
           <span>(필수) 개인정보 수집 및 이용에 동의합니다.</span>
         </label>
-        <p class="visitor-home-subscription-feedback" id="home-subscription-feedback" role="status" aria-live="polite">구독 신청 기능 준비 중입니다. 입력한 정보는 전송·저장되지 않습니다.</p>
-      </div>
+        <p class="visitor-home-subscription-feedback" id="home-subscription-feedback" role="status" aria-live="polite" tabindex="-1">구독 신청 기능 준비 중입니다. 입력한 정보는 전송·저장되지 않습니다.</p>
+      </form>
     </section>
   </main>
   <div data-visitor-footer></div>

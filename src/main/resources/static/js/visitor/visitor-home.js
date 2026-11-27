@@ -1,14 +1,19 @@
-/* 홈 구독 입력 검증. 백엔드 미구현으로 API 호출·저장·신청 완료 처리는 하지 않습니다. */
 (() => {
+  const form = document.getElementById('home-subscription-form');
   const email = document.getElementById('home-subscription-email');
   const consent = document.getElementById('home-subscription-consent');
   const button = document.getElementById('home-subscription-button');
   const feedback = document.getElementById('home-subscription-feedback');
-  if (!email || !consent || !button || !feedback) return;
+  if (!form || !email || !consent || !button || !feedback) return;
 
+  const enabled = form.dataset.subscriptionEnabled === 'true';
   const pendingMessage = '구독 신청 기능 준비 중입니다. 입력한 정보는 전송·저장되지 않습니다.';
+  const consentError = '개인정보 수집 및 이용에 동의해 주세요.';
+  const submitLabel = button.textContent;
   let emailTouched = false;
   let consentTouched = false;
+  let submitting = false;
+  if (enabled) button.removeAttribute('title');
 
   function validateEmail(value) {
     const normalizedEmail = value.trim();
@@ -22,27 +27,66 @@
     return '';
   }
 
-  // 향후 API 연동 시 사용할 요청 데이터 준비 경계입니다.
-  // 유효하지 않으면 null을 반환하며, 반환값을 저장하거나 전송하지 않습니다.
-  function prepareSubscriptionRequest(value, agreedToPrivacy) {
-    if (validateEmail(value) || agreedToPrivacy !== true) return null;
-    return { email: value.trim(), agreedToPrivacy: true };
-  }
-
-  function updateValidation() {
+  function updateValidation(message) {
+    if (submitting) return;
     const error = validateEmail(email.value);
-    const ready = prepareSubscriptionRequest(email.value, consent.checked) !== null;
     email.setAttribute('aria-invalid', String(emailTouched && Boolean(error)));
     consent.setAttribute('aria-invalid', String(consentTouched && !consent.checked));
-    // 입력 조건과 API 준비 상태는 별개입니다. 아직 실제 신청은 허용하지 않습니다.
-    button.disabled = true;
-    if (emailTouched && error) feedback.textContent = `${error} ${pendingMessage}`;
-    else if ((emailTouched || consentTouched) && !consent.checked) {
-      feedback.textContent = `개인정보 수집 및 이용에 동의해 주세요. ${pendingMessage}`;
-    } else if (ready) {
-      feedback.textContent = `입력 조건을 충족했습니다. 아직 구독 신청된 상태는 아닙니다. ${pendingMessage}`;
-    } else feedback.textContent = pendingMessage;
+    button.disabled = !enabled || Boolean(error) || !consent.checked;
+    const validation = emailTouched && error ? error
+      : (emailTouched || consentTouched) && !consent.checked ? consentError : '';
+    const status = message ?? validation;
+    feedback.textContent = enabled ? status : [status, pendingMessage].filter(Boolean).join(' ');
   }
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!enabled || submitting) return;
+
+    emailTouched = consentTouched = true;
+    const error = validateEmail(email.value);
+    if (error || !consent.checked) {
+      updateValidation();
+      (error ? email : consent).focus();
+      return;
+    }
+
+    submitting = true;
+    button.disabled = true;
+    email.readOnly = true;
+    consent.disabled = true;
+    button.textContent = '신청 중…';
+    feedback.textContent = '구독 신청을 처리하고 있어요.';
+    let message;
+    try {
+      const response = await fetch('/api/v1/subscriptions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ email: email.value.trim(), agreedToPrivacy: true })
+      });
+      const data = await response.json().catch(() => null);
+      if (response.ok && data?.isSuccess === true) {
+        message = '뉴스레터 구독이 완료됐어요.';
+        form.reset();
+        emailTouched = consentTouched = false;
+      } else if (response.status === 400) {
+        message = data?.code === 'SUBSCRIBER4001'
+          ? '이미 구독 중인 이메일이에요.'
+          : '이메일 주소와 개인정보 동의를 확인해 주세요.';
+      } else {
+        message = '구독 신청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.';
+      }
+    } catch {
+      message = '서버에 연결하지 못했어요. 인터넷 연결을 확인한 뒤 다시 시도해 주세요.';
+    } finally {
+      submitting = false;
+      email.readOnly = false;
+      consent.disabled = false;
+      button.textContent = submitLabel;
+      if (form.contains(document.activeElement) || document.activeElement === document.body) feedback.focus();
+      updateValidation(message);
+    }
+  });
 
   email.addEventListener('input', () => { emailTouched = true; updateValidation(); });
   email.addEventListener('blur', () => {
