@@ -70,7 +70,9 @@
         form.reset();
         emailTouched = consentTouched = false;
       } else if (response.status === 400) {
-        message = '이메일 주소와 개인정보 동의를 확인해 주세요.';
+        message = data?.code === 'SUBSCRIBER4001'
+          ? '이미 구독 중인 이메일이에요.'
+          : '이메일 주소와 개인정보 동의를 확인해 주세요.';
       } else {
         message = '구독 신청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.';
       }
