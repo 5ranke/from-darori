@@ -1,7 +1,21 @@
 /* 홈.png 이미지의 비율을 바탕으로 한 근사값입니다. Figma 원본 수치·폰트는 미확인입니다.
  * 공통 헤더·푸터 선택자는 덮어쓰지 않습니다. 모바일 배치는 데스크톱 시안의 줄바꿈입니다. */
 .visitor-home .visitor-home-main { flex: 1; padding-block: 48px 120px; }
-.visitor-home .visitor-home-hero { padding: 128px 100px; border-radius: 20px; background: #f5f5f5; }
+.visitor-home .visitor-home-hero {
+  position: relative;
+  padding: 128px 100px;
+  padding-inline-end: 47%;
+  border-radius: 20px;
+  background: #f5f5f5;
+}
+.visitor-home .visitor-home-character {
+  position: absolute;
+  inset-inline-end: 5%;
+  inset-block-end: 0;
+  display: block;
+  width: 41%;
+  height: auto;
+}
 .visitor-home .visitor-home-hero h1 { margin: 0; font-size: clamp(30px, 2.083vw, 40px); line-height: 1.5; font-weight: 800; letter-spacing: -1.4px; }
 .visitor-home .visitor-home-hero p { max-width: 760px; margin: 28px 0 56px; font-size: clamp(17px, 1.042vw, 20px); line-height: 1.6; word-break: keep-all; }
 .visitor-home .visitor-home-button { display: inline-flex; flex-shrink: 0; justify-content: center; align-items: center; gap: 12px; min-height: 56px; padding: 14px 28px; border: 0; border-radius: 16px; background: var(--visitor-accent); color: #fff; font: inherit; font-size: 18px; line-height: 1.4; text-decoration: none; white-space: nowrap; }
@@ -60,7 +74,13 @@
   .visitor-home .visitor-home-consent { font-size: 16px; }
 }
 @media (max-width: 1100px) {
-  .visitor-home .visitor-home-hero { padding: 80px 48px; }
+  .visitor-home .visitor-home-hero { padding: 80px 48px 0; }
+  .visitor-home .visitor-home-character {
+    position: static;
+    width: min(76%, 320px);
+    margin-block-start: 24px;
+    margin-inline-start: auto;
+  }
   .visitor-home .visitor-home-news-card { padding: 24px; }
   .visitor-home .visitor-home-letter-list { padding: 32px; }
   .visitor-home .visitor-home-thumbnail { flex-basis: 120px; width: 120px; }
@@ -71,7 +91,7 @@
 }
 @media (max-width: 760px) {
   .visitor-home .visitor-home-main { padding-block: 24px 64px; }
-  .visitor-home .visitor-home-hero { padding: 48px 24px; }
+  .visitor-home .visitor-home-hero { padding: 48px 24px 0; }
   .visitor-home .visitor-home-hero h1 { font-size: 28px; }
   .visitor-home .visitor-home-hero p { margin: 24px 0 32px; }
   .visitor-home .visitor-home-desktop-break { display: none; }
